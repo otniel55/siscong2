@@ -1,9 +1,4 @@
-{% extends "layout.html" %}
 
-{% block contenido %}
-
-	<div class="col-md-10 col-lg-10 col-xs-offset-0 col-sm-offset-0 col-md-offset-1">
-		<div class="form-panel row">
 		    <div class="visible-md visible-lg">
 				<h1 class="text-center titlecolor"><i class="fa fa-angle-right"></i>Informacion del Grupo</h1>
 			</div>
@@ -17,7 +12,12 @@
 			{% csrf_token %}
 			
 			<div class="col-lg-6 col-lg-offset-3">
-            	{{ form }}
+				<label>Encargado</label>
+				<input class="form-control mrg-bottom" id="id_encargado" maxlength="50" name="Encagado" type="text" value="{{ enc }}">
+			</div>
+			<div class="col-lg-6 col-lg-offset-3">
+				<label>Auxiliar:</label>
+            	<input class="form-control mrg-bottom" id="id_auxiliar" maxlength="50" name="auxiliar" type="text" value="{{ aux }}">
 			</div>
 
 			<div class="clearfix"></div>
@@ -50,8 +50,8 @@
 				</div>
 			</div>
 			
-			<div class="col-sm-12 col-md-2 col-lg-2 col-xs-offset-0 col-sm-offset-0 col-md-offset-5 col-lg-offset-5">
-            	<button id="btnSave" type="submit" class="btn btn-primary">Guardar</button>
+			<div class="col-xs-12 col-md-4 col-xs-offset-0 col-sm-offset-0 col-md-offset-4">
+            	<button id="btnMod" type="submit" class="btn btn-primary">Guardar</button>
 			</div>
 			
         </div>
@@ -65,10 +65,6 @@
 		</div>
 
 	</div>
-		</div>		
-
-	</div> 
-
 <div class="modal fade" id="pubGroup" role="dialog">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
@@ -92,9 +88,6 @@
 		</div>
 	</div>
 </div>
-
-{% endblock %}
-
 
 
 {% block scripts %}
@@ -132,6 +125,21 @@
 				
 				
 			})
+		})
+		$("#btnMod").click(function(){
+			a=$("#id_auxiliar").val()
+			e=$("#id_encargado").val()
+			if ($.trim(a)!="" && $.trim(e)!=""){
+				$.post("{% url 'secretario:modGrup' %}", {'id':encargado, 'enc':e, 'aux':a, csrfmiddlewaretoken:'{{ csrf_token }}'}, function(res){
+					res=JSON.parse(res)
+					if (res.on==1){
+						window.location="{% url 'secretario:conGrupo' %}"
+						alert(res.msg)
+					} else {
+						alert(res.msg)
+					}
+				})
+			}
 		})
 	</script>
 {% endblock %}

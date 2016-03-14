@@ -8,7 +8,7 @@ class GruposPred(models.Model):
 	IDgrupo = models.AutoField(primary_key=True)
 	encargado = models.CharField(max_length=50)
 	auxiliar = models.CharField(max_length=50)
-	def __unicode__(self):
+	def __str__(self):
 		return self.encargado
 
 class Publicador(models.Model):
@@ -26,7 +26,7 @@ class Publicador(models.Model):
         on_delete = models.CASCADE,
     )
 	
-	def __unicode__(self):
+	def __str__(self):
 		return self.nombre
 
 	
