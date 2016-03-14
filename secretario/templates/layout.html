@@ -23,7 +23,7 @@
   <link href="{% static 'css/table-responsive.css' %}" rel="stylesheet">
   <link href="{% static 'datepicker/bootstrap-datetimepicker.min.css' %}" rel="stylesheet">
   <link href="{% static 'datatable/jquery.dataTables.min.css' %}" rel="stylesheet">
-
+  <link href="{% static 'jqueryUI/jquery-ui.min.css' %}" rel="stylesheet">
 
   </head>
 
@@ -103,7 +103,7 @@
                           <span>Informes</span>
                       </a>
                       <ul class="sub">
-                          <li><a  href="">Registrar</a></li>
+                          <li><a  href="{% url 'secretario:regInfo' %}">Registrar</a></li>
             						  <li><a  href=""></a>Modificar</li>
             						  <li><a  href=""></a>Estadisticas</li>
                       </ul>
@@ -134,6 +134,7 @@
     <!-- js placed at the end of the document so the pages load faster -->
     <script src="{% static 'js/jquery.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'jqueryUI/jquery-ui.min.js' %}"></script>
     <script class="include" type="text/javascript" src="{% static 'js/jquery.dcjqaccordion.2.7.js' %}"></script>
     <script src="{% static 'js/jquery.ui.touch-punch.min.js' %}"></script>
     <script src="{% static 'js/jquery.scrollTo.min.js' %}"></script>

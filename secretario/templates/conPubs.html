@@ -16,16 +16,16 @@
 			{% csrf_token %}
 			<div class="col-lg-12">
 				<div class="row">
-					<div class="col-lg-3" style="margin-left: 30px;margin-right: 40px;">
+					<div class="col-lg-3" style="padding:0px;margin-left:50px;margin-right:30px;">
 						<input type="search" id="filtro" class="form-control" style="margin-top: 40px;" placeholder="Ingrese su Busqueda..." />
-						<div style="overflow:hidden;margin-top: 40px;">
+						<div style="overflow:hidden;margin-top:40px;padding:5px;">
 						    <div class="form-group">
 						        <div id="picker"></div>
 						    </div>
 						</div>
-						<button id="clear" class="btn btn-success" style="width: 50%;margin-left:25%;">Limpiar</button>
+						<button id="clear" class="btn btn-success" style="width:50%;margin-left:25%;">Limpiar</button>
 					</div>
-					<div id="pubs" class="col-lg-8" style="border-left: solid 1px; border-left-color: #E4C840">
+					<div id="pubs" class="col-lg-8" style="">
 		                <div class="content-panel">
 		                	<h3 class="text-center titlecolor" style="margin:0px;padding: 0px;">Informacion de los publicadores</h3>
 							<section id="no-more-tables" style="margin-top: 20px;">
@@ -42,28 +42,30 @@
 									<tbody>
 									{% for x in pub %}
 										<tr>
-											<td class="numeric" data-title="Nombre y Apellido" style="width:34%;">
+											<td class="numeric nombre" data-title="Nombre y Apellido" style="width:34%;">
 												<a href="{% url 'secretario:traerPub' x.id %}">{{ x.nombre }} {{ x.apellido }}</a>
 											</td>
 											<td class="numeric text-center" data-title="Edad" style="width:10%;">
 												{{ x.edad }}
 											</td>
-											<td class="numeric text-center" data-title="Fecha de Bautismo" style="width:17%;">
+											<td class="numeric text-center bau" data-title="Fecha de Bautismo" style="width:17%;">
 												{{ x.fechaBau }}
 											</td>
 											<td class="numeric" data-title="Grupo Asignado" style="width:34%;">
 												<a href="javascript:llamargrup({{ x.g }})">{{ x.FKgrupo }}</a>
 											</td>
 											{% if estado == 0 %}
-												<td class="numeric success" data-title="Estado" style="width:10%;">
+												<td class="numeric success estado" data-title="Estado" style="width:10%;">
 												</td>
 											{% elif estado == 1 %}
-												<td class="numeric" data-title="Estado" style="width:10%;">
+												<td class="numeric estado" data-title="Estado" style="width:10%;">
 												</td>
 											{% else %}
-												<td class="numeric" data-title="Estado" style="width:10%;background-color: #09B20F">
+												<td class="numeric estado" id="{{x.FKgrupo}}" data-title="Estado" style="width:10%;background-color: #09B20F">
 												</td>
 											{% endif %}
+											<!--background-color: #ffad33"
+											background-color: #b30000"-->
 										</tr>
 									{% endfor %}
 									</tbody>
@@ -80,6 +82,10 @@
 
 	</div> 
 
+<div id="dialogo" style="display: none">
+	<h3>hola mundo</h3>
+	<input type="text" />
+</div>
 {% endblock %}
 
 {% block scripts %}
@@ -136,5 +142,15 @@
 			$('#filtro').change()
 		})
 
+		$('td.estado').mouseover(function(){
+			id = $(this).attr('id')
+			$('#dialogo').dialog({
+				 position: { my: "left top-160", at: "left", of: this }
+			});
+		})
+		$('td.estado').mouseleave(function(){
+			$('#dialogo').dialog("destroy")
+
+		})
 	</script>
 {% endblock %}

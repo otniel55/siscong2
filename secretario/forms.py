@@ -34,3 +34,16 @@ class regPub(forms.ModelForm):
             'fechaBau': forms.TextInput(attrs={'class':'form-control '}),
             'fechaNa': forms.DateInput(attrs={'class':'form-control '}),
         }
+
+class regInforme(forms.ModelForm):
+    class Meta:
+        model = Informe
+        fields = ['horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'fecha']
+        widgets = {
+            'horas': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number'}),
+            'publicaciones': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number'}),
+            'videos': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number'}),
+            'revisitas': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number'}),
+            'estudios': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number'}),
+            'fecha': forms.DateInput(attrs={'class':'form-control '}),
+        }
