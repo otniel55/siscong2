@@ -168,6 +168,10 @@ def modGrup(request):
           msg={'msg':'Grupo modificado con exito', 'on':1}
      return HttpResponse(json.dumps(msg))
 
+def viewInfo(request):
+     formInfo = regInforme()
+     return render(request, 'regInforme.html', {'form': formInfo})
+
 def regInf(request):
      _horas = request.POST['horas']
      _publicaciones = request.POST['publicaciones']
