@@ -36,7 +36,8 @@ def conGrupo(request):
 def datGrupo(request,idGrupo):
      g = GruposPred.objects.get(pk=idGrupo)
      p = Publicador.objects.filter(FKgrupo=g.pk)
-     datos = {'aux': g.auxiliar, 'publicadores':p, 'num': g.pk, 'enc':g.encargado}
+     formDatGrupo = CrearGrupo(instance=g)
+     datos = {'form': formDatGrupo, 'publicadores': p, 'num': g.pk}
      return render(request, 'datGrupo.html',datos)
 
 def conPub(request):
