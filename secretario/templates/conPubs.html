@@ -1,0 +1,140 @@
+{% extends "layout.html" %}
+
+{% block contenido %}
+
+	<div class="col-md-12 col-lg-12">
+		<div class="form-panel row">
+		    <div class="visible-md visible-lg">
+				<h1 class="text-center titlecolor"><i class="fa fa-angle-right"></i>Publicadores de "El Palito"</h1>
+			</div>
+			<div class="visible-xs visible-sm">
+				<h3 class="text-center"><i class="fa fa-angle-right"></i>Informacion de "El Palito"</h3>
+			</div>
+	<div class="form-horizontal style-form">
+
+		<div class="form-group">
+			{% csrf_token %}
+			<div class="col-lg-12">
+				<div class="row">
+					<div class="col-lg-3" style="margin-left: 30px;margin-right: 40px;">
+						<input type="search" id="filtro" class="form-control" style="margin-top: 40px;" placeholder="Ingrese su Busqueda..." />
+						<div style="overflow:hidden;margin-top: 40px;">
+						    <div class="form-group">
+						        <div id="picker"></div>
+						    </div>
+						</div>
+						<button id="clear" class="btn btn-success" style="width: 50%;margin-left:25%;">Limpiar</button>
+					</div>
+					<div id="pubs" class="col-lg-8" style="border-left: solid 1px; border-left-color: #E4C840">
+		                <div class="content-panel">
+		                	<h3 class="text-center titlecolor" style="margin:0px;padding: 0px;">Informacion de los publicadores</h3>
+							<section id="no-more-tables" style="margin-top: 20px;">
+		                    	<table id="public" class="table table-bordered table-striped table-condensed cf" style="font-size:14px;">
+		                        	<thead class="cf">				
+										<tr>
+											<th class="numeric text-center" style="width:34%;">Nombre y Apellido</th>
+											<th class="numeric text-center" style="width:10%;">Edad</th>
+											<th class="numeric text-center" style="width:15%;">Fecha de Bautismo</th>
+											<th class="numeric text-center" style="width:34%;">Grupo Asignado</th>
+											<th class="numeric text-center" style="width:10%;">Estado</th>
+										</tr>
+									</thead>
+									<tbody>
+									{% for x in pub %}
+										<tr>
+											<td class="numeric" data-title="Nombre y Apellido" style="width:34%;">
+												<a href="{% url 'secretario:traerPub' x.id %}">{{ x.nombre }} {{ x.apellido }}</a>
+											</td>
+											<td class="numeric text-center" data-title="Edad" style="width:10%;">
+												{{ x.edad }}
+											</td>
+											<td class="numeric text-center" data-title="Fecha de Bautismo" style="width:17%;">
+												{{ x.fechaBau }}
+											</td>
+											<td class="numeric" data-title="Grupo Asignado" style="width:34%;">
+												<a href="javascript:llamargrup({{ x.g }})">{{ x.FKgrupo }}</a>
+											</td>
+											{% if estado == 0 %}
+												<td class="numeric success" data-title="Estado" style="width:10%;">
+												</td>
+											{% elif estado == 1 %}
+												<td class="numeric" data-title="Estado" style="width:10%;">
+												</td>
+											{% else %}
+												<td class="numeric" data-title="Estado" style="width:10%;background-color: #09B20F">
+												</td>
+											{% endif %}
+										</tr>
+									{% endfor %}
+									</tbody>
+								</table>
+							</section>
+						</div>
+					</div>
+				</div>
+			</div>
+        </div>
+
+	</div>
+		</div>		
+
+	</div> 
+
+{% endblock %}
+
+{% block scripts %}
+	<script>
+		//dateTable
+
+			var table = $('#public').dataTable({
+				"bPaginate":false,
+				"bInfo":false,
+				"bFilter":true,
+				"oLanguage": {
+						      "sInfoEmpty": "La Tabla esta Vacia",
+						      "sZeroRecords": "No se Encontraron Registros"
+						     }
+				});
+
+			$('#public_filter').css('display', 'none')
+
+	        $('#filtro').on( 'keyup change', function () {
+							table.fnFilter(this.value);
+						});
+
+        //fin dateTable
+
+		//dataTimePicker
+
+			$(function () {
+	            $('#picker').datetimepicker({
+	                inline: true,
+	                showTodayButton:true,
+	                viewMode: 'days',
+	                format: 'YYYY-MM-DD',
+		            widgetPositioning: {
+			            horizontal: 'right',
+			            vertical: 'auto'
+			        }
+	            }).on("dp.change", function(e) {
+						date = $('#picker').data("DateTimePicker").viewDate()
+						date = moment(date._d.toJSON()).format('DD-MM-YYYY')
+	            		$('#filtro').val(date)
+	            		$('#filtro').change()	
+	        		});
+	        });
+
+		//fin del dataTimePicker
+
+		function llamargrup(id){
+			$.post("{% url 'secretario:datGrupo' %}", {'Encargado':id, csrfmiddlewaretoken:'{{ csrf_token }}', 'on':true})
+		}
+
+		//boton limpiar filtro
+		$("#clear").click(function(){
+			$('#filtro').val("")
+			$('#filtro').change()
+		})
+
+	</script>
+{% endblock %}

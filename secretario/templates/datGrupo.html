@@ -1,0 +1,137 @@
+{% extends "layout.html" %}
+
+{% block contenido %}
+
+	<div class="col-md-10 col-lg-10 col-xs-offset-0 col-sm-offset-0 col-md-offset-1">
+		<div class="form-panel row">
+		    <div class="visible-md visible-lg">
+				<h1 class="text-center titlecolor"><i class="fa fa-angle-right"></i>Informacion del Grupo</h1>
+			</div>
+			<div class="visible-xs visible-sm">
+				<h3 class="text-center"><i class="fa fa-angle-right"></i>Informacion del Grupo</h3>
+			</div>
+
+	<div class="form-horizontal style-form">
+
+		<div class="form-group">
+			{% csrf_token %}
+			
+			<div class="col-lg-6 col-lg-offset-3">
+            	{{ form }}
+			</div>
+
+			<div class="clearfix"></div>
+
+			<div id="pubs" class="col-lg-6 col-lg-offset-3">
+                <div class="content-panel">
+                	<h3 class="text-center sinmrg" style="margin-bottom:10px;">Publicadores del Grupo # {{ num }}</h3>
+					<section id="no-more-tables">
+                    	<table class="table table-bordered table-striped table-condensed cf" style="font-size:16px;">
+                        	<thead class="cf">				
+								<tr>
+									<th class="numeric text-center" style="border-right:0px;width:85%;">Nombre y Apellido</th>
+									<th class="numeric" style="border-left:0px;width:15%;"></th>
+								</tr>
+							</thead>
+							<tbody>
+							{% for pub in publicadores %}
+								<tr>
+									<td class="numeric" data-title="Nombre y Apellido" style="border-right:0px;width:85%;">
+										{{ pub.nombre|upper }} {{ pub.apellido|upper }}
+									</td>
+									<td class="numeric text-center" data-title="" style="border-left:0px;width:15%;">
+										<button id="{{ pub.pk }}" class="btn btn-danger fa fa-trash" data-toggle="modal" data-target="#pubGroup"></button>
+									</td>
+								</tr>
+							{% endfor %}
+							</tbody>
+						</table>
+					</section>
+				</div>
+			</div>
+			
+			<div class="col-sm-12 col-md-2 col-lg-2 col-xs-offset-0 col-sm-offset-0 col-md-offset-5 col-lg-offset-5">
+            	<button id="btnSave" type="submit" class="btn btn-primary">Guardar</button>
+			</div>
+			
+        </div>
+
+        <div class="clearfix"></div>
+
+		<div class="col-xs-2" style="margin-top: 30px;">
+			<ul class="pager">
+				<li class="pager-prev"><a href="{% url 'secretario:conGrupo' %}">Volver</a></li>
+			</ul>
+		</div>
+
+	</div>
+		</div>		
+
+	</div> 
+
+<div class="modal fade" id="pubGroup" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+			  <button type="button" class="close" data-dismiss="modal">&times;</button>
+			  <h4 class="modal-title">Cambiar de Grupo</h4>
+			</div>
+
+			<div class="modal-body">
+				<label for="nombres">Nombres:</label>
+					<input id="nombres" name="datPub" class="form-control mrg-bottom" disabled="true"/>
+				<label for="apellidos">Apellidos:</label>
+					<input id="apellidos" name="datPub" class="form-control mrg-bottom" disabled="true" />
+				<label for="grupos">Grupos:</label>
+				<select id="grupos" name="grupos" class="form-control" style=""></select>
+			</div>
+
+			<div class="modal-footer">
+			  <button type="button" class="btn btn-default" data-dismiss="modal">Cambiar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+
+
+
+{% block scripts %}
+	<script>
+		var id
+		$("td > button").click(function(){
+			/*row = $(this).parents('tr')
+			row.fadeOut()*/
+			id = this.id
+			$.post("{% url 'secretario:conPub' %}", {'id':id, csrfmiddlewaretoken:'{{ csrf_token }}'}, 
+			function(r){
+				resp = JSON.parse(r)
+				$('#grupos').html("")
+				$.each(resp['grupos'], function(key, value){
+					if (value.id != resp['pub'].grupo){
+						$('#grupos').append('<option value="'+value.id+'">'+value.encargado+'</option>')
+					} else {
+						$('#grupos').append('<option value="'+value.id+'" selected>'+value.encargado+'</option>')
+					}
+				})
+				$('#nombres').val(resp['pub'].nombre.toUpperCase())
+				$('#apellidos').val(resp['pub'].apellido.toUpperCase())
+			})
+		})
+		
+		$("div.modal-footer > button").click(function(){
+			idgrupo = $('#grupos').val()
+			$.post("{% url 'secretario:cambiarPub' %}", {'id':id, 'grupo': idgrupo, csrfmiddlewaretoken:'{{ csrf_token }}'}, function(res){
+				res=JSON.parse(res)
+				console.log(res)
+				if (res.on==1){
+					row = $('td > #'+id).parents('tr')
+					row.fadeOut()
+				}
+				
+				
+			})
+		})
+	</script>
+{% endblock %}
