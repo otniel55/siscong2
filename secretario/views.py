@@ -33,11 +33,10 @@ def conGrupo(request):
      cGrupo = traerGrupo()
      return render(request, 'conGrupo.html', {'form': cGrupo})
 
-def datGrupo(request):
-     g = get_object_or_404(GruposPred, pk=request.POST['Encargado'])
+def datGrupo(request,idGrupo):
+     g = GruposPred.objects.get(pk=idGrupo)
      p = Publicador.objects.filter(FKgrupo=g.pk)
-     datForm = CrearGrupo(instance=g)
-     datos = {'form': datForm, 'publicadores':p, 'num': g.pk}
+     datos = {'aux': g.auxiliar, 'publicadores':p, 'num': g.pk, 'enc':g.encargado}
      return render(request, 'datGrupo.html',datos)
 
 def conPub(request):
@@ -153,3 +152,40 @@ def modPub(request):
             p.save
             msg={'msg':'Publicador modificado con exito'}
     return HttpResponse(json.dumps(msg))
+
+def modGrup(request):
+     _encargado=request.POST['enc']
+     _auxiliar=request.POST['aux']
+     _pk=request.POST['id']
+     try:
+          g=GruposPred.objects.get(pk=_pk)
+     except(KeyError, GruposPred.DoesNotExist):
+          msg={'msg':'Grupo no existe'}
+     else:
+          g.encargado=_encargado
+          g.auxiliar=_auxiliar
+          g.save()
+          msg={'msg':'Grupo modificado con exito', 'on':1}
+     return HttpResponse(json.dumps(msg))
+
+def regInf(request):
+     _horas = request.POST['horas']
+     _publicaciones = request.POST['publicaciones']
+     _videos = request.POST['videos']
+     _revisitas = request.POST['revisitas']
+     _estudios = request.POST['estudios']
+     _fecha = request.POST['fecha']
+     _pub=request.POST('publicador')
+     try:
+          p=Publicador.objects.get(pk=_pub)
+     except(KeyError, Publicador.DoesNotExist):
+          msg={'msg':'Publicador no existe'}
+     else:
+          try:
+               Informe.objects.get(fecha=_fecha,FKpub=_pub)
+          except(KeyError, Informe.DoesNotExist):
+               p.informe_set.create(horas=_horas, publicaciones=_publicaciones, videos=_videos,revisistas=_revisitas, estudios=_estudios, fecha=_fecha)
+               msg={'msg':'Informe Registrado con exito', 'on':1}
+          else:
+               msg={'msg':'Informe ya Fue registrado'}
+     return HttpResponse(json.dumps(msg))
