@@ -30,6 +30,9 @@
 								<td class="numeric text-center" data-title="" style="border-left:0px;width:15%;">
 									<button id="{{ pub.pk }}" class="btn btn-danger fa fa-trash" data-toggle="modal" data-target="#pubGroup"></button>
 								</td>
+								<td class="numeric text-center inf" data-title="" style="width:15%;">
+									<button id="{{ pub.pk }}" class="btn btn-primary fa fa-plus" data-toggle="modal" data-target="#informe"></button>
+								</td>
 							</tr>
 						{% endfor %}
 						</tbody>
@@ -46,6 +49,36 @@
 			
 </div>
 
+
+<div class="modal fade" id="informe" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+			  <button type="button" class="close" data-dismiss="modal">&times;</button>
+			  <h4 class="modal-title">Registrar Informe</h4>
+			</div>
+
+			<div class="modal-body">
+				<label for="horas">Horas:</label>
+					<input id="horas" name="horas" class="form-control mrg-bottom"/>
+				<label for="publicaciones">Publicaciones:</label>
+					<input id="publicaciones" name="Publicaciones" class="form-control mrg-bottom"/>
+				<label for="videos">videos:</label>
+				<input id="videos" name="videos" class="form-control" style="" />
+				<label for="revisitas">Revisitas:</label>
+				<input id="revisitas" class="form-control" style="" />
+				<label for="estudios">Estudios:</label>
+				<input id="estudios" class="form-control" style="" />
+				<label for="fecha">Fecha:</label>
+				<input id="fecha" class="form-control" style="" />
+			</div>
+
+			<div class="modal-footer">
+			  <button id="regInf" type="button" class="btn btn-primary" data-dismiss="modal">Registrar</button>
+			</div>
+		</div>
+	</div>
+</div>
 
 <div class="modal fade" id="pubGroup" role="dialog">
 	<div class="modal-dialog modal-sm">
@@ -65,7 +98,7 @@
 			</div>
 
 			<div class="modal-footer">
-			  <button type="button" class="btn btn-default" data-dismiss="modal">Cambiar</button>
+			  <button type="button" class="btn btn-default" data-dismiss="modal" id="changeP">Cambiar</button>
 			</div>
 		</div>
 	</div>
@@ -75,6 +108,7 @@
 {% block scripts %}
 	<script>
 		var id
+		var idinf
 		$("td > button").click(function(){
 			/*row = $(this).parents('tr')
 			row.fadeOut()*/
@@ -95,7 +129,7 @@
 			})
 		})
 		
-		$("div.modal-footer > button").click(function(){
+		$("#changeP").click(function(){
 			idgrupo = $('#grupos').val()
 			$.post("{% url 'secretario:cambiarPub' %}", {'id':id, 'grupo': idgrupo, csrfmiddlewaretoken:'{{ csrf_token }}'}, function(res){
 				res=JSON.parse(res)
@@ -122,6 +156,23 @@
 					}
 				})
 			}
+		})
+		
+		$(".inf > button").click(function(){
+			idinf=this.id
+		})
+		$("#regInf").click(function(){
+			_h=$("#horas").val()
+			_p=$("#publicaciones").val()
+			_v=$("#videos").val()
+			_r=$("#revisitas").val()
+			_e=$("#estudios").val()
+			_f=$("#fecha").val()
+			alert(idinf)
+			$.post("{% url 'secretario:regInf' %}", {'horas': _h, 'publicaciones':_p, 'videos': _v, 'revisitas': _r, 'estudios': _e, 'fecha':_f, 'publicador':idinf, csrfmiddlewaretoken:'{{ csrf_token }}'}, function(res){
+				res=JSON.parse(res)
+				console.log(res)
+			})
 		})
 	</script>
 {% endblock %}

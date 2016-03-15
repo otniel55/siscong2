@@ -180,7 +180,7 @@ def regInf(request):
      _revisitas = request.POST['revisitas']
      _estudios = request.POST['estudios']
      _fecha = request.POST['fecha']
-     _pub=request.POST('publicador')
+     _pub=request.POST['publicador']
      try:
           p=Publicador.objects.get(pk=_pub)
      except(KeyError, Publicador.DoesNotExist):
@@ -189,8 +189,8 @@ def regInf(request):
           try:
                Informe.objects.get(fecha=_fecha,FKpub=_pub)
           except(KeyError, Informe.DoesNotExist):
-               p.informe_set.create(horas=_horas, publicaciones=_publicaciones, videos=_videos,revisistas=_revisitas, estudios=_estudios, fecha=_fecha)
-               msg={'msg':'Informe Registrado con exito', 'on':1}
+               p.informe_set.create(horas=_horas, publicaciones=_publicaciones, videos=_videos, revisitas=_revisitas, estudios=_estudios, fecha=_fecha)
+               msg={'msg':'Informe Registrado con exito'}
           else:
                msg={'msg':'Informe ya Fue registrado'}
      return HttpResponse(json.dumps(msg))

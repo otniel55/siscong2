@@ -16,5 +16,6 @@ urlpatterns = [
     url(r'^consultar/Publicadores/$', views.conPubs, name='conPubs'),
     url(r'^(?P<idpub>[0-9]+)/Publicador/$', views.traerPub, name='traerPub'),
 	url(r'^modGrup/$', views.modGrup, name='modGrup'),
-     url(r'^informe/registrar/$', views.viewInfo, name='viewInfo'),
+    url(r'^informe/registrar/$', views.viewInfo, name='viewInfo'),
+	url(r'^regInf/$', views.regInf, name='regInf'),
 ]

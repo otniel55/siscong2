@@ -132,10 +132,6 @@
 
 		//fin del dataTimePicker
 
-		function llamargrup(id){
-			$.post("{% url 'secretario:datGrupo' %}", {'Encargado':id, csrfmiddlewaretoken:'{{ csrf_token }}', 'on':true})
-		}
-
 		//boton limpiar filtro
 		$("#clear").click(function(){
 			$('#filtro').val("")
