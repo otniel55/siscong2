@@ -7,6 +7,7 @@ from secretario.models import *
 from django.views import generic
 import json
 import datetime
+from django.utils import timezone
 
 def index(request):
      return render(request, 'layout.html', {})
@@ -186,11 +187,20 @@ def regInf(request):
      except(KeyError, Publicador.DoesNotExist):
           msg={'msg':'Publicador no existe'}
      else:
-          try:
-               Informe.objects.get(fecha=_fecha,FKpub=_pub)
-          except(KeyError, Informe.DoesNotExist):
+          inf=Informe.objects.filter(fecha__month=_fecha[5:7],fecha__year=_fecha[0:4],FKpub=_pub)
+          if len(inf)==0:
                p.informe_set.create(horas=_horas, publicaciones=_publicaciones, videos=_videos, revisitas=_revisitas, estudios=_estudios, fecha=_fecha)
                msg={'msg':'Informe Registrado con exito'}
           else:
                msg={'msg':'Informe ya Fue registrado'}
      return HttpResponse(json.dumps(msg))
+
+def tarjeta(request, idPub):
+     p=Publicador.objects.get(pk=idPub)
+     inf=Informe.objects.filter(fecha__year=timezone.now().year, FKpub=idPub)
+     if len(inf)>0:
+          datos={'pub':inf, 'p':p}
+     else:
+          datos={'vacio':1}
+     return render(request, 'tarjetaPub.html', datos)
+     

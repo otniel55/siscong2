@@ -25,7 +25,7 @@
 						{% for pub in publicadores %}
 							<tr>
 								<td class="numeric" data-title="Nombre y Apellido" style="border-right:0px;width:85%;">
-									{{ pub.nombre|upper }} {{ pub.apellido|upper }}
+									<a href="{% url 'secretario:tarjeta' pub.pk %}">{{ pub.nombre|upper }} {{ pub.apellido|upper }}</a>
 								</td>
 								<td class="numeric text-center" data-title="" style="border-left:0px;width:15%;">
 									<button id="{{ pub.pk }}" class="btn btn-danger fa fa-trash" data-toggle="modal" data-target="#pubGroup"></button>

@@ -8,20 +8,23 @@
 				<h1 class="text-center titlecolor"><i class="fa fa-angle-right"></i>Datos del Publicador</h1>
 			</div>
 			<div class="visible-xs visible-sm">
-				<h3 class="text-center"><i class="fa fa-angle-right"></i>Datos del Publicador</h3>
+				<h3 class="text-center"><i class="fa fa-angle-right"></i>Tarjeta</h3>
 			</div>
 
-	<form action="{% url 'secretario:publicReg' %}" method="POST" class="form-horizontal style-form">
+	<div class="form-horizontal style-form">
 		{% csrf_token %}
 		<div class="form-group">
 		
 			<div class="content-panel">
-            	<h3 class="text-center" style="margin:0px;padding: 0px;">Informacion de los publicadores</h3>
+				{% if vacio %}
+					<p>Este publicador no ha informado en este año de servicio</p>
+				{% else %}
+            	<h3 class="text-center" style="margin:0px;padding: 0px;">Tarjeta del publicador {{ p.nombre }} {{ p.apellido }}</h3>
 				<section id="no-more-tables">
                 	<table id="public" class="table table-bordered table-striped table-condensed cf" style="font-size:14px;">
                     	<thead class="cf">				
 							<tr>
-								<th class="numeric text-center" style="width:45%;">Meses</th>
+								<th class="numeric text-center" style="width:45%;">Mes</th>
 								<th class="numeric text-center" style="width:15%;">Horas</th>
 								<th class="numeric text-center" style="width:15%;">Publicaciones</th>
 								<th class="numeric text-center" style="width:15%;">Videos</th>
@@ -32,26 +35,33 @@
 						<tbody>
 						{% for x in pub %}
 							<tr>
-								<td class="numeric" data-title="Nombre y Apellido" style="width:45%;">
-									<a href="{% url 'secretario:traerPub' x.id %}">{{ x.nombre }} {{ x.apellido }}</a>
+								<td class="numeric" data-title="Meses" style="width:45%;">
+									{{ x.fecha.month }}
 								</td>
-								<td class="numeric text-center" data-title="Edad" style="width:15%;">
-									{{ x.edad }}
+								<td class="numeric text-center" data-title="Horas" style="width:15%;">
+									{{ x.horas }}
+								</td>
+								<td class="numeric text-center" data-title="" style="width:15%;">
+									{{ x.publicaciones }}
+								</td>
+								<td class="numeric text-center" data-title="" style="width:15%;">
+									{{ x.videos }}
+								</td>
+								<td class="numeric text-center" data-title="" style="width:10%;">
+									{{ x.revisitas }}
+								</td>
+								<td class="numeric text-center" data-title="" style="width:10%;">
+									{{ x.estudios }}
 								</td>
 							</tr>
 						{% endfor %}
 						</tbody>
 					</table>
 				</section>
+				{% endif %}
 			</div>
-		
-
-			<div class="col-xs-4 col-xs-offset-1">
-	        	<button id="btnSave" type="submit" class="btn btn-primary">Guardar</button>
-			</div>
-
 		</div>
-	</form>		
+	</div>		
 
 		</div>
 	</div>    
