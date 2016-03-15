@@ -52,7 +52,7 @@
 												{{ x.fechaBau }}
 											</td>
 											<td class="numeric" data-title="Grupo Asignado" style="width:34%;">
-												<a href="javascript:llamargrup({{ x.g }})">{{ x.FKgrupo }}</a>
+												<a href="{% url 'secretario:datGrupo' x.g %}">{{ x.FKgrupo }}</a>
 											</td>
 											{% if estado == 0 %}
 												<td class="numeric success estado" data-title="Estado" style="width:10%;">
