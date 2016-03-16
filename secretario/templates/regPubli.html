@@ -2,7 +2,7 @@
 
 {% block contenido %}
 
-	<div class="col-md-6 col-lg-6 col-xs-offset-0 col-sm-offset-0 col-md-offset-3">
+	<div class="col-lg-6 col-md-offset-3">
 		<div class="form-panel row">
 		    <div class="visible-md visible-lg">
 				<h1 class="text-center titlecolor"><i class="fa fa-angle-right"></i>Datos del Publicador</h1>
@@ -15,7 +15,7 @@
 		{% csrf_token %}
 		<div class="form-group">
 		
-			<div class="col-xs-10 col-xs-offset-1">
+			<div class="col-lg-10 col-lg-offset-1">
 	        	{% for f in form %}
 	        		{% if f == form.fechaNa or f == form.fechaBau %}
 				        	{{ f.label_tag }}
@@ -33,9 +33,21 @@
 	        		{{ form2 }}
 	        </div>
 		
+	        <div class="clearfix"></div>
+	        {% if on %}
+				<div class="col-md-1" style="margin-top:50px;padding-left:30px;padding-top: 20px;">
+					<ul class="pager" style="margin:0px;padding:0px;">
+					  <li class="previous"><a href="{% url 'secretario:conPubs' %}">Volver</a></li>
+					</ul>
+				</div>
 
-			<div class="col-xs-4 col-xs-offset-1">
-	        	<button id="btnSave" type="submit" class="btn btn-primary">Guardar</button>
+				<div class="col-lg-4 col-md-offset-3" style="margin-top:30px;">
+				
+		        	<button id="btnMod" type="submit" class="btn btn-success" style="width:100%;">Modificar</button>
+			{% else %}
+				<div class="col-lg-4 col-md-offset-4" style="margin-top:30px;">
+					<button id="btnSave" type="submit" class="btn btn-primary" style="width:100%;">Guardar</button>
+			{% endif %}
 			</div>
 
 		</div>
@@ -58,7 +70,11 @@
 		            vertical: 'auto'
 		        }
 		    })
-			$('#id_fechaBau').attr('value', 'No Bau')
+
+			{% if form.fechaBau.value == "No Bau" %}
+			  	$('#id_fechaBau').val('No Bau')
+			{% endif %}
+
 		});
 	</script>
 {% endblock %}

@@ -125,7 +125,8 @@ def cambiarPub(request):
 def traerPub(request, idpub):
     p=Publicador.objects.get(pk=idpub)
     formPub = regPub(instance=p)
-    return render(request, 'regPubli.html', {'form': formPub})
+    cmbGrupo = traerGrupo(initial={'Encargado': p.FKgrupo.pk})
+    return render(request, 'regPubli.html', {'form': formPub, 'form2':cmbGrupo, 'on': 1})
 
 def modPub(request):
     _nombre=request.POST['nombre'].upper()
