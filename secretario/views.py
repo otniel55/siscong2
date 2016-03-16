@@ -37,9 +37,19 @@ def conGrupo(request):
 def datGrupo(request,idGrupo):
      g = GruposPred.objects.get(pk=idGrupo)
      p = Publicador.objects.filter(FKgrupo=g.pk)
+
      formDatGrupo = CrearGrupo(instance=g)
-     datos = {'form': formDatGrupo, 'publicadores': p, 'num': g.pk}
+     formPub = modalPub()
+     modalGrupo = traerGrupo()
+     modalInfo = regInforme()
+     datos = {'form': formDatGrupo, 'publicadores': p, 'num': g.pk, 'modalPub': formPub, 
+            'modalGrupo': modalGrupo, 'modalInfo': modalInfo,
+            }
      return render(request, 'datGrupo.html',datos)
+
+def conGrupoofPubs(request, idGrupo):
+     cGrupo = traerGrupo(initial={'Encargado': idGrupo})
+     return render(request, 'conGrupo.html', {'form': cGrupo, 'onPub': 1 })
 
 def conPub(request):
      cont=0
@@ -48,14 +58,8 @@ def conPub(request):
      except(KeyError, Publicador.DoesNotExist):
         return HttpResponse(json.dumps({'msg':'Error, Publicador no existe'}))
      else:
-          fechaNa=str(p.fechaNa.day)+"-"+str(p.fechaNa.month)+"-"+str(p.fechaNa.year)
-          p={'nombre':p.nombre, 'apellido':p.apellido, 'telefono':p.telefono, 'direccion':p.direccion, 'email':p.email,'fechaBau':p.fechaBau,'fechaNa':fechaNa, 'grupo':p.FKgrupo.pk}
-          g=GruposPred.objects.all()
-          grup={}
-          for i in g:
-            grup[cont]={'id':i.pk, 'encargado':i.encargado}
-            cont=cont+1
-          datos={'pub':p, 'grupos':grup}
+          p={'nombre':p.nombre, 'apellido':p.apellido,'grupo':p.FKgrupo.pk}
+          datos={'pub':p}
           return HttpResponse(json.dumps(datos))
 
 def conPubs(request):
@@ -197,7 +201,7 @@ def regInf(request):
 
 def tarjeta(request, idPub):
      p=Publicador.objects.get(pk=idPub)
-     inf=Informe.objects.filter(fecha__year=timezone.now().year, FKpub=idPub)
+     inf=Informe.objects.filter(fecha__year=timezone.now().year, FKpub=idPub).order_by('fecha')
      if len(inf)>0:
           datos={'pub':inf, 'p':p}
      else:

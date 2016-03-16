@@ -21,6 +21,15 @@ class traerGrupo(forms.Form):
 										widget=forms.Select(attrs={'class': 'form-control'})
 										)
 
+class modalPub(forms.ModelForm):
+    class Meta:
+        model = Publicador
+        fields = ['nombre', 'apellido']
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control mrg-bottom'}),
+            'apellido': forms.TextInput(attrs={'class': 'form-control mrg-bottom'}),
+            }
+
 class regPub(forms.ModelForm):
 	class Meta:
 		model = Publicador
@@ -40,10 +49,10 @@ class regInforme(forms.ModelForm):
         model = Informe
         fields = ['horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'fecha']
         widgets = {
-            'horas': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number'}),
-            'publicaciones': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number'}),
-            'videos': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number'}),
-            'revisitas': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number'}),
-            'estudios': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number'}),
-            'fecha': forms.DateInput(attrs={'class':'form-control '}),
+            'horas': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number', 'min':'0'}),
+            'publicaciones': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number', 'min':'0'}),
+            'videos': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number', 'min':'0'}),
+            'revisitas': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number', 'min':'0'}),
+            'estudios': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number', 'min':'0'}),
+            'fecha': forms.DateInput(attrs={'class':'form-control'}),
         }

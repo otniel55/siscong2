@@ -52,5 +52,12 @@
 				})
 			}
 		});
+
+		{% if onPub == 1 %}
+			$(document).ready(function(){
+				$("#btnCon").click()
+			})
+		{% endif %}
+		
 	</script>
 {% endblock %}
