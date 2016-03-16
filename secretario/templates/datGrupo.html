@@ -10,6 +10,12 @@
 
 		<div class="clearfix"></div>
 
+		<div class="col-lg-2 col-md-offset-5" style="margin-top: 30px;">
+        	<button id="btnMod" type="submit" class="btn btn-success" style="width:100%">Modificar</button>
+		</div>
+
+		<div class="clearfix"></div>
+
 		<div id="pubs" class="col-lg-6 col-lg-offset-3">
             <div class="content-panel">
             	<h3 class="text-center sinmrg" style="margin-bottom:10px;">Publicadores del Grupo # {{ num }}</h3>
@@ -38,14 +44,7 @@
 					</table>
 				</section>
 			</div>
-		</div>
-		
-		<div class="clearfix"></div>
-
-		<div class="col-lg-2 col-md-offset-5" style="margin-top: 40px;">
-        	<button id="btnMod" type="submit" class="btn btn-success" style="width:100%">Modificar</button>
-		</div>
-			
+		</div>	
 </div>
 
 
@@ -75,7 +74,8 @@
 			</div>
 
 			<div class="modal-footer">
-			  <button id="regInf" type="button" class="btn btn-primary" data-dismiss="modal">Registrar</button>
+				<button id="snAct" type="button" class="btn btn-warning">Sin Actividad</button>
+			 	<button id="regInf" type="button" class="btn btn-primary" data-dismiss="modal">Registrar</button>
 			</div>
 		</div>
 	</div>
@@ -95,7 +95,7 @@
 			</div>
 
 			<div class="modal-footer">
-			  <button type="button" class="btn btn-default" data-dismiss="modal" id="changeP">Cambiar</button>
+			  <button id="changeP" type="button" class="btn btn-default" data-dismiss="modal">Cambiar</button>
 			</div>
 		</div>
 	</div>
@@ -170,11 +170,15 @@
 				})
 	})
 
+	$('#snAct').click(function(){
+		inputsInfo.val(0)
+		inputsInfo.eq(6).val("")
+	})
+
 	$(document).ready(function() {
 		$( ".datepicker" ).datetimepicker({
-			showTodayButton:true,
             viewMode: 'days',
-            format: 'YYYY-MM-DD',
+            format: 'YYYY-MM',
             widgetPositioning: {
 	            horizontal: 'right',
 	            vertical: 'auto'

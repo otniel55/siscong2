@@ -83,9 +83,21 @@
 	</div> 
 
 <div id="dialogo" style="display: none">
-	<h3>hola mundo</h3>
-	<input type="text" />
+	<dl>
+		<dt>Estado:</dt>
+		<dd id="dgEstado">activo</dd>
+		
+		<dt>Fecha del Ultimo Informe:</dt>
+		<dd id="dgFecha">10-2015</dd>
+
+		<dt>Intervalo:</dt>
+		<dd id="dgInt">hace 1 mes</dd>
+
+		<dt>Conclusiones:</dt>
+		<dd id="dgConclu">publicador en buen estado, encomielo a seguir con su fiel labor</dd>
+	</dl>
 </div>
+
 {% endblock %}
 
 {% block scripts %}
@@ -141,12 +153,12 @@
 		$('td.estado').mouseover(function(){
 			id = $(this).attr('id')
 			$('#dialogo').dialog({
-				 position: { my: "left top-160", at: "left", of: this }
+				 position: { my: "right-60 center", at: "", of: this },
+				 dialogClass: 'dlg-no-title',
 			});
 		})
 		$('td.estado').mouseleave(function(){
 			$('#dialogo').dialog("destroy")
-
 		})
 	</script>
 {% endblock %}

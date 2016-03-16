@@ -2269,3 +2269,12 @@ label {
 .titlecolor {
 	color: sandybrown;
 }
+
+.dlg-no-title .ui-dialog-titlebar{
+    display: none;
+}
+
+.ui-dialog {
+    background-color: white;
+    border: solid 2px #ffa31a;
+}
