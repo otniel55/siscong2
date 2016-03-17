@@ -20,4 +20,6 @@ urlpatterns = [
 	url(r'^regInf/$', views.regInf, name='regInf'),
 	url(r'^(?P<idPub>[0-9]+)/Tarjeta/$', views.tarjeta, name='tarjeta'),
     url(r'^(?P<idGrupo>[0-9]+)/grupoPublicador/$', views.conGrupoofPubs, name='conGrupoofPubs'),
+	url(r'^conPubG$', views.conPubG, name='conPubG'),
+	url(r'^informes/consultar$', views.infCon, name='infCon'),
 ]

@@ -208,4 +208,26 @@ def tarjeta(request, idPub):
      else:
           datos={'vacio':1}
      return render(request, 'tarjetaPub.html', datos)
-     
+
+def conPubG(request):
+     cont=0
+     pubs={}
+     grupo=request.POST['g']
+     try:
+          g=GruposPred.objects.get(pk=grupo)
+     except:
+          datos={'on':1, 'msg':"Error grupo no existe"}
+     else:
+          p=Publicador.objects.filter(FKgrupo=g)
+          if len(p)>0:
+               for i in p:
+                    pubs[cont]={'id':i.pk, 'nombre':i.nombre, 'apellido':i.apellido}
+                    cont+=1
+               datos={'p':pubs}
+          else:
+               datos={'on':1, 'msg':'Este grupo no tiene ningun publcador'}
+     return HttpResponse(json.dumps(datos))
+
+def infCon(request):
+     cGrupo = traerGrupo()
+     return render(request, 'infcon.html', {'form': cGrupo})
