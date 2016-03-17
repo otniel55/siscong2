@@ -1,87 +1,47 @@
-{% extends "layout.html" %}
 
-{% block contenido %}
-
-<div class="col-lg-12">
-	<div class="row">
-		<div class="form-panel">
-		    <div class="visible-md visible-lg">
-				<h1 class="text-center titlecolor"><i class="fa fa-angle-right"></i>Datos de Actividad del Publicador</h1>
-			</div>
-			<div class="visible-xs visible-sm">
-				<h3 class="text-center"><i class="fa fa-angle-right"></i>Datos de Actividad del Publicador</h3>
-			</div>
-
-	<div class="form-horizontal style-form">
-		{% csrf_token %}
-		<div class="form-group">
-			<div class="col-lg-10 col-md-offset-1" style="margin-top: 30px;">
-				<div class="content-panel">
-				
-					{% if vacio %}
-						<p>Este publicador no ha informado en este año de servicio</p>
-					{% else %}
-		        	<h3 class="text-center" style="margin:0px;margin-bottom:15px;">Actividad de: <span style="color: darkcyan;">{{ p.nombre|upper }} {{ p.apellido|upper }}</span></h3>
-
-					<section id="no-more-tables">
-		            	<table id="public" class="table table-bordered table-striped table-condensed cf" style="font-size:20px;">
-		                	<thead class="cf">				
-								<tr>
-									<th class="numeric text-center" style="width:20%;">Mes</th>
-									<th class="numeric text-center" style="width:15%;">Horas</th>
-									<th class="numeric text-center" style="width:15%;">Publicaciones</th>
-									<th class="numeric text-center" style="width:15%;">Videos</th>
-									<th class="numeric text-center" style="width:15%;">Revisitas</th>
-									<th class="numeric text-center" style="width:20%;">Cursos Biblicos</th>
-								</tr>
-							</thead>
-							<tbody>
-							{% for x in pub %}
-								<tr>
-									<td class="numeric" data-title="Meses" style="width:20%;">
-										{{ x.fecha|date:'F' }}
-									</td>
-									<td class="numeric text-center" data-title="Horas" style="width:15%;">
-										{{ x.horas }}
-									</td>
-									<td class="numeric text-center" data-title="" style="width:15%;">
-										{{ x.publicaciones }}
-									</td>
-									<td class="numeric text-center" data-title="" style="width:15%;">
-										{{ x.videos }}
-									</td>
-									<td class="numeric text-center" data-title="" style="width:15%;">
-										{{ x.revisitas }}
-									</td>
-									<td class="numeric text-center" data-title="" style="width:20%;">
-										{{ x.estudios }}
-									</td>
-								</tr>
-							{% endfor %}
-							</tbody>
-						</table>
-					</section>
-					{% endif %}
-				</div>
-			</div>
-
-			<div class="clearfix"></div>
-
-			<div class="col-xs-1" style="margin-top:50px;margin-left:30px;">
-				<ul class="pager" style="margin:0px;padding:0px;">
-				  <li class="previous"><a href="{% url 'secretario:conGrupo' %}">Volver</a></li>
-				</ul>
-			</div>
-		</div>
-	</div>		
-
-		</div>
-	</div>
-</div>    
-
-{% endblock %}
-
-{% block scripts %}
-	<script>
-	</script>
-{% endblock %}
+<div class="content-panel">
+	{% if vacio %}
+		<h3 class="text-center" style="margin:0px;margin-bottom:15px;">Este publicador no ha informado en este año de servicio</h3>
+	{% else %}
+		<h3 class="text-center" style="margin:0px;margin-bottom:15px;">Actividad de: <span style="color: darkcyan;">{{ p.nombre|upper }} {{ p.apellido|upper }}</span></h3>
+		
+		<section id="no-more-tables">
+			<table id="public" class="table table-bordered table-striped table-condensed cf" style="font-size:20px;">
+		    	<thead class="cf">				
+					<tr>
+						<th class="numeric text-center" style="width:20%;">Mes</th>
+						<th class="numeric text-center" style="width:15%;">Horas</th>
+						<th class="numeric text-center" style="width:15%;">Publicaciones</th>
+						<th class="numeric text-center" style="width:15%;">Videos</th>
+						<th class="numeric text-center" style="width:15%;">Revisitas</th>
+						<th class="numeric text-center" style="width:20%;">Cursos Biblicos</th>
+					</tr>
+				</thead>
+				<tbody>
+				{% for x in pub %}
+					<tr>
+						<td class="numeric" data-title="Meses" style="width:20%;">
+							{{ x.fecha|date:'F' }}
+						</td>
+						<td class="numeric text-center" data-title="Horas" style="width:15%;">
+							{{ x.horas }}
+						</td>
+						<td class="numeric text-center" data-title="" style="width:15%;">
+							{{ x.publicaciones }}
+						</td>
+						<td class="numeric text-center" data-title="" style="width:15%;">
+							{{ x.videos }}
+						</td>
+						<td class="numeric text-center" data-title="" style="width:15%;">
+							{{ x.revisitas }}
+						</td>
+						<td class="numeric text-center" data-title="" style="width:20%;">
+							{{ x.estudios }}
+						</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</section>
+	{% endif %}
+</div>

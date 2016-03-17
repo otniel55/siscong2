@@ -63,19 +63,19 @@ def conPub(request):
           return HttpResponse(json.dumps(datos))
 
 def conPubs(request):
-    c=[]
-    cont=0
-    pubs={}
-    p=Publicador.objects.all()
-    for i in p:
-        pubs[cont]={'nombre':i.nombre, 'apellido':i.apellido, 'fechaBau':i.fechaBau, 'edad':obteneredad(i), 'FKgrupo':i.FKgrupo, 'id':i.pk, 'g':i.FKgrupo.pk}
-        cont=cont+1
-    pubs=pubs.values()
-    return render(request, 'conPubs.html',{'pub':pubs})
+     c=[]
+     cont=0
+     pubs={}
+     p=Publicador.objects.all()
+     for i in p:
+          pubs[cont]={'nombre':i.nombre, 'apellido':i.apellido, 'fechaBau':i.fechaBau, 'edad':obteneredad(i), 'FKgrupo':i.FKgrupo, 'id':i.pk, 'g':i.FKgrupo.pk}
+          cont=cont+1
+     pubs=pubs.values()
+     return render(request, 'conPubs.html',{'pub':pubs})
 
 def obteneredad(persona):
-    hoy=datetime.date.today()
-    return hoy.year-persona.fechaNa.year-((hoy.month, hoy.day)<(persona.fechaNa.month, persona.fechaNa.day))
+     hoy=datetime.date.today()
+     return hoy.year-persona.fechaNa.year-((hoy.month, hoy.day)<(persona.fechaNa.month, persona.fechaNa.day))
 
 def regPubli(request):
      formPub = regPub()
@@ -83,82 +83,82 @@ def regPubli(request):
      return render(request, 'regPubli.html', {'form': formPub, 'form2': cmbGrupo})
 
 def publicReg(request):
-    _nombre=request.POST['nombre'].upper()
-    _apellido=request.POST['apellido'].upper()
-    _telefono=request.POST['telefono']
-    _direccion =request.POST['direccion'].upper()
-    _email=request.POST['email'].upper()
-    _fechaBau=request.POST['fechaBau']
-    _fechaNa=request.POST['fechaNa']
-    _grupo=request.POST['Encargado']
-    try:
-        pub=Publicador.objects.get(nombre=_nombre, apellido=_apellido, fechaNa=_fechaNa)
-    except(KeyError, Publicador.DoesNotExist):
-        g=GruposPred.objects.get(pk=_grupo)
-        g.publicador_set.create(nombre=_nombre, apellido=_apellido, telefono=_telefono, direccion=_direccion,email=_email, fechaBau=_fechaBau, fechaNa=_fechaNa)
-        return render(request, 'regPubli.html', {'msg':"Grupo Registrado con exito"})
-    else:
-        return render(request, 'regPubli.html', {
+     _nombre=request.POST['nombre'].upper()
+     _apellido=request.POST['apellido'].upper()
+     _telefono=request.POST['telefono']
+     _direccion =request.POST['direccion'].upper()
+     _email=request.POST['email'].upper()
+     _fechaBau=request.POST['fechaBau']
+     _fechaNa=request.POST['fechaNa']
+     _grupo=request.POST['Encargado']
+     try:
+          pub=Publicador.objects.get(nombre=_nombre, apellido=_apellido, fechaNa=_fechaNa)
+     except(KeyError, Publicador.DoesNotExist):
+          g=GruposPred.objects.get(pk=_grupo)
+          g.publicador_set.create(nombre=_nombre, apellido=_apellido, telefono=_telefono, direccion=_direccion,email=_email, fechaBau=_fechaBau, fechaNa=_fechaNa)
+          return render(request, 'regPubli.html', {'msg':"Grupo Registrado con exito"})
+     else:
+          return render(request, 'regPubli.html', {
           'msg': "Error! Este encargado se encuentra en otro grupo.",
-        })
+          })
 
 def cambiarPub(request):
-    _p=request.POST['id']
-    _g=request.POST['grupo']
-    try:
-        p=Publicador.objects.get(pk=_p)
-    except(KeyError, Publicador.DoesNotExist):
-        msg={'msg':'Publicador no existe'}
-    else:
-        try:
-            g=GruposPred.objects.get(pk=_g)
-        except(KeyError, GruposPred.DoesNotExist):
-            msg={'msg':'Grupo no existe'}
-        else:
-            if p.FKgrupo.pk!=g.pk:
-                Publicador.objects.filter(pk=_p).update(FKgrupo=g)
-                msg={'msg':'El publicador ha sido movido con exito', 'on':1}
-            else:
-                msg={'msg':'No hubo ningun cambio realizado'}
-    return HttpResponse(json.dumps(msg))
+     _p=request.POST['id']
+     _g=request.POST['grupo']
+     try:
+          p=Publicador.objects.get(pk=_p)
+     except(KeyError, Publicador.DoesNotExist):
+          msg={'msg':'Publicador no existe'}
+     else:
+          try:
+               g=GruposPred.objects.get(pk=_g)
+          except(KeyError, GruposPred.DoesNotExist):
+               msg={'msg':'Grupo no existe'}
+          else:
+               if p.FKgrupo.pk!=g.pk:
+                    Publicador.objects.filter(pk=_p).update(FKgrupo=g)
+                    msg={'msg':'El publicador ha sido movido con exito', 'on':1}
+               else:
+                    msg={'msg':'No hubo ningun cambio realizado'}
+     return HttpResponse(json.dumps(msg))
 
 def traerPub(request, idpub):
-    p=Publicador.objects.get(pk=idpub)
-    formPub = regPub(instance=p)
-    cmbGrupo = traerGrupo(initial={'Encargado': p.FKgrupo.pk})
-    return render(request, 'regPubli.html', {'form': formPub, 'form2':cmbGrupo, 'on': 1})
+     p=Publicador.objects.get(pk=idpub)
+     formPub = regPub(instance=p)
+     cmbGrupo = traerGrupo(initial={'Encargado': p.FKgrupo.pk})
+     return render(request, 'regPubli.html', {'form': formPub, 'form2':cmbGrupo, 'on': 1})
 
 def modPub(request):
-    _nombre=request.POST['nombre'].upper()
-    _apellido=request.POST['apellido'].upper()
-    _telefono=request.POST['telefono']
-    _direccion =request.POST['direccion'].upper()
-    _email=request.POST['email'].upper()
-    _fechaBau=request.POST['fechaBau']
-    _fechaNa=request.POST['fechaNa']
-    _grupo=request.POST['Encargado']
-    _id=request.POST['id']
-    try:
+     _nombre=request.POST['nombre'].upper()
+     _apellido=request.POST['apellido'].upper()
+     _telefono=request.POST['telefono']
+     _direccion =request.POST['direccion'].upper()
+     _email=request.POST['email'].upper()
+     _fechaBau=request.POST['fechaBau']
+     _fechaNa=request.POST['fechaNa']
+     _grupo=request.POST['Encargado']
+     _id=request.POST['id']
+     try:
         p=Publicador.objects.get(pk=_id)
-    except(KeyError, Publicador.DoesNotExist):
+     except(KeyError, Publicador.DoesNotExist):
         msg={'msg':'Error, publicador no registrado'}
-    else:
-        try:
-            g=GruposPred.objects.get(pk=_grupo)
-        except(KeyError, GruposPred.DoesNotExist):
-            msg={'msg':'Grupo no existe'}
-        else:
-            Publicador.objects.filter(pk=_id).update(FKgrupo=_grupo)
-            p.nombre=_nombre
-            p.apellido=_apellido
-            p.telefono=_telefono
-            p.direccion=_direccion
-            p.email=_email
-            p.fechaBau=_fechaBau
-            p.fechaNa=_fechaNa
-            p.save
-            msg={'msg':'Publicador modificado con exito'}
-    return HttpResponse(json.dumps(msg))
+     else:
+          try:
+               g=GruposPred.objects.get(pk=_grupo)
+          except(KeyError, GruposPred.DoesNotExist):
+               msg={'msg':'Grupo no existe'}
+          else:
+               Publicador.objects.filter(pk=_id).update(FKgrupo=_grupo)
+               p.nombre=_nombre
+               p.apellido=_apellido
+               p.telefono=_telefono
+               p.direccion=_direccion
+               p.email=_email
+               p.fechaBau=_fechaBau
+               p.fechaNa=_fechaNa
+               p.save
+               msg={'msg':'Publicador modificado con exito'}
+     return HttpResponse(json.dumps(msg))
 
 def modGrup(request):
      _encargado=request.POST['enc']
@@ -200,14 +200,20 @@ def regInf(request):
                msg={'msg':'Informe ya Fue registrado'}
      return HttpResponse(json.dumps(msg))
 
-def tarjeta(request, idPub):
+def tarjeta(request, vista, idPub):
      p=Publicador.objects.get(pk=idPub)
      inf=Informe.objects.filter(fecha__year=timezone.now().year, FKpub=idPub).order_by('fecha')
      if len(inf)>0:
           datos={'pub':inf, 'p':p}
      else:
           datos={'vacio':1}
-     return render(request, 'tarjetaPub.html', datos)
+
+     if vista == '1':
+          pagina = 'conTarjetaGrupoPub.html'
+     else:
+          pagina = 'tarjetaPub.html'
+
+     return render(request, pagina , datos)
 
 def conPubG(request):
      cont=0
@@ -228,6 +234,6 @@ def conPubG(request):
                datos={'on':1, 'msg':'Este grupo no tiene ningun publcador'}
      return HttpResponse(json.dumps(datos))
 
-def infCon(request):
+def verTarjetaPub(request):
      cGrupo = traerGrupo()
-     return render(request, 'infcon.html', {'form': cGrupo})
+     return render(request, 'verTarjetaPub.html', {'form': cGrupo})
