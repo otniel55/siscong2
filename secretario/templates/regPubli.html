@@ -17,15 +17,34 @@
 		
 			<div class="col-lg-10 col-lg-offset-1">
 	        	{% for f in form %}
-	        		{% if f == form.fechaNa or f == form.fechaBau %}
-				        	{{ f.label_tag }}
-				            <div class='input-group date datepicker mrg-bottom'>
-				                {{ f }} 
-				                <span class="input-group-addon">
-				                    <span class="glyphicon glyphicon-calendar">
+	        		{% if f == form.fechaNa or f == form.fechaBau and f.value != "No Bau" %}
+				        {{ f.label_tag }}
+			            <div class='input-group date datepicker mrg-bottom'>
+			                {{ f }} 
+			                <span class="input-group-addon">
+			                    <span class="fa fa-calendar">
+			                    </span>
+			                </span>
+			            </div>
+	        		{% elif f == form.fechaBau and f.value == "No Bau" %}
+	        			{{ f.label_tag }}
+			        	<div class="row">
+				        	<div class="col-lg-11" style="margin:0px;">
+					            <div class='input-group date datepicker mrg-bottom'>
+					                {{ f }} 
+					                <span class="input-group-addon">
+					                    <span class="fa fa-calendar">
+					                    </span>
+					                </span>
+					            </div>
+				            </div>
+				            <div class="col-lg-1" style="margin:0px;padding-left:0px;">
+				                <span class="btn btn-warning">
+				                    <span class="fa fa-calendar-times-o">
 				                    </span>
 				                </span>
-				            </div>
+				           </div>
+			           </div>
 	        		{% else %}
 	        			{{ f.label_tag }}{{ f }}
 	        		{% endif %}
@@ -73,6 +92,10 @@
 
 			{% if form.fechaBau.value == "No Bau" %}
 			  	$('#id_fechaBau').val('No Bau')
+
+			  	$('span.btn').click(function(){
+			  		$('#id_fechaBau').val('No Bau')
+			  	})
 			{% endif %}
 
 		});
