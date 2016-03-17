@@ -1,0 +1,80 @@
+{% extends "layout.html" %}
+
+{% block contenido %}
+<div class="col-md-12 col-lg-12">
+	<div class="row">
+		<div class="form-panel">
+		    <div class="visible-md visible-lg">
+				<h1 class="text-center titlecolor"><i class="fa fa-angle-right"></i>Seleccione un Grupo de Predicación</h1>
+			</div>
+			<div class="visible-xs visible-sm">
+				<h3 class="text-center"><i class="fa fa-angle-right"></i>Seleccione un Grupo de Predicación</h3>
+			</div>
+
+			<div class="form-horizontal style-form">
+				{% csrf_token %}
+				<div class="form-group">
+
+					<div class="col-lg-4 col-md-offset-4" style="margin-top: 28px">
+			        	{{ form.Encargado }}
+					</div>
+					<div class="col-lg-1">
+			        	<button id="btnCon" type="submit" class="btn btn-primary fa fa-search" style="width:50%;height:34px;margin-top: 28px;"></button>
+					</div>
+					
+					<div class="clearfix"></div>
+					<div class="col-lg-4 col-md-offset-4">
+			        	<select id="pubs" class="form-control">
+							<option value="">--SELECCIONE--</option>
+						</select>
+					</div>
+					<div class="clearfix"></div>
+					<div id="datpub" class="col-lg-12" style="display:none;margin-top: 20px;"></div>
+					
+		    	</div>
+			</div>		
+		</div>
+	</div>
+</div>    
+
+{% endblock %}
+{% block scripts %}
+	<script>
+		datpub = $("#datpub")
+		$("#btnCon").click(function(){
+			g=$("#id_Encargado").val()
+			if ($.trim(g)!=""){
+				$.post("{% url 'secretario:conPubG' %}", {'g':g, csrfmiddlewaretoken:'{{ csrf_token }}'})
+				.success(function(res){
+					$("#pubs").html("")
+					$("#pubs").append('<option value="">--SELECCIONE--</option>')
+					res=JSON.parse(res)
+					if (res.on==1){
+						alert(res.msg)
+					} else{
+						$.each(res.p, function(key, values){
+							$("#pubs").append("<option value="+values.id+">"+values.nombre+" "+values.apellido+"</option>")
+						})
+						console.log(res)
+						console.log(res.p)
+					}
+				})
+			}
+		})
+		
+		$("#pubs").change(function(){
+			p=this.value
+			if( datpub.css('display')=='none'){
+				datpub.load("../"+p+"/Tarjeta/", function(){
+					datpub.show( 'blind', 1000 );
+				});
+			} else {
+				datpub.hide('blind', 1000, function(){
+					datpub.load("../"+p+"/Tarjeta/", function(){
+						datpub.show( 'blind', 1000 );
+					});
+				})
+			}
+		})
+	</script>
+{% endblock %}
