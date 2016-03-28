@@ -57,19 +57,17 @@
 			</div>
 
 			<div class="modal-body">
-				{% for f in modalInfo %}
-	        		{% if f == modalInfo.fecha %}
-				        	{{ f.label_tag }}
-				            <div class='input-group date datepicker mrg-bottom'>
-				                {{ f }} 
-				                <span class="input-group-addon">
-				                    <span class="glyphicon glyphicon-calendar">
-				                    </span>
-				                </span>
-				            </div>
-	        		{% else %}
-	        			{{ f.label_tag }}{{ f }}
-	        		{% endif %}
+				{{ modalInfo }}
+
+				{% for f in mes %}
+		        	{{ f.label_tag }}
+		            <div class='input-group date datepicker mrg-bottom'>
+		                {{ f }} 
+		                <span class="input-group-addon">
+		                    <span class="glyphicon glyphicon-calendar">
+		                    </span>
+		                </span>
+		            </div>
 	        	{% endfor %}
 			</div>
 
@@ -161,8 +159,7 @@
 				'videos': inputsInfo.eq(3).val(), 
 				'revisitas': inputsInfo.eq(4).val(), 
 				'estudios': inputsInfo.eq(5).val(), 
-				'mes': inputsInfo.eq(6).val(), 
-				'year': inputsInfo.eq(7).val(),
+				'fecha': inputsInfo.eq(6).val(), 
 				'publicador': id, 
 				 csrfmiddlewaretoken:'{{ csrf_token }}'}, 
 				function(res){
@@ -178,8 +175,7 @@
 
 	$(document).ready(function() {
 		$( ".datepicker" ).datetimepicker({
-            viewMode: 'days',
-            format: 'YYYY-MM',
+            format: 'MM-YYYY',
             widgetPositioning: {
 	            horizontal: 'right',
 	            vertical: 'auto'

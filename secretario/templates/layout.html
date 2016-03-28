@@ -96,6 +96,7 @@
                       <ul class="sub">
                           <li><a  href="">Nombrar</a></li>
                           <li><a  href="">Consultar</a></li>
+                          <li><a  href="{% url 'secretario:nomPrecur' %}">Modificar Precursorado</a></li>
                       </ul>
                   </li>
 				  
@@ -105,8 +106,8 @@
                           <span>Informes</span>
                       </a>
                       <ul class="sub">
-						  <li><a  href="">Modificar</a></li>
-						  <li><a  href="">Estadisticas</a></li>
+            						  <li><a  href="">Modificar</a></li>
+            						  <li><a  href="">Estadisticas</a></li>
                       </ul>
                   </li>
 
@@ -124,7 +125,6 @@
                     <div class="col-xs-6 col-xs-offset-3">
                       <img src="{% static 'img/jwlogo.png' %}" style="width: 100%">
                     </div>
-                    holamundo
                     {% endblock %}
               </div>
           </section>

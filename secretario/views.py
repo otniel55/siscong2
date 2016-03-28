@@ -42,8 +42,9 @@ def datGrupo(request,idGrupo):
      formPub = modalPub()
      modalGrupo = traerGrupo()
      modalInfo = regInforme()
+     mes = mesInfor()
      datos = {'form': formDatGrupo, 'publicadores': p, 'num': g.pk, 'modalPub': formPub, 
-            'modalGrupo': modalGrupo, 'modalInfo': modalInfo,
+            'modalGrupo': modalGrupo, 'modalInfo': modalInfo, 'mes': mes,
             }
      return render(request, 'datGrupo.html',datos)
 
@@ -69,7 +70,15 @@ def conPubs(request):
      p=Publicador.objects.all()
      for i in p:
           inf=Informe.objects.filter(FKpub=i.pk).order_by("-year", "-mes")
-          pubs[cont]={'nombre':i.nombre, 'apellido':i.apellido, 'fechaBau':i.fechaBau, 'edad':obteneredad(i), 'FKgrupo':i.FKgrupo, 'id':i.pk, 'g':i.FKgrupo.pk, 'status':obtenerStatus(inf[0].mes, inf[0].year)[0], 'intervalo':obtenerStatus(inf[0].mes, inf[0].year)[1],'fecha':str(inf[0].mes)+"-"+str(inf[0].year)}
+          if len(inf)>0:
+               status=obtenerStatus(inf[0].mes, inf[0].year)[0]
+               intervalo=obtenerStatus(inf[0].mes, inf[0].year)[1]
+               fecha=str(inf[0].mes)+"-"+str(inf[0].year)
+          else:
+               status=3
+               intervalo="Este publicador nunca ha informado"
+               fecha="Nulo"
+          pubs[cont]={'nombre':i.nombre, 'apellido':i.apellido, 'fechaBau':i.fechaBau, 'edad':obteneredad(i), 'FKgrupo':i.FKgrupo, 'id':i.pk, 'g':i.FKgrupo.pk, 'status': status, 'intervalo': intervalo, 'fecha':fecha}
           cont=cont+1
      pubs=pubs.values()
      return render(request, 'conPubs.html',{'pub':pubs})
@@ -204,17 +213,16 @@ def regInf(request):
      _videos = request.POST['videos']
      _revisitas = request.POST['revisitas']
      _estudios = request.POST['estudios']
-     _mes = request.POST['mes']
-     _year=request.POST['year']
+     _fecha = request.POST['fecha']
      _pub=request.POST['publicador']
      try:
           p=Publicador.objects.get(pk=_pub)
      except(KeyError, Publicador.DoesNotExist):
           msg={'msg':'Publicador no existe'}
      else:
-          inf=Informe.objects.filter(mes=_mes, year=_year,FKpub=_pub)
+          inf=Informe.objects.filter(mes=int(_fecha[0:2]), year=int(_fecha[3:]),FKpub=_pub)
           if len(inf)==0:
-               p.informe_set.create(horas=_horas, publicaciones=_publicaciones, videos=_videos, revisitas=_revisitas, estudios=_estudios, mes=_mes, year=_year)
+               p.informe_set.create(horas=_horas, publicaciones=_publicaciones, videos=_videos, revisitas=_revisitas, estudios=_estudios, mes=int(_fecha[0:2]), year=int(_fecha[3:]))
                msg={'msg':'Informe Registrado con exito'}
           else:
                msg={'msg':'Informe ya Fue registrado'}
@@ -257,3 +265,6 @@ def conPubG(request):
 def verTarjetaPub(request):
      cGrupo = traerGrupo()
      return render(request, 'verTarjetaPub.html', {'form': cGrupo})
+
+def nomPrecur(request):
+     return render(request, 'nomPrecur.html', {'precur': Precursor.objects.all()})

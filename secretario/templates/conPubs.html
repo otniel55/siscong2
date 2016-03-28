@@ -55,13 +55,77 @@
 												<a href="{% url 'secretario:conGrupoofPubs' x.g %}">{{ x.FKgrupo }}</a>
 											</td>
 											{% if x.status == 0 %}
-												<td class="numeric success estado" data-title="Estado" style="width:10%; background-color:#09B20F">
+												<td class="numeric estado" id="{{x.id}}" data-title="Estado" style="width:10%; background-color:#09B20F">
+
+													<div style="display: none">
+														<dl>
+															<dt>Estado:</dt>
+															<dd id="dgEstado">Activo</dd>
+															
+															<dt>Fecha del Ultimo Informe:</dt>
+															<dd id="dgFecha">{{ x.fecha }}</dd>
+
+															<dt>Intervalo:</dt>
+															<dd id="dgInt">{{ x.intervalo }}</dd>
+
+															<dt>Conclusiones:</dt>
+															<dd id="dgConclu">publicador en buen estado</dd>
+														</dl>
+													</div>
 												</td>
 											{% elif x.status == 1 %}
-												<td class="numeric estado" data-title="Estado" style="width:10%; background-color:#ffad33">
+												<td class="numeric estado" id="{{x.id}}" data-title="Estado" style="width:10%; background-color:#ffad33">
+
+													<div style="display: none">
+														<dl>
+															<dt>Estado:</dt>
+															<dd id="dgEstado">Irregular</dd>
+															
+															<dt>Fecha del Ultimo Informe:</dt>
+															<dd id="dgFecha">{{ x.fecha }}</dd>
+
+															<dt>Intervalo:</dt>
+															<dd id="dgInt">{{ x.intervalo }}</dd>
+
+															<dt>Conclusiones:</dt>
+															<dd id="dgConclu">publicador precaucion</dd>
+														</dl>
+													</div>
+												</td>
+											{% elif x.status ==  2 %}
+												<td class="numeric estado" id="{{x.id}}" data-title="Estado" style="width:10%; background-color:#b30000">
+
+													<div style="display: none">
+														<dl>
+															<dt>Estado:</dt>
+															<dd id="dgEstado">Inactivo</dd>
+															
+															<dt>Fecha del Ultimo Informe:</dt>
+															<dd id="dgFecha">{{ x.fecha }}</dd>
+
+															<dt>Intervalo:</dt>
+															<dd id="dgInt">{{ x.intervalo }}</dd>
+
+															<dt>Conclusiones:</dt>
+															<dd id="dgConclu">publicador mal</dd>
+														</dl>
+													</div>
 												</td>
 											{% else %}
-												<td class="numeric estado" id="{{x.FKgrupo}}" data-title="Estado" style="width:10%;background-color: #b30000">
+												<td class="numeric estado" id="{{x.id}}" data-title="Estado" style="width:10%;background-color: #009999"><!--#669999 color para los q no cumplieron con sus horas-->
+
+													<div style="display: none">
+														<dl>
+															<dt>Estado:</dt>
+															<dd id="dgEstado">Nuevo</dd>
+
+															<dt>Intervalo:</dt>
+															<dd id="dgInt">{{ x.intervalo }}</dd>
+
+															<dt>Conclusiones:</dt>
+															<dd id="dgConclu">Publicador Nuevo</dd>
+														</dl>
+													</div>
 												</td>
 											{% endif %}
 										</tr>
@@ -81,19 +145,7 @@
 	</div> 
 
 <div id="dialogo" style="display: none">
-	<dl>
-		<dt>Estado:</dt>
-		<dd id="dgEstado">activo</dd>
-		
-		<dt>Fecha del Ultimo Informe:</dt>
-		<dd id="dgFecha">10-2015</dd>
 
-		<dt>Intervalo:</dt>
-		<dd id="dgInt">hace 1 mes</dd>
-
-		<dt>Conclusiones:</dt>
-		<dd id="dgConclu">publicador en buen estado, encomielo a seguir con su fiel labor</dd>
-	</dl>
 </div>
 
 {% endblock %}
@@ -148,15 +200,20 @@
 			$('#filtro').change()
 		})
 
-		$('td.estado').mouseover(function(){
-			id = $(this).attr('id')
-			$('#dialogo').dialog({
-				 position: { my: "right-60 center", at: "", of: this },
-				 dialogClass: 'dlg-no-title',
-			});
-		})
-		$('td.estado').mouseleave(function(){
-			$('#dialogo').dialog("destroy")
-		})
+		//dialogo
+			$('td.estado').mouseover(function(){
+				id = $(this).attr('id')
+				x = $('#'+id+' > div').html()
+				$('#dialogo').html(x)
+
+				$('#dialogo').dialog({
+					 position: { my: "right-60 center", at: "", of: this },
+					 dialogClass: 'dlg-no-title',
+				});
+			})
+			$('td.estado').mouseleave(function(){
+				$('#dialogo').dialog("destroy")
+			})
+		//fin del dialogo
 	</script>
 {% endblock %}

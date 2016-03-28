@@ -26,8 +26,8 @@ class modalPub(forms.ModelForm):
         model = Publicador
         fields = ['nombre', 'apellido']
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control mrg-bottom'}),
-            'apellido': forms.TextInput(attrs={'class': 'form-control mrg-bottom'}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'disabled': 'true'}),
+            'apellido': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'disabled': 'true'}),
             }
 
 class regPub(forms.ModelForm):
@@ -47,13 +47,18 @@ class regPub(forms.ModelForm):
 class regInforme(forms.ModelForm):
     class Meta:
         model = Informe
-        fields = ['horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'mes', 'year']
+        fields = ['horas', 'publicaciones', 'videos', 'revisitas', 'estudios']
         widgets = {
             'horas': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number', 'min':'0'}),
             'publicaciones': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number', 'min':'0'}),
             'videos': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number', 'min':'0'}),
             'revisitas': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number', 'min':'0'}),
             'estudios': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number', 'min':'0'}),
-            'mes': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number', 'min':'1'}),
-            'year': forms.TextInput(attrs={'class': 'form-control', 'type':'number', 'min':'1980'}),
         }
+
+class mesInfor(forms.Form):   
+    fecha = forms.CharField(
+        label='Mes a Informar:', 
+        max_length=6, 
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+        )

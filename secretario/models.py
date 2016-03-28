@@ -28,7 +28,6 @@ class Publicador(models.Model):
 	
 	def __unicode__(self):
 		return self.nombre
-
 	
 class Informe(models.Model):
 	Idinf = models.AutoField(primary_key=True)
