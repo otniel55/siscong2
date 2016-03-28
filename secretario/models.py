@@ -37,7 +37,8 @@ class Informe(models.Model):
 	videos = models.IntegerField()
 	revisitas = models.IntegerField()
 	estudios = models.IntegerField()
-	fecha = models.DateField()
+	mes=models.IntegerField()
+	year=models.IntegerField()
 	FKpub = models.ForeignKey(
         'Publicador',
         on_delete = models.CASCADE,

@@ -68,10 +68,28 @@ def conPubs(request):
      pubs={}
      p=Publicador.objects.all()
      for i in p:
-          pubs[cont]={'nombre':i.nombre, 'apellido':i.apellido, 'fechaBau':i.fechaBau, 'edad':obteneredad(i), 'FKgrupo':i.FKgrupo, 'id':i.pk, 'g':i.FKgrupo.pk}
+          inf=Informe.objects.filter(FKpub=i.pk).order_by("-year", "-mes")
+          pubs[cont]={'nombre':i.nombre, 'apellido':i.apellido, 'fechaBau':i.fechaBau, 'edad':obteneredad(i), 'FKgrupo':i.FKgrupo, 'id':i.pk, 'g':i.FKgrupo.pk, 'status':obtenerStatus(inf[0].mes, inf[0].year)[0], 'intervalo':obtenerStatus(inf[0].mes, inf[0].year)[1],'fecha':str(inf[0].mes)+"-"+str(inf[0].year)}
           cont=cont+1
      pubs=pubs.values()
      return render(request, 'conPubs.html',{'pub':pubs})
+
+def obtenerStatus(mes, year):
+     hoy=datetime.date.today()
+     if hoy.year==year:
+          meses=(hoy.month-1)-mes
+     else:
+          mesYear=(hoy.year-year)*12
+          mesYear=mesYear-mes
+          meses=mesYear+(hoy.month-1)
+     if meses<1:
+          meses=0
+          status=0
+     elif meses>0 and meses<7:
+          status=1
+     else:
+          status=2
+     return (status, meses)
 
 def obteneredad(persona):
      hoy=datetime.date.today()
@@ -156,7 +174,7 @@ def modPub(request):
                p.email=_email
                p.fechaBau=_fechaBau
                p.fechaNa=_fechaNa
-               p.save
+               p.save()
                msg={'msg':'Publicador modificado con exito'}
      return HttpResponse(json.dumps(msg))
 
@@ -180,21 +198,23 @@ def viewInfo(request):
      return render(request, 'regInforme.html', {'form': formInfo})
 
 def regInf(request):
+     pass
      _horas = request.POST['horas']
      _publicaciones = request.POST['publicaciones']
      _videos = request.POST['videos']
      _revisitas = request.POST['revisitas']
      _estudios = request.POST['estudios']
-     _fecha = request.POST['fecha']
+     _mes = request.POST['mes']
+     _year=request.POST['year']
      _pub=request.POST['publicador']
      try:
           p=Publicador.objects.get(pk=_pub)
      except(KeyError, Publicador.DoesNotExist):
           msg={'msg':'Publicador no existe'}
      else:
-          inf=Informe.objects.filter(fecha__month=_fecha[5:7],fecha__year=_fecha[0:4],FKpub=_pub)
+          inf=Informe.objects.filter(mes=_mes, year=_year,FKpub=_pub)
           if len(inf)==0:
-               p.informe_set.create(horas=_horas, publicaciones=_publicaciones, videos=_videos, revisitas=_revisitas, estudios=_estudios, fecha=_fecha)
+               p.informe_set.create(horas=_horas, publicaciones=_publicaciones, videos=_videos, revisitas=_revisitas, estudios=_estudios, mes=_mes, year=_year)
                msg={'msg':'Informe Registrado con exito'}
           else:
                msg={'msg':'Informe ya Fue registrado'}
@@ -202,7 +222,7 @@ def regInf(request):
 
 def tarjeta(request, vista, idPub):
      p=Publicador.objects.get(pk=idPub)
-     inf=Informe.objects.filter(fecha__year=timezone.now().year, FKpub=idPub).order_by('fecha')
+     inf=Informe.objects.filter(year=timezone.now().year, FKpub=idPub).order_by('mes')
      if len(inf)>0:
           datos={'pub':inf, 'p':p}
      else:

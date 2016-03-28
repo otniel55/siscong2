@@ -54,18 +54,16 @@
 											<td class="numeric" data-title="Grupo Asignado" style="width:34%;">
 												<a href="{% url 'secretario:conGrupoofPubs' x.g %}">{{ x.FKgrupo }}</a>
 											</td>
-											{% if estado == 0 %}
-												<td class="numeric success estado" data-title="Estado" style="width:10%;">
+											{% if x.status == 0 %}
+												<td class="numeric success estado" data-title="Estado" style="width:10%; background-color:#09B20F">
 												</td>
-											{% elif estado == 1 %}
-												<td class="numeric estado" data-title="Estado" style="width:10%;">
+											{% elif x.status == 1 %}
+												<td class="numeric estado" data-title="Estado" style="width:10%; background-color:#ffad33">
 												</td>
 											{% else %}
-												<td class="numeric estado" id="{{x.FKgrupo}}" data-title="Estado" style="width:10%;background-color: #09B20F">
+												<td class="numeric estado" id="{{x.FKgrupo}}" data-title="Estado" style="width:10%;background-color: #b30000">
 												</td>
 											{% endif %}
-											<!--background-color: #ffad33"
-											background-color: #b30000"-->
 										</tr>
 									{% endfor %}
 									</tbody>
