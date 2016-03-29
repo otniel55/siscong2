@@ -266,5 +266,5 @@ def verTarjetaPub(request):
      cGrupo = traerGrupo()
      return render(request, 'verTarjetaPub.html', {'form': cGrupo})
 
-def nomPrecur(request):
-     return render(request, 'nomPrecur.html', {'precur': Precursor.objects.all()})
+def editPrecur(request):
+     return render(request, 'editPrecur.html', {'precur': Precursor.objects.all()})

@@ -22,5 +22,5 @@ urlpatterns = [
     url(r'^(?P<idGrupo>[0-9]+)/grupoPublicador/$', views.conGrupoofPubs, name='conGrupoofPubs'),
 	url(r'^conPubG/$', views.conPubG, name='conPubG'),
 	url(r'^Publicador/verTarjeta$', views.verTarjetaPub, name='verTarjetaPub'),
-    url(r'^Precursores/horas/$', views.nomPrecur, name='nomPrecur'),
+    url(r'^Precursores/horas/$', views.editPrecur, name='editPrecur'),
 ]
