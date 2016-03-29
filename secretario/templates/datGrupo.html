@@ -31,7 +31,7 @@
 						{% for pub in publicadores %}
 							<tr>
 								<td class="numeric" data-title="Nombre y Apellido" style="border-right:0px;width:80%;">
-									<a href="{% url 'secretario:tarjeta' 1 pub.pk %}">{{ pub.nombre|upper }} {{ pub.apellido|upper }}</a>
+									<a href="{% url 'secretario:tarjeta' 1 pub.pk y %}">{{ pub.nombre|upper }} {{ pub.apellido|upper }}</a>
 								</td>
 								<td class="numeric text-center" data-title="" style="border-left:0px;width:20%;" id="{{ pub.pk }}">
 									<button class="btn btn-danger fa fa-trash" data-toggle="modal" data-target="#pubGroup"></button>

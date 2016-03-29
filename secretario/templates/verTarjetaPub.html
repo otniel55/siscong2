@@ -18,15 +18,22 @@
 					<div class="col-lg-4 col-md-offset-4" style="margin-top: 28px">
 			        	{{ form.Encargado }}
 					</div>
-					<div class="col-lg-1">
-			        	<button id="btnCon" type="submit" class="btn btn-primary fa fa-search" style="width:50%;height:34px;margin-top: 28px"></button>
-					</div>
 					
 					<div class="clearfix"></div>
 
 					<div class="col-lg-4 col-md-offset-4">
 			        	<select id="pubs" class="form-control">
 							<option value="">--SELECCIONE--</option>
+						</select>
+					</div>
+					<div class="clearfix"></div>
+					
+					<div class="col-lg-4 col-md-offset-4">
+			        	<select id="years" class="form-control">
+							<option value="">--SELECCIONE--</option>
+							{% for y in years %}
+							<option value={{ y }}> {{ y }} </option>
+							{% endfor %}
 						</select>
 					</div>
 
@@ -43,8 +50,15 @@
 {% endblock %}
 {% block scripts %}
 	<script>
+		newOption=document.createElement("option")
+		newOption.value=""
+		newOption.innerHTML="--SELECCIONE--"
+		primerOpt=document.getElementById("id_Encargado").getElementsByTagName("option")[0]
+		document.getElementById("id_Encargado").insertBefore(newOption, primerOpt)
+		primerOpt=document.getElementById("id_Encargado").getElementsByTagName("option")[0]
+		primerOpt.selected=true
 		datpub = $("#datpub")
-		$("#btnCon").click(function(){
+		$("#id_Encargado").change(function(){
 			g=$("#id_Encargado").val()
 			if ($.trim(g)!=""){
 				$.post("{% url 'secretario:conPubG' %}", {'g':g, csrfmiddlewaretoken:'{{ csrf_token }}'})
@@ -65,18 +79,42 @@
 			}
 		})
 		
-		$("#pubs").change(function(){
-			p=this.value
+		$("#years").change(function(){
+			p=$("#pubs").val()
+			y=this.value
 			if( datpub.css('display')=='none'){
-				datpub.load("../2/"+p+"/Tarjeta/", function(){
-					datpub.show( 'blind', 1000 );
-				});
-			} else {
-				datpub.hide('blind', 1000, function(){
-					datpub.load("../2/"+p+"/Tarjeta/", function(){
+				if($.trim($("#pubs").val())!="" && $.trim($("#years").val())!=""){
+					datpub.load("../2/"+p+"/Tarjeta/"+y, function(){
 						datpub.show( 'blind', 1000 );
 					});
-				})
+				}
+			} else {
+				if($.trim($("#pubs").val())!="" && $.trim($("#years").val())!=""){
+					datpub.hide('blind', 1000, function(){
+						datpub.load("../2/"+p+"/Tarjeta/"+y, function(){
+							datpub.show( 'blind', 1000 );
+						});
+					})
+				}
+			}
+		})
+		$("#pubs").change(function(){
+			y=$("#years").val()
+			p=this.value
+			if( datpub.css('display')=='none'){
+				if($.trim($("#pubs").val())!="" && $.trim($("#years").val())!=""){
+					datpub.load("../2/"+p+"/Tarjeta/"+y, function(){
+						datpub.show( 'blind', 1000 );
+					});
+				}
+			} else {
+				if($.trim($("#pubs").val())!="" && $.trim($("#years").val())!=""){
+					datpub.hide('blind', 1000, function(){
+						datpub.load("../2/"+p+"/Tarjeta/"+y, function(){
+							datpub.show( 'blind', 1000 );
+						});
+					})
+				}
 			}
 		})
 	</script>

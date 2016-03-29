@@ -43,8 +43,9 @@ def datGrupo(request,idGrupo):
      modalGrupo = traerGrupo()
      modalInfo = regInforme()
      mes = mesInfor()
+     y=datetime.date.today().year
      datos = {'form': formDatGrupo, 'publicadores': p, 'num': g.pk, 'modalPub': formPub, 
-            'modalGrupo': modalGrupo, 'modalInfo': modalInfo, 'mes': mes,
+            'modalGrupo': modalGrupo, 'modalInfo': modalInfo, 'mes': mes,'y':y,
             }
      return render(request, 'datGrupo.html',datos)
 
@@ -228,9 +229,9 @@ def regInf(request):
                msg={'msg':'Informe ya Fue registrado'}
      return HttpResponse(json.dumps(msg))
 
-def tarjeta(request, vista, idPub):
+def tarjeta(request, vista, idPub, y):
      p=Publicador.objects.get(pk=idPub)
-     inf=Informe.objects.filter(year=timezone.now().year, FKpub=idPub).order_by('mes')
+     inf=Informe.objects.filter(year=y, FKpub=idPub).order_by('mes')
      if len(inf)>0:
           datos={'pub':inf, 'p':p}
      else:
@@ -263,8 +264,15 @@ def conPubG(request):
      return HttpResponse(json.dumps(datos))
 
 def verTarjetaPub(request):
+     years=[]
+     cont=0
+     yearHoy=datetime.date.today().year
+     while cont<5:
+          years.append(yearHoy)
+          yearHoy=yearHoy-1
+          cont+=1
      cGrupo = traerGrupo()
-     return render(request, 'verTarjetaPub.html', {'form': cGrupo})
+     return render(request, 'verTarjetaPub.html', {'form': cGrupo, 'years':years})
 
 def editPrecur(request):
      return render(request, 'editPrecur.html', {'precur': Precursor.objects.all()})
