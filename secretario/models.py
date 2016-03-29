@@ -11,6 +11,14 @@ class GruposPred(models.Model):
 	def __unicode__(self):
 		return self.encargado
 
+class Precursor(models.Model):
+	IDprecursor = models.AutoField(primary_key=True)
+	horas = models.IntegerField()
+	nombre = models.CharField(max_length=50)
+
+	def __unicode__(self):
+		return self.nombre
+
 class Publicador(models.Model):
 	IDpub = models.AutoField(primary_key=True)
 	nombre = models.CharField(max_length=50)
@@ -20,7 +28,7 @@ class Publicador(models.Model):
 	email = models.EmailField()
 	fechaBau = models.CharField('Fecha de Bautismo',max_length=10)
 	fechaNa = models.DateField('Fecha de Nacimiento')
-	
+	precursorado=models.ManyToManyField(Precursor)
 	FKgrupo = models.ForeignKey(
         'GruposPred',
         on_delete = models.CASCADE,
@@ -45,24 +53,8 @@ class Informe(models.Model):
 	
 	def __int__(self):
 		return self.IDinf
-	
-class Precursor(models.Model):
-	IDprecursor = models.AutoField(primary_key=True)
-	horas = models.IntegerField()
-	nombre = models.CharField(max_length=50)
-	
-	def __unicode__(self):
-		return self.nombre
 
 class PubPrecursor(models.Model):
-	FKpub = models.ForeignKey(
-        'Publicador',
-        on_delete = models.CASCADE,
-    )
-	FKprecursor = models.ForeignKey(
-        'Precursor',
-        on_delete = models.CASCADE,
-    )
 	duracion = models.IntegerField()
 	fechaIni = models.DateField()
 		
