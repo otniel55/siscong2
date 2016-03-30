@@ -23,4 +23,5 @@ urlpatterns = [
 	url(r'^conPubG/$', views.conPubG, name='conPubG'),
 	url(r'^Publicador/verTarjeta$', views.verTarjetaPub, name='verTarjetaPub'),
     url(r'^Precursores/horas/$', views.editPrecur, name='editPrecur'),
+    url(r'^Precursores/nombrar/$', views.vistaNombrar, name='vistaNombrar'),
 ]

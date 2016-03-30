@@ -276,3 +276,9 @@ def verTarjetaPub(request):
 
 def editPrecur(request):
      return render(request, 'editPrecur.html', {'precur': Precursor.objects.all()})
+
+def vistaNombrar(request):
+     p=Publicador.objects.all()
+     g=GruposPred.objects.all()
+     precur=Precursor.objects.all()
+     return render(request, 'nombrarPub.html', {'pub':p, 'grupo':g, 'precur':precur})
