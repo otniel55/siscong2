@@ -28,7 +28,7 @@ class Publicador(models.Model):
 	email = models.EmailField()
 	fechaBau = models.CharField('Fecha de Bautismo',max_length=10)
 	fechaNa = models.DateField('Fecha de Nacimiento')
-	precursorado=models.ManyToManyField(Precursor)
+	precursorado=models.ManyToManyField(Precursor, through='PubPrecursor')
 	FKgrupo = models.ForeignKey(
         'GruposPred',
         on_delete = models.CASCADE,
@@ -55,10 +55,6 @@ class Informe(models.Model):
 		return self.IDinf
 
 class PubPrecursor(models.Model):
-	duracion = models.IntegerField()
-	fechaIni = models.DateField()
-		
-class PeridoPrecursor(models.Model):
 	FKpub = models.ForeignKey(
         'Publicador',
         on_delete = models.CASCADE,
@@ -67,5 +63,7 @@ class PeridoPrecursor(models.Model):
         'Precursor',
         on_delete = models.CASCADE,
     )
-	fechaIni = models.DateField()
-	fechaFin = models.DateField()
+	duracion = models.IntegerField()
+	mesIni = models.IntegerField()
+	yearIni=models.IntegerField()
+	status=models.BooleanField()
