@@ -278,7 +278,35 @@ def editPrecur(request):
      return render(request, 'editPrecur.html', {'precur': Precursor.objects.all()})
 
 def vistaNombrar(request):
-     p=Publicador.objects.all()
-     g=GruposPred.objects.all()
+     p=Publicador.objects.exclude(fechaBau__startswith="No")
      precur=Precursor.objects.all()
      return render(request, 'nombrarPub.html', {'pub':p, 'grupo':g, 'precur':precur})
+
+def NombrarPrecur(request):
+     cont=0
+     msg={}
+     tipoPre=request.POST['tipoprecur']
+     p=json.loads(request.POST['pub'])
+     mes=request.POST['mes']
+     year=request.POST['year']
+     try:
+          prec=Precursor.objects.get(pk=tipoPre)
+     except(KeyError, Precursor.DoesNotExist):
+          msg={'msg':"Tipo de precursorado no existe"}
+     else:
+          for x in p:
+               try:
+                    pub=Publicador.objects.get(pk=x['id'])
+               except(KeyError, Publicador.DoesNotExist):
+                    msg[cont]={'msg':'el publicador'+x['id']+'no esta registrado'}
+               else:
+                    verificar=PubPrecursor.objects.filter(FKpub=x['id'],status=True)
+                    if len(verificar)>0:
+                         msg[cont]={'msg':'el publicador'+x['id']+'ya es precursor'}
+                    else:
+                         pubP=PubPrecursor(FKpub=pub, Fkprec=prec, duracion=x['duracion'], mesIni=mes, yearIni=year, status=True)
+                         pubP.save()
+                         msg[cont]={'msg':'el publicador'+x['id']+'fue nombrado con exito'}
+               cont+=1
+     msg=msg.values()
+     return HttpResponse(json.dumps(msg))
