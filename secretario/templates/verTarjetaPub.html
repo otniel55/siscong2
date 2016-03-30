@@ -11,32 +11,31 @@
 				<h3 class="text-center"><i class="fa fa-angle-right"></i>Tarjeta de Actividad del Publicador</h3>
 			</div>
 
-			<div class="form-horizontal style-form">
+			<div class="form-horizontal style-form" style="margin-top: 30px;">
 				{% csrf_token %}
 				<div class="form-group">
+					<div class="row">
+						<div class="col-lg-8 col-md-offset-2">
+							<div class="col-lg-4">
+					        	{{ form.Encargado }}
+							</div>
 
-					<div class="col-lg-4 col-md-offset-4" style="margin-top: 28px">
-			        	{{ form.Encargado }}
+							<div class="col-lg-4">
+					        	<select class="form-control" disabled="true">
+									<option value="" >--SELECCIONE UN PUBLICADOR--</option>
+								</select>
+							</div>
+							
+							<div class="col-lg-4">
+					        	<select class="form-control" disabled="true">
+									<option value="" >--AÑO DE SERVICIO--</option>
+									{% for y in years %}
+									<option value={{ y }}> {{ y }} </option>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
 					</div>
-					
-					<div class="clearfix"></div>
-
-					<div class="col-lg-4 col-md-offset-4">
-			        	<select id="pubs" class="form-control">
-							<option value="">--SELECCIONE--</option>
-						</select>
-					</div>
-					<div class="clearfix"></div>
-					
-					<div class="col-lg-4 col-md-offset-4">
-			        	<select id="years" class="form-control">
-							<option value="">--SELECCIONE--</option>
-							{% for y in years %}
-							<option value={{ y }}> {{ y }} </option>
-							{% endfor %}
-						</select>
-					</div>
-
 					<div class="clearfix"></div>
 
 					<div id="datpub" class="col-lg-10 col-md-offset-1" style="display:none;margin-top:40px;margin-bottom:30px;"></div>
@@ -50,72 +49,111 @@
 {% endblock %}
 {% block scripts %}
 	<script>
-		newOption=document.createElement("option")
-		newOption.value=""
-		newOption.innerHTML="--SELECCIONE--"
-		primerOpt=document.getElementById("id_Encargado").getElementsByTagName("option")[0]
-		document.getElementById("id_Encargado").insertBefore(newOption, primerOpt)
-		primerOpt=document.getElementById("id_Encargado").getElementsByTagName("option")[0]
-		primerOpt.selected=true
-		datpub = $("#datpub")
-		$("#id_Encargado").change(function(){
-			g=$("#id_Encargado").val()
-			if ($.trim(g)!=""){
-				$.post("{% url 'secretario:conPubG' %}", {'g':g, csrfmiddlewaretoken:'{{ csrf_token }}'})
+		//obtener todos los selects
+		combos = $('select')
+		datpub = $('#datpub')
+
+		//ordernar alfabeticamente los selects
+		combos.eq(0).each(function() {
+		    $(this).html($("option", $(this)).sort(function(a, b) {
+		        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1
+		    }));
+		})
+
+		//inyectar una new option en el primer indice del select
+		combos.eq(0).prepend(new Option("--SELECCIONE UN ENCARGADO--","",true,true))
+
+
+		combos.eq(0).change(function(){
+
+			g = $(this).val()
+
+			if(g == ""){
+				combos.eq(1).attr('disabled', true).find('option:first').prop('selected', true)
+				combos.eq(2).attr('disabled', true).find('option:first').prop('selected', true)
+				datpub.hide('blind', 1000, function(){})
+			}else{
+				$.post("{% url 'secretario:conPubG' %}", {'g': g, csrfmiddlewaretoken:'{{ csrf_token }}'})
 				.success(function(res){
-					$("#pubs").html("")
-					$("#pubs").append('<option value="">--SELECCIONE--</option>')
 					res=JSON.parse(res)
+
 					if (res.on==1){
 						alert(res.msg)
 					} else{
+						//elimina los nodos hermanos
+						combos.eq(1).find('option:first').siblings().detach()
+
+						//habilita y llena el combo
+						combos.eq(1).attr('disabled', false)
+
 						$.each(res.p, function(key, values){
-							$("#pubs").append("<option value="+values.id+">"+values.nombre+" "+values.apellido+"</option>")
+							combos.eq(1).append("<option value="+values.id+">"+values.nombre+" "+values.apellido+"</option>")
 						})
-						console.log(res)
-						console.log(res.p)
+
+						combos.eq(1).each(function() {
+						    $(this).html($("option", $(this)).sort(function(a, b) {
+						        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1
+						    }));
+						})
 					}
 				})
 			}
 		})
 		
-		$("#years").change(function(){
-			p=$("#pubs").val()
-			y=this.value
-			if( datpub.css('display')=='none'){
-				if($.trim($("#pubs").val())!="" && $.trim($("#years").val())!=""){
+		combos.eq(1).change(function(){
+
+			y = combos.eq(2).val()
+			p = this.value
+
+			combos.eq(2).attr('disabled', false)
+
+			if(datpub.is(":hidden")){
+				if(p != "" && y != ""){
 					datpub.load("../2/"+p+"/Tarjeta/"+y, function(){
 						datpub.show( 'blind', 1000 );
 					});
+				} else {
+					if(p == ""){
+						combos.eq(2).attr('disabled', true).find('option:first').prop('selected', true)
+					}
 				}
 			} else {
-				if($.trim($("#pubs").val())!="" && $.trim($("#years").val())!=""){
+				if(p != "" && y != ""){
 					datpub.hide('blind', 1000, function(){
 						datpub.load("../2/"+p+"/Tarjeta/"+y, function(){
 							datpub.show( 'blind', 1000 );
 						});
 					})
+				} else {
+					datpub.hide('blind', 1000, function(){})
+					combos.eq(2).attr('disabled', true).find('option:first').prop('selected', true)
 				}
 			}
 		})
-		$("#pubs").change(function(){
-			y=$("#years").val()
-			p=this.value
-			if( datpub.css('display')=='none'){
-				if($.trim($("#pubs").val())!="" && $.trim($("#years").val())!=""){
+
+		combos.eq(2).change(function(){
+
+			p = combos.eq(1).val()
+			y = this.value
+
+			if(datpub.is(":hidden")){
+				if(p != "" && y != ""){
 					datpub.load("../2/"+p+"/Tarjeta/"+y, function(){
 						datpub.show( 'blind', 1000 );
 					});
 				}
 			} else {
-				if($.trim($("#pubs").val())!="" && $.trim($("#years").val())!=""){
+				if(p != "" && y != ""){
 					datpub.hide('blind', 1000, function(){
 						datpub.load("../2/"+p+"/Tarjeta/"+y, function(){
 							datpub.show( 'blind', 1000 );
 						});
 					})
+				} else {
+					datpub.hide('blind', 1000, function(){})
 				}
 			}
 		})
+
 	</script>
 {% endblock %}
