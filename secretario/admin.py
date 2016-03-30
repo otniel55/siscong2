@@ -10,7 +10,4 @@ admin.site.register(Publicador)
 admin.site.register(Precursor)
 admin.site.register(PubPrecursor)
 
-class infpub(admin.ModelAdmin):
-	list_display = ('horas','FKpub')
-
-admin.site.register(Informe,infpub)
+admin.site.register(Informe)

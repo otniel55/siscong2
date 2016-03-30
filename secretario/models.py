@@ -26,7 +26,7 @@ class Publicador(models.Model):
 	telefono = models.CharField(max_length=15)
 	direccion = models.CharField(max_length=150)
 	email = models.EmailField()
-	fechaBau = models.CharField('Fecha de Bautismo',max_length=10)
+	fechaBau = models.CharField('Fecha de Bautismo',max_length=20)
 	fechaNa = models.DateField('Fecha de Nacimiento')
 	precursorado=models.ManyToManyField(Precursor, through='PubPrecursor')
 	FKgrupo = models.ForeignKey(
