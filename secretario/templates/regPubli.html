@@ -53,6 +53,7 @@
 	        </div>
 		
 	        <div class="clearfix"></div>
+
 	        {% if on %}
 				<div class="col-md-1" style="margin-top:50px;padding-left:30px;padding-top: 20px;">
 					<ul class="pager" style="margin:0px;padding:0px;">
@@ -89,7 +90,8 @@
 		            vertical: 'auto'
 		        }
 		    })
-
+			$('#id_fechaBau').val('No Bau')
+			
 			{% if form.fechaBau.value == "No Bau" %}
 			  	$('#id_fechaBau').val('No Bau')
 

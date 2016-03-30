@@ -34,8 +34,8 @@
 										<tr>
 											<th class="numeric text-center" style="width:34%;">Nombre y Apellido</th>
 											<th class="numeric text-center" style="width:10%;">Edad</th>
-											<th class="numeric text-center" style="width:14%;">Fecha de Bautismo</th>
-											<th class="numeric text-center" style="width:34%;">Grupo Asignado</th>
+											<th class="numeric text-center" style="width:18%;">Fecha de Bautismo</th>
+											<th class="numeric text-center" style="width:30%;">Grupo Asignado</th>
 											<th class="numeric text-center" style="width:8%;">Estado</th>
 										</tr>
 									</thead>
@@ -48,10 +48,10 @@
 											<td class="numeric text-center" data-title="Edad" style="width:10%;">
 												{{ x.edad }}
 											</td>
-											<td class="numeric text-center bau" data-title="Fecha de Bautismo" style="width:14%;">
+											<td class="numeric text-center bau" data-title="Fecha de Bautismo" style="width:18%;">
 												{{ x.fechaBau }}
 											</td>
-											<td class="numeric" data-title="Grupo Asignado" style="width:34%;">
+											<td class="numeric" data-title="Grupo Asignado" style="width:30%;">
 												<a href="{% url 'secretario:conGrupoofPubs' x.g %}">{{ x.FKgrupo }}</a>
 											</td>
 											{% if x.status == 0 %}
