@@ -282,3 +282,9 @@ def vistaNombrar(request):
      g=GruposPred.objects.all()
      precur=Precursor.objects.all()
      return render(request, 'nombrarPub.html', {'pub':p, 'grupo':g, 'precur':precur})
+
+def NombrarPrecur(request):
+     tipoPre=request.POST['Precursor']
+     p=json.loads(request.POST['pub'])
+     mes=datetime.date.today().month
+     year=datetime.date.today().year
