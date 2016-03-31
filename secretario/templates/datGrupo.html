@@ -59,16 +59,14 @@
 			<div class="modal-body">
 				{{ modalInfo }}
 
-				{% for f in mes %}
-		        	{{ f.label_tag }}
-		            <div class='input-group date datepicker mrg-bottom'>
-		                {{ f }} 
-		                <span class="input-group-addon">
-		                    <span class="glyphicon glyphicon-calendar">
-		                    </span>
-		                </span>
-		            </div>
-	        	{% endfor %}
+	        	{{ mes.fecha.label_tag }}
+	            <div class='input-group date datepicker mrg-bottom'>
+	                {{ mes.fecha }} 
+	                <span class="input-group-addon">
+	                    <span class="glyphicon glyphicon-calendar">
+	                    </span>
+	                </span>
+	            </div>
 			</div>
 
 			<div class="modal-footer">

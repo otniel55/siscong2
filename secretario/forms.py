@@ -19,7 +19,13 @@ class traerGrupo(forms.Form):
 	Encargado = forms.ModelChoiceField(queryset = GruposPred.objects.all(), 
 										empty_label=None, 
 										widget=forms.Select(attrs={'class': 'form-control'})
-										)
+									)
+
+class precursorados(forms.Form):
+    precur = forms.ModelChoiceField(queryset = Precursor.objects.all(), 
+                                        empty_label='Tipos de Precursorados', 
+                                        widget=forms.Select(attrs={'class': 'form-control'})
+                                        )
 
 class modalPub(forms.ModelForm):
     class Meta:

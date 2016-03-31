@@ -279,7 +279,7 @@ def editPrecur(request):
 
 def vistaNombrar(request):
      p=Publicador.objects.exclude(fechaBau__startswith="No")
-     precur=Precursor.objects.all()
+     precur= precursorados()
      return render(request, 'nombrarPub.html', {'pub':p, 'precur':precur})
 
 def NombrarPrecur(request):
