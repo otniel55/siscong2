@@ -17,26 +17,37 @@
 			{% csrf_token %}
 
 			<div class="col-lg-12" style="margin-top: 40px;">
-				<div class="row"><div class="col-lg-2 col-md-offset-1">
-						<button id="move" class="btn btn-success" style="width: 100%">Enviar</button>
-					</div>
-					
-					<div class="col-lg-4 form-horizontal">
-						<div class="row">
-							<label for="fechaIni" class="control-label col-lg-4">Fecha de Inicio:</label>
-							<div class='col-lg-4 input-group date datepicker mrg-bottom'>
-				                <input type="text" id="fechaIni" class="form-control" /> 
-				                <span class="input-group-addon">
-				                    <span class="fa fa-calendar">
-				                    </span>
-				                </span>
+				<div class="row">
+
+					<fieldset class="col-lg-6 col-md-offset-3">
+						<legend>Opciones del Precurorado</legend>
+							<div class="row">
+
+								<div class="form-horizontal">
+									<label for="fechaIni" class="control-label col-lg-3">Fecha de Inicio:</label>
+						        	<div class="col-lg-3">
+							            <div class='input-group date datepicker mrg-bottom'>
+							                <input type="text" class="form-control">
+							                <span class="input-group-addon">
+							                    <span class="fa fa-calendar">
+							                    </span>
+							                </span>
+							            </div>
+						            </div>
+					            </div>
+
+								<div class="col-lg-2">
+									<button id="save" class="btn btn-primary fa fa-check-square-o fa-2x" style="width: 100%"></button>
+								</div>
+								<div class="col-lg-2">
+									<button id="move" class="btn btn-success fa fa-arrow-right fa-2x" style="width: 100%;"></button>
+								</div>
+								<div class="col-lg-2">
+									<button id="move" class="btn btn-danger fa fa-arrow-left fa-2x" style="width: 100%;"></button>
+								</div>
 				            </div>
-			            </div>
-					</div>
-					
-					<div class="col-lg-2">
-						<button id="save" class="btn btn-primary" style="width: 100%">Nombrar Precursores</button>
-					</div>
+					</fieldset>
+
 				</div>
 			</div>
 
@@ -46,7 +57,8 @@
                 <div class="content-panel" id="pito">
 					<section id="no-more-tables">
 						<h3 class="text-center titlecolor" style="margin:0px;padding: 0px;">Publicadores</h3>
-                    	<table id="publics" class="display table table-condensed cf" cellspacing="0" style="font-size:20px;" width:"100%">
+
+                    	<table id="publics" class="display table table-condensed cf" cellspacing="0" style="font-size:14px;" width:"100%">
                         	<thead class="cf">				
 								<tr>
 									<th>
@@ -59,7 +71,7 @@
 							</thead>
 							<tbody>
 							{% for pubs in pub %}
-								<tr>
+								<tr id="{{ pubs.pk }}">
 									<td></td>
 									<td class="numeric text-center" data-title="Nombre y Apellido">
 										{{ pubs.nombre }} {{ pubs.apellido }}
@@ -74,27 +86,35 @@
 							{% endfor %}
 							</tbody>
 						</table>
+
 					</section>
 				</div>
 			</div>
+
 			<div class="col-lg-6" style="margin-top: 40px;">
                 <div class="content-panel">
 					<section id="no-more-tables">
 						<h3 class="text-center titlecolor" style="margin:0px;padding: 0px;">Publicadores Que Seran Nombrados</h3>
-                    	<table id="nombrar" class="table table-bordered table-striped table-condensed cf" style="font-size:20px;">
+
+                    	<table id="nombrar" class="display table table-condensed cf" cellspacing="0" style="font-size:14px;" width:"100%">
                         	<thead class="cf">				
 								<tr>
+									<th>
+										<input type="checkbox" id="selectAll" />
+									</th>
 									<th class="numeric text-center">Publicador</th>
-									<th class="numeric text-center">Tipo Precursorado<div class="col-lg-12">
-						{{ precur.precur }}
-					</div></th>
+									<th class="numeric text-center">Tipo Precursorado
+										<div class="col-lg-12">
+											{{ precur.precur }}
+										</div>
+									</th>
 									<th class="numeric text-center">Duracion</th>
 								</tr>
 							</thead>
 							<tbody>
-
 							</tbody>
 						</table>
+
 					</section>
 				</div>
 			</div>
@@ -130,6 +150,16 @@
 					    });
 
 			nombrar	= 	$('#nombrar').DataTable({
+							columnDefs: [{
+					            orderable: false,
+					            className: 'select-checkbox',
+					            targets:   0
+					        }],
+					        select: {
+					            style: 'multi',
+					            selector: 'td:first-child',
+					        },
+					        order: [[ 1, 'asc' ]],
 					    	"bPaginate":false,
 							"bInfo":false,
 							"bFilter":false,
@@ -139,7 +169,7 @@
 									     }
 						})
 
-		    $( ".datepicker" ).datetimepicker({
+		    $('.datepicker').datetimepicker({
 				format: 'MM-YYYY',
 	            widgetPositioning:  {
 							          horizontal: 'right',
@@ -151,18 +181,18 @@
         	$('div.content-panel').css('height', alto+'px')
 		});
 
-		$("#selectAll").click(function(){
+		$('#selectAll').click(function(){
 
 			if(this.checked){ 
                 publics.rows().select();
             } else {
                 publics.rows().deselect();
             }
+
         })
 		
 		$('#move').click(function(){
 			row = ""
-			filas = ""
 
 			cmb =   '<select class="form-control">\
 			 			<option value="1">1 mes</option>\
@@ -170,31 +200,73 @@
 			 			<option value="3">3 meses</option>\
 			 			<option value="0">Indefinido</option>\
 			 		<select>'
+
 			cmbPrecur=  '<select class="form-control">\
-							<option value="0">--SELECCIONE--</option>\
-							<option value="1">auxiliar</option>\
-							<option value="2">auxiliar2</option>\
-							<option value="3">regular</option>\
-							<option value="4">especial</option>\
-			 		<select>'
+							<option value="2">Auxiliar</option>\
+							<option value="1">Auxiliar (Campañas)</option>\
+							<option value="3">Regular</option>\
+							<option value="4">Especial</option>\
+			 			<select>'
+
+			col = ""
+
 			row = publics.rows('.selected').data()
+			tr = $('#publics tr.selected')
 			publics.rows('.selected').remove().draw()
+
 			$.each(row, function(key, value){
 
 				nombrar.row.add([
+								col,
 					            value[1],
 					            cmbPrecur,
 					            cmb,
 					        ]).draw( false );
 
+				$('#nombrar tr:last-child').attr('id', ''+tr[key].id)
 			})
 		})
-		$("#id_precur").change(function(){
-			$("td:nth-child(2) > select").val(this.value)
+
+		$('#id_precur').change(function(){
+			$('td:nth-child(3) > select').val(this.value)
 		})
 		
-		$("#save").click(function(){
+		$('#save').click(function(){
+			tr = ""
+			pubs = []
+
+			fechaIni = $('div.datepicker > input').val()
+
+			tr = $('#nombrar tbody tr')
+
+			$('#nombrar tbody tr').each(function(){
+				pubs.push({
+		            id: $(this).attr('id'),
+		            'duracion': $(this).find('td:eq(3) > select').val(),
+		            'precur': $(this).find('td:eq(2) > select').val()
+        		})    
+			})
+
+
+			$.post("{% url 'secretario:NombrarPrecur' %}",
+					{
+					  'fechaIni': fechaIni,
+					  'pub': JSON.stringify(pubs),
+					  csrfmiddlewaretoken:'{{ csrf_token }}'
+					})
+					.success(function(res){
+						res=JSON.parse(res)
+						console.log(res)
+					})
 			
+			x = {
+					  'fechaIni': fechaIni,
+					  'pub': JSON.stringify(pubs),
+					  csrfmiddlewaretoken:'{{ csrf_token }}'
+					}
+
+			console.log(x)
 		})
+		
 </script>
 {% endblock %}

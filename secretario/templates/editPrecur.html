@@ -63,38 +63,40 @@
 	var id = ''
 	var val = ''
 
-	$('#editPrecur tr td:nth-child(2)').on('click',function(){
-		input = $(this).find('input').length
+	$('#editPrecur tr td:nth-child(2), #editPrecur tr td:nth-child(3)').on('click',function(){
+        tr = $(this).parent('tr').index()
+        td=$("#editPrecur tr:nth-child("+(tr+1)+") td:nth-child(2)")
+		input = td.find('input').length
 		if(input == 0){
 			if(!Number.isInteger(id)){
-
-				id = $(this).parent('tr').index()
-				val = $(this).html()
-
-				$(this).html(
-					"<input type'text' class='inputtrans' value='"+val.trim()+"' style='background:transparent;border:none;' />"
+                btn=$("#editPrecur tr:nth-child("+(tr+1)+") td:nth-child(3) button")
+                btn.removeClass("btn-success")
+                btn.addClass("btn-primary")
+				id = td.parent('tr').index()
+				val = td.html().trim()
+				td.html(
+					"<input type'text' class='inputtrans' value='"+val+"' style='background:transparent;border:none;' />"
 					)
-				$(this).find('input')
+				td.find('input')
 						.focus()
 						.focusout(function(){
-									$('tbody > tr:eq('+id+') > td:eq(1)').html(val)
+									$('tbody > tr:eq('+id+') > td:eq(1)').html(this.value)
+                                    btn.removeClass("btn-primary")
+                                    btn.add("btn-success")
 								})
 
 			} else {
-
-				$('tbody > tr:eq('+id+') > td:eq(1)').html(val)
-
-				id = $(this).parent('tr').index()
-				val = $(this).html()
-
-				$(this).html(
-					"<input type'text' class='inputtrans'' value='"+val.trim()+"' style='background:transparent;border:none;' />"
+				id = td.parent('tr').index()
+				val = td.html().trim()
+                
+				td.html(
+					"<input type'text' class='inputtrans'' value='"+val+"' style='background:transparent;border:none;' />"
 					)
-				$(this).find('input')
+				td.find('input')
 						.focus()
 						.focusout(function(){
-									$('tbody > tr:eq('+id+') > td:eq(1)').html(val)
-								})
+				            $('tbody > tr:eq('+id+') > td:eq(1)').html(this.value)
+				        })
 
 			}
 		}

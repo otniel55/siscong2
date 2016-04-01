@@ -278,35 +278,44 @@ def editPrecur(request):
      return render(request, 'editPrecur.html', {'precur': Precursor.objects.all()})
 
 def vistaNombrar(request):
-     p=Publicador.objects.exclude(fechaBau__startswith="No")
+     cont=0
+     p={}
+     pubs=Publicador.objects.exclude(fechaBau__startswith="No").exclude(pubprecursor__status=True)
      precur= precursorados()
+
      return render(request, 'nombrarPub.html', {'pub':p, 'precur':precur})
 
 def NombrarPrecur(request):
+     validaciones=True
      cont=0
      msg={}
-     tipoPre=request.POST['tipoprecur']
      p=json.loads(request.POST['pub'])
-     mes=request.POST['mes']
-     year=request.POST['year']
-     try:
-          prec=Precursor.objects.get(pk=tipoPre)
-     except(KeyError, Precursor.DoesNotExist):
-          msg={'msg':"Tipo de precursorado no existe"}
-     else:
-          for x in p:
-               try:
-                    pub=Publicador.objects.get(pk=x['id'])
-               except(KeyError, Publicador.DoesNotExist):
-                    msg[cont]={'msg':'el publicador'+x['id']+'no esta registrado'}
+     mes=request.POST['fechaIni'][0:2]
+     year=request.POST['fechaIni'][3:]
+     for x in p:
+          try:
+               pub = Publicador.objects.get(pk=x['id'])
+          except(KeyError, Publicador.DoesNotExist):
+               msg[cont] = {'msg': 'el publicador' + x['id'] + 'no esta registrado'}
+               validaciones = False
+          else:
+               verificar = PubPrecursor.objects.filter(FKpub=x['id'], status=True)
+               if len(verificar) > 0:
+                    msg[cont] = {'msg': 'el publicador' + x['id'] + 'ya es precursor'}
+                    validaciones = False
                else:
-                    verificar=PubPrecursor.objects.filter(FKpub=x['id'],status=True)
-                    if len(verificar)>0:
-                         msg[cont]={'msg':'el publicador'+x['id']+'ya es precursor'}
+                    try:
+                         prec=Precursor.objects.get(pk=x['precur'])
+                    except(KeyError, Precursor.DoesNotExist):
+                         msg[cont]={'msg':'El precursorado'+ x['precur'] + ' no existe'}
+                         validaciones=False
                     else:
-                         pubP=PubPrecursor(FKpub=pub, Fkprec=prec, duracion=x['duracion'], mesIni=mes, yearIni=year, status=True)
+                         pubP = PubPrecursor(FKpub=pub, FKprecursor=prec, duracion=x['duracion'], mesIni=mes, yearIni=year, status=True)
                          pubP.save()
-                         msg[cont]={'msg':'el publicador'+x['id']+'fue nombrado con exito'}
-               cont+=1
-     msg=msg.values()
+                         msg[cont] = {'msg': 'el publicador' + x['id'] + 'fue nombrado con exito'}
+          cont += 1
+     if validaciones:
+          msg={'msg':'Los publicadores han sido nombrados precursores.'}
+     else:
+          msg=msg.values()
      return HttpResponse(json.dumps(msg))

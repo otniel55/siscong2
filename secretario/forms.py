@@ -47,7 +47,7 @@ class regPub(forms.ModelForm):
             'direccion': forms.TextInput(attrs={'class': 'form-control mrg-bottom'}),
             'email': forms.EmailInput(attrs={'class': 'form-control mrg-bottom'}),
             'fechaBau': forms.TextInput(attrs={'class':'form-control '}),
-            'fechaNa': forms.DateInput(attrs={'class':'form-control'}),
+            'fechaNa': forms.TextInput(attrs={'class':'form-control'}),
         }
 
 class regInforme(forms.ModelForm):

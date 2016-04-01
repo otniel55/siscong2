@@ -24,4 +24,5 @@ urlpatterns = [
 	url(r'^Publicador/verTarjeta$', views.verTarjetaPub, name='verTarjetaPub'),
     url(r'^Precursores/horas/$', views.editPrecur, name='editPrecur'),
     url(r'^Precursores/nombrar/$', views.vistaNombrar, name='vistaNombrar'),
+    url(r'^nombrar/$', views.NombrarPrecur, name='NombrarPrecur'),
 ]
