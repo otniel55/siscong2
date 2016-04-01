@@ -17,12 +17,7 @@
 			{% csrf_token %}
 
 			<div class="col-lg-12" style="margin-top: 40px;">
-				<div class="row">
-					<div class="col-lg-3">
-						{{ precur.precur }}
-					</div>
-
-					<div class="col-lg-2 col-md-offset-1">
+				<div class="row"><div class="col-lg-2 col-md-offset-1">
 						<button id="move" class="btn btn-success" style="width: 100%">Enviar</button>
 					</div>
 					
@@ -90,7 +85,9 @@
                         	<thead class="cf">				
 								<tr>
 									<th class="numeric text-center">Publicador</th>
-									<th class="numeric text-center">Tipo Precursorado</th>
+									<th class="numeric text-center">Tipo Precursorado<div class="col-lg-12">
+						{{ precur.precur }}
+					</div></th>
 									<th class="numeric text-center">Duracion</th>
 								</tr>
 							</thead>
@@ -173,19 +170,31 @@
 			 			<option value="3">3 meses</option>\
 			 			<option value="0">Indefinido</option>\
 			 		<select>'
-
+			cmbPrecur=  '<select class="form-control">\
+							<option value="0">--SELECCIONE--</option>\
+							<option value="1">auxiliar</option>\
+							<option value="2">auxiliar2</option>\
+							<option value="3">regular</option>\
+							<option value="4">especial</option>\
+			 		<select>'
 			row = publics.rows('.selected').data()
-
+			publics.rows('.selected').remove().draw()
 			$.each(row, function(key, value){
 
 				nombrar.row.add([
 					            value[1],
-					            $('#id_precur').val(),
+					            cmbPrecur,
 					            cmb,
 					        ]).draw( false );
 
 			})
 		})
-
-	</script>
+		$("#id_precur").change(function(){
+			$("td:nth-child(2) > select").val(this.value)
+		})
+		
+		$("#save").click(function(){
+			
+		})
+</script>
 {% endblock %}

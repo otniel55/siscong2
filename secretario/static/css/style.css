@@ -18,6 +18,10 @@ body {
     margin: 0px !important;
     font-size:13px;
 }
+.inputtrans:focus{
+	outline: 0px;
+	text-align: center;
+}
 
 ul li {
     list-style: none;
@@ -2278,3 +2282,5 @@ label {
     background-color: white;
     border: solid 2px #ffa31a;
 }
+
+
