@@ -16,11 +16,11 @@
 
 			{% csrf_token %}
 
-			<div class="col-lg-12" style="margin-top: 40px;">
+			<div class="col-lg-12" style="margin-top: 20px;">
 				<div class="row">
 
-					<fieldset class="col-lg-6 col-md-offset-3">
-						<legend>Opciones del Precurorado</legend>
+					<div class="col-lg-6 col-md-offset-3">
+						<h2 class="text-center titlecolor" style="margin-bottom: 30px;">Opciones del Precurorado</h2>
 							<div class="row">
 
 								<div class="form-horizontal">
@@ -46,7 +46,7 @@
 									<button id="move" class="btn btn-danger fa fa-arrow-left fa-2x" style="width: 100%;"></button>
 								</div>
 				            </div>
-					</fieldset>
+					</div>
 
 				</div>
 			</div>
@@ -80,7 +80,7 @@
 										{{ pubs.fechaBau }}
 									</td>
 									<td class="numeric text-center" data-title="Tiempo Bautizado">
-										{{ 2 }}
+										{{ pubs.tiempoB }}
 									</td>
 								</tr>
 							{% endfor %}

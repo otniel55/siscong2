@@ -214,6 +214,9 @@
 			$('td.estado').mouseleave(function(){
 				$('#dialogo').dialog("destroy")
 			})
+            {% if msg %}
+                alert("{{msg}}")
+            {% endif %}
 		//fin del dialogo
 	</script>
 {% endblock %}

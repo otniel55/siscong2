@@ -25,4 +25,5 @@ urlpatterns = [
     url(r'^Precursores/horas/$', views.editPrecur, name='editPrecur'),
     url(r'^Precursores/nombrar/$', views.vistaNombrar, name='vistaNombrar'),
     url(r'^nombrar/$', views.NombrarPrecur, name='NombrarPrecur'),
+    url(r'^modPub/$', views.modPub, name='modPub'),
 ]

@@ -11,13 +11,13 @@
 				<h3 class="text-center"><i class="fa fa-angle-right"></i>Datos del Publicador</h3>
 			</div>
 
-	<form action="{% url 'secretario:publicReg' %}" method="POST" class="form-horizontal style-form">
+	<div class="form-horizontal style-form">
 		{% csrf_token %}
 		<div class="form-group">
 		
 			<div class="col-lg-10 col-lg-offset-1">
 	        	{% for f in form %}
-	        		{% if f == form.fechaNa or f == form.fechaBau and f.value != "No Bau" %}
+	        		{% if f == form.fechaNa %}
 				        {{ f.label_tag }}
 			            <div class='input-group date datepicker mrg-bottom'>
 			                {{ f }} 
@@ -26,7 +26,7 @@
 			                    </span>
 			                </span>
 			            </div>
-	        		{% elif f == form.fechaBau and f.value == "No Bau" %}
+	        		{% elif f == form.fechaBau %}
 	        			{{ f.label_tag }}
 			        	<div class="row">
 				        	<div class="col-lg-11" style="margin:0px;">
@@ -49,7 +49,8 @@
 	        			{{ f.label_tag }}{{ f }}
 	        		{% endif %}
 	        	{% endfor %}
-	        		{{ form2 }}
+
+	        	{{ form2 }}
 	        </div>
 		
 	        <div class="clearfix"></div>
@@ -62,25 +63,23 @@
 				</div>
 
 				<div class="col-lg-4 col-md-offset-3" style="margin-top:30px;">
-				
 		        	<button id="btnMod" type="submit" class="btn btn-success" style="width:100%;">Modificar</button>
+		        </div>
 			{% else %}
 				<div class="col-lg-4 col-md-offset-4" style="margin-top:30px;">
 					<button id="btnSave" type="submit" class="btn btn-primary" style="width:100%;">Guardar</button>
+				</div>
 			{% endif %}
-			</div>
-
-		</div>
-	</form>		
-
-		</div>
-	</div>    
-
+		</div>		
+	</div>
+		</div>    
+	</div>
 {% endblock %}
 
 {% block scripts %}
 	<script>
 		$(document).ready(function() {
+			
 			$( ".datepicker" ).datetimepicker({
 				showTodayButton:true,
                 viewMode: 'days',
@@ -90,16 +89,58 @@
 		            vertical: 'auto'
 		        }
 		    })
-			$('#id_fechaBau').val('No Bau')
-			
-			{% if form.fechaBau.value == "No Bau" %}
-			  	$('#id_fechaBau').val('No Bautizado')
 
-			  	$('span.btn').click(function(){
-			  		$('#id_fechaBau').val('No Bautizado')
-			  	})
+			$('span.btn').click(function(){
+		  		$('#id_fechaBau').val('No Bautizado')
+		  	})
+
+			{% if form.fechaBau.value == "No Bautizado" %}
+			  	$('#id_fechaBau').val('No Bautizado')
 			{% endif %}
 
 		});
+
+		$('#btnSave').click(function(){
+
+			val = $(':input', 'div.form-group')
+
+			$.post("{% url 'secretario:publicReg' %}",
+					{
+					  'nombre': val[0].value,
+					  'apellido': val[1].value,
+					  'telefono': val[2].value,
+					  'direccion': val[3].value,
+					  'email': val[4].value,
+					  'fechaBau': val[5].value,
+					  'fechaNa': val[6].value,
+					  'Encargado': val[7].value,
+					  csrfmiddlewaretoken:'{{ csrf_token }}'
+					})
+					.success(function(res){
+						res=JSON.parse(res)
+						console.log(res)
+					})
+		})
+
+		$('#btnMod').click(function(){
+
+			val = $(':input', 'div.form-group')
+
+			$.post("{% url 'secretario:modPub' %}",
+					{
+					  'nombre': val[0].value,
+					  'apellido': val[1].value,
+					  'telefono': val[2].value,
+					  'direccion': val[3].value,
+					  'email': val[4].value,
+					  'fechaBau': val[5].value,
+					  'fechaNa': val[6].value,
+					  'Encargado': val[7].value,
+					  csrfmiddlewaretoken:'{{ csrf_token }}'
+					}).success(function(){
+                        location.href="../../consultar/Publicadores/"
+            })
+		})
+
 	</script>
 {% endblock %}

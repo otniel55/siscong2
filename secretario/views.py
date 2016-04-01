@@ -24,11 +24,10 @@ def grupos_registrar(request):
      except(KeyError, GruposPred.DoesNotExist):
           grupo=GruposPred(encargado=_encargado, auxiliar=_auxiliar)
           grupo.save()
-          return render(request, 'regGrupo.html', {'msg':"Grupo Registrado con exito"})
+          msg={'msg':"Grupo Registrado con exito"}
      else:
-          return render(request, 'regGrupo.html', {
-          'msg': "Error! Este encargado se encuentra en otro grupo.",
-          })
+          msg = {'msg': "Este encargado se encuentra en otro grupo"}
+     return  HttpResponse(json.dumps(msg))
         
 def conGrupo(request):
      cGrupo = traerGrupo()
@@ -65,6 +64,8 @@ def conPub(request):
           return HttpResponse(json.dumps(datos))
 
 def conPubs(request):
+     msg=request.session['msgpub']
+     request.session['msgpub']=""
      c=[]
      cont=0
      pubs={}
@@ -82,7 +83,7 @@ def conPubs(request):
           pubs[cont]={'nombre':i.nombre, 'apellido':i.apellido, 'fechaBau':i.fechaBau, 'edad':obteneredad(i), 'FKgrupo':i.FKgrupo, 'id':i.pk, 'g':i.FKgrupo.pk, 'status': status, 'intervalo': intervalo, 'fecha':fecha}
           cont=cont+1
      pubs=pubs.values()
-     return render(request, 'conPubs.html',{'pub':pubs})
+     return render(request, 'conPubs.html',{'pub':pubs,'msg':msg})
 
 def obtenerStatus(mes, year):
      hoy=datetime.date.today()
@@ -101,9 +102,16 @@ def obtenerStatus(mes, year):
           status=2
      return (status, meses)
 
-def obteneredad(persona):
+def obteneredad(persona, tb=0):
      hoy=datetime.date.today()
-     return hoy.year-persona.fechaNa.year-((hoy.month, hoy.day)<(persona.fechaNa.month, persona.fechaNa.day))
+     if tb==0:
+          fecha=persona.fechaNa
+     else:
+          year=int(persona.fechaBau[0:4])
+          mes=int(persona.fechaBau[5:7])
+          dia=int(persona.fechaBau[8:])
+          fecha=datetime.date(year,mes,dia)
+     return hoy.year-fecha.year-((hoy.month, hoy.day)<(fecha.month, fecha.day))
 
 def regPubli(request):
      formPub = regPub()
@@ -122,13 +130,16 @@ def publicReg(request):
      try:
           pub=Publicador.objects.get(nombre=_nombre, apellido=_apellido, fechaNa=_fechaNa)
      except(KeyError, Publicador.DoesNotExist):
-          g=GruposPred.objects.get(pk=_grupo)
-          g.publicador_set.create(nombre=_nombre, apellido=_apellido, telefono=_telefono, direccion=_direccion,email=_email, fechaBau=_fechaBau, fechaNa=_fechaNa)
-          return render(request, 'regPubli.html', {'msg':"Grupo Registrado con exito"})
+          try:
+               g=GruposPred.objects.get(pk=_grupo)
+          except(KeyError, GruposPred.DoesNotExist):
+               msg={'msg':"El grupo no existe"}
+          else:
+               g.publicador_set.create(nombre=_nombre, apellido=_apellido, telefono=_telefono, direccion=_direccion,email=_email, fechaBau=_fechaBau, fechaNa=_fechaNa)
+               msg={'msg':"Publicador Registrado con exito"}
      else:
-          return render(request, 'regPubli.html', {
-          'msg': "Error! Este encargado se encuentra en otro grupo.",
-          })
+          msg={ 'msg': "Error! Este publicador ya esta registrado."}
+     return HttpResponse(json.dumps(msg))
 
 def cambiarPub(request):
      _p=request.POST['id']
@@ -151,6 +162,7 @@ def cambiarPub(request):
      return HttpResponse(json.dumps(msg))
 
 def traerPub(request, idpub):
+     request.session['pub']=idpub
      p=Publicador.objects.get(pk=idpub)
      formPub = regPub(instance=p)
      cmbGrupo = traerGrupo(initial={'Encargado': p.FKgrupo.pk})
@@ -165,16 +177,16 @@ def modPub(request):
      _fechaBau=request.POST['fechaBau']
      _fechaNa=request.POST['fechaNa']
      _grupo=request.POST['Encargado']
-     _id=request.POST['id']
+     _id=request.session['pub']
      try:
         p=Publicador.objects.get(pk=_id)
      except(KeyError, Publicador.DoesNotExist):
-        msg={'msg':'Error, publicador no registrado'}
+        msg='Error, publicador no registrado'
      else:
           try:
                g=GruposPred.objects.get(pk=_grupo)
           except(KeyError, GruposPred.DoesNotExist):
-               msg={'msg':'Grupo no existe'}
+               msg='Grupo no existe'
           else:
                Publicador.objects.filter(pk=_id).update(FKgrupo=_grupo)
                p.nombre=_nombre
@@ -185,8 +197,9 @@ def modPub(request):
                p.fechaBau=_fechaBau
                p.fechaNa=_fechaNa
                p.save()
-               msg={'msg':'Publicador modificado con exito'}
-     return HttpResponse(json.dumps(msg))
+               msg='Publicador modificado con exito'
+     request.session['msgpub']=msg
+     return render(request, 'conPubs.html')
 
 def modGrup(request):
      _encargado=request.POST['enc']
@@ -282,7 +295,10 @@ def vistaNombrar(request):
      p={}
      pubs=Publicador.objects.exclude(fechaBau__startswith="No").exclude(pubprecursor__status=True)
      precur= precursorados()
-
+     for x in pubs:
+          p[cont]={'pk':x.pk, 'nombre':x.nombre, 'apellido':x.apellido, 'tiempoB':obteneredad(x, 1), 'fechaBau':x.fechaBau}
+          cont=cont+1
+     p=p.values()
      return render(request, 'nombrarPub.html', {'pub':p, 'precur':precur})
 
 def NombrarPrecur(request):
