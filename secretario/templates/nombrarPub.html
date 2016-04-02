@@ -40,10 +40,10 @@
 									<button id="save" class="btn btn-primary fa fa-check-square-o fa-2x" style="width: 100%"></button>
 								</div>
 								<div class="col-lg-2">
-									<button id="move" class="btn btn-success fa fa-arrow-right fa-2x" style="width: 100%;"></button>
+									<button id="move-right" class="btn btn-success fa fa-arrow-right fa-2x" style="width: 100%;"></button>
 								</div>
 								<div class="col-lg-2">
-									<button id="move" class="btn btn-danger fa fa-arrow-left fa-2x" style="width: 100%;"></button>
+									<button id="move-left" class="btn btn-danger fa fa-arrow-left fa-2x" style="width: 100%;"></button>
 								</div>
 				            </div>
 					</div>
@@ -191,41 +191,66 @@
 
         })
 		
-		$('#move').click(function(){
-			row = ""
+		//cambiar de tabla 
+			$('#move-right').click(function(){
+				row = ""
+				col = ""
+				nodo = ""
 
-			cmb =   '<select class="form-control">\
-			 			<option value="1">1 mes</option>\
-			 			<option value="2">2 meses</option>\
-			 			<option value="3">3 meses</option>\
-			 			<option value="0">Indefinido</option>\
-			 		<select>'
+				cmb =   '<select class="form-control">\
+				 			<option value="1">1 mes</option>\
+				 			<option value="2">2 meses</option>\
+				 			<option value="3">3 meses</option>\
+				 			<option value="0">Indefinido</option>\
+				 		<select>'
 
-			cmbPrecur=  '<select class="form-control">\
-							<option value="2">Auxiliar</option>\
-							<option value="1">Auxiliar (Campañas)</option>\
-							<option value="3">Regular</option>\
-							<option value="4">Especial</option>\
-			 			<select>'
+				cmbPrecur=  '<select class="form-control">\
+								<option value="2">Auxiliar</option>\
+								<option value="1">Auxiliar (Campañas)</option>\
+								<option value="3">Regular</option>\
+								<option value="4">Especial</option>\
+				 			<select>'
 
-			col = ""
+				row = publics.rows('.selected').data()
+				tr = $('#publics tr.selected')
+				publics.rows('.selected').remove().draw()
 
-			row = publics.rows('.selected').data()
-			tr = $('#publics tr.selected')
-			publics.rows('.selected').remove().draw()
+				$.each(row, function(key, value){
 
-			$.each(row, function(key, value){
+					nodo = nombrar.row.add([
+									col,
+						            value[1],
+						            cmbPrecur,
+						            cmb,
+						        ]).draw().node()
 
-				nombrar.row.add([
-								col,
-					            value[1],
-					            cmbPrecur,
-					            cmb,
-					        ]).draw( false );
-
-				$('#nombrar tr:last-child').attr('id', ''+tr[key].id)
+					$(nodo).attr('id', ''+tr[key].id)
+				})
 			})
-		})
+
+			$('#move-left').click(function(){
+				row = ""
+				col = ""
+				nodo = ""
+
+				row = nombrar.rows('.selected').data()
+				tr = $('#nombrar tr.selected')
+				nombrar.rows('.selected').remove().draw()
+				
+				$.each(row, function(key, value){
+
+					nodo = publics.row.add([
+									col,
+						            value[1],
+						            2016-05-19,
+						            12
+						        ]).draw().node()
+
+					$(nodo).attr('id', ''+tr[key].id)
+				})
+			})
+
+		//fin de cambiar de tabla
 
 		$('#id_precur').change(function(){
 			$('td:nth-child(3) > select').val(this.value)
