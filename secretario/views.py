@@ -341,8 +341,76 @@ def NombrarPrecur(request):
           msg=msg.values()
      return HttpResponse(json.dumps(msg))
 
+def conPrec(request):
+     precur= precursorados()
+     return render(request, 'conPrecur.html', {'precur':precur})
+
 def conPrecs(request):
      cont=0
-     precur={}
-     p=Publicador.objects.filter(pubprecursor__status=True)
+     precs={}
+     prec=request.POST['precur']
+     status=request.POST['status']
+     try:
+          Precursor.objects.get(pk=prec)
+     except(KeyError, Precursor.DoesNotExist):
+          data={'msg':"Precursorado no existe"}
+     else:
+          if status==3:
+               p=Publicador.objects.filter(pubprecursor__FKprecursor=prec)
+          else:
+               p=Publicador.objects.filter(pubprecursor__FKprecursor=prec, pubprecursor__status=status)
+          for i in p:
+               precs[cont]={'pk':i.pk, 'nombre':i.nombre, 'apellido':i.apellido}
+               cont+=1
+          data={'p':precs}
+     return HttpResponse(json.dumps(data))
 
+def historiaPrec(request, pub, year, tipo):
+     cont=0
+     datosp={}
+     try:
+          p=Publicador.objects.get(pk=pub)
+     except(KeyError, Publicador.DoesNotExist):
+          datosp={'msg':'Publicador no existe'}
+     else:
+          try:
+               Precursor.objects.get(pk=tipo)
+          except(KeyError, Precursor.DoesNotExist):
+               datosp={'msg':"tipo de precursorado no existe"}
+          else:
+               if tipo==1 or tipo==2:
+                    precur=PubPrecursor.obejects.filter(FKpub=pub, FKprecursor=tipo).order_by('-yearIni', '-mesIni')
+               else:
+                    precur=PubPrecursor.obejects.filter(FKpub=pub, FKprecursor=tipo, yearIni=year).order_by('-mesIni')
+               if len(precur)>0:
+                    for i in precur:
+                         mes=i.mesIni
+                         year=i.yearIni
+                         duracion=i.duracion
+                         while duracion>0:
+                              status=2
+                              try:
+                                   inf=Informe.objects.get(FKpub=pub, mes=mes, year=year)
+                              except(KeyError, Informe.DoesNotExist):
+                                   h="No informo"
+                              else:
+                                   h=inf.horas
+                                   if h>=i.FKprecursor.horas:
+                                        status=1
+                              mes+=1
+                              if mes==13:
+                                   mes=1
+                                   year+=1
+                              duracion-=1
+                              if tipo==1 or tipo==2:
+                                   datosp[cont]={'tipoPrecur':i.FKprecursor.nombre, 'horasExigidas': i.FKprecursor.horas, 'horasHechas':h}
+                              else:
+                                   if h!="No informo":
+                                        datosp[cont]={'mes':inf.mes, 'horas':inf.horas, 'publicaciones':inf.publicaciones, 'videos':inf.videos, 'revisitas':inf.revisitas, 'estudios': inf.estudios}
+                                   else:
+                                        datosp[cont]={'msg':h}
+                              cont+=1
+                              datosp=datosp.values()
+               else:
+                    datosp={'msg':"Esta persona no ha realizado el precursorado en ese lapso de tiempo o nunca ha sido precursor."}
+     return render(request, "tarjetaPrec.html", datosp)

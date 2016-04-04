@@ -26,4 +26,7 @@ urlpatterns = [
     url(r'^Precursores/nombrar/$', views.vistaNombrar, name='vistaNombrar'),
     url(r'^nombrar/$', views.NombrarPrecur, name='NombrarPrecur'),
     url(r'^modPub/$', views.modPub, name='modPub'),
+    url(r'^consultar/Precursor/$', views.conPrec, name='conPrec'),
+    url(r'^conPrecs/$', views.conPrecs, name='conPrecs'),
+    url(r'^historia/precursor/(?P<pub>[0-9]+)/(?P<year>[0-9]+)/(?P<tipo>[0-9]+)/$', views.historiaPrec, name='historiaPrec'),
 ]
