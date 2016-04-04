@@ -346,10 +346,16 @@ def conPrec(request):
      return render(request, 'conPrecur.html', {'precur':precur})
 
 def conPrecs(request):
+     contaux=0
+     years=[]
      cont=0
      precs={}
-     prec=request.POST['precur']
-     status=request.POST['status']
+     prec=int(request.POST['precur'])
+     status=int(request.POST['status'])
+     if status==1:
+          status=True
+     elif status==2:
+          status=False
      try:
           Precursor.objects.get(pk=prec)
      except(KeyError, Precursor.DoesNotExist):
@@ -359,10 +365,19 @@ def conPrecs(request):
                p=Publicador.objects.filter(pubprecursor__FKprecursor=prec)
           else:
                p=Publicador.objects.filter(pubprecursor__FKprecursor=prec, pubprecursor__status=status)
-          for i in p:
-               precs[cont]={'pk':i.pk, 'nombre':i.nombre, 'apellido':i.apellido}
-               cont+=1
-          data={'p':precs}
+          if len(p)>0:
+               for i in p:
+                    if prec==3 or prec==4:
+                         pubprec=PubPrecursor.objects.filter(FKpub=i.pk)
+                         for x in pubprec:
+                              cont+=1
+                              years.append(x.yearIni)
+                    precs[cont]={'pk':i.pk, 'nombre':i.nombre+" "+i.apellido}
+                    cont+=1
+
+               data = {'p':precs}
+          else:
+               data={'msg':'No hay ningun registro de este tipo de precursor'}
      return HttpResponse(json.dumps(data))
 
 def historiaPrec(request, pub, year, tipo):
@@ -414,3 +429,6 @@ def historiaPrec(request, pub, year, tipo):
                else:
                     datosp={'msg':"Esta persona no ha realizado el precursorado en ese lapso de tiempo o nunca ha sido precursor."}
      return render(request, "tarjetaPrec.html", datosp)
+
+
+#

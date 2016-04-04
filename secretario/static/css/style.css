@@ -255,8 +255,8 @@ ul.top-menu > li > .logout {
 #sidebar .sub-menu > .sub li:last-child {
     padding-bottom: 10px;
 }
+/*
 
-/*LEFT NAVIGATION ICON*/
 .dcjq-icon {
     height:17px;
     width:17px;
@@ -274,7 +274,7 @@ ul.top-menu > li > .logout {
     border-radius:3px;
     -moz-border-radius:3px;
     -webkit-border-radius:3px;
-}
+}*/
 /*---*/
 
 .nav-collapse.collapse {
@@ -2282,5 +2282,16 @@ label {
     background-color: white;
     border: solid 2px #ffa31a;
 }
+
+.fullwidth {
+    width: 100%;
+}
+
+.mrgPdgNull {
+    margin: 0px;
+    padding: 0px;
+}
+
+
 
 

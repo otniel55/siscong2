@@ -22,7 +22,7 @@ class traerGrupo(forms.Form):
 									)
 
 class precursorados(forms.Form):
-    precur = forms.ModelChoiceField(queryset = Precursor.objects.all(), 
+    precur = forms.ModelChoiceField(queryset = Precursor.objects.all().order_by('pk'),
                                         empty_label='Tipos de Precursorados', 
                                         widget=forms.Select(attrs={'class': 'form-control'})
                                         )

@@ -11,7 +11,7 @@
 				<h3 class="text-center"><i class="fa fa-angle-right"></i>Nombrar Precursores</h3>
 			</div>
 
-	<div class="form-horizontal style-form">
+	<div class="style-form">
 		<div class="form-group">
 
 			{% csrf_token %}
@@ -20,30 +20,31 @@
 				<div class="row">
 
 					<div class="col-lg-6 col-md-offset-3">
-						<h2 class="text-center titlecolor" style="margin-bottom: 30px;">Opciones del Precurorado</h2>
 							<div class="row">
-
-								<div class="form-horizontal">
-									<label for="fechaIni" class="control-label col-lg-3">Fecha de Inicio:</label>
-						        	<div class="col-lg-3">
-							            <div class='input-group date datepicker mrg-bottom'>
-							                <input type="text" class="form-control">
-							                <span class="input-group-addon">
-							                    <span class="fa fa-calendar">
-							                    </span>
-							                </span>
-							            </div>
-						            </div>
+                               
+                                <div class="col-sm-2 col-md-2 col-lg-2">
+                                    <button id="move-right" class="btn btn-success fa fa-arrow-right fa-2x  fullwidth"></button>
+                                </div>
+                                
+                                <div class="col-sm-2 col-md-2 col-lg-2">
+                                    <button id="move-left" class="btn btn-danger fa fa-arrow-left fa-2x fullwidth" disabled></button>
+                                </div>
+                                
+                                <div class="form-inline col-lg-6" style="margin-top:3px;">
+									<div class="form-group" >
+                                        <label for="fechaIni">Fecha de Inicio:</label>
+                                        <div class='input-group date datepicker mrg-bottom'>
+                                            <input type="text" class="form-control">
+                                            <span class="input-group-addon">
+                                                <span class="fa fa-calendar">
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
 					            </div>
 
-								<div class="col-lg-2">
-									<button id="save" class="btn btn-primary fa fa-check-square-o fa-2x" style="width: 100%"></button>
-								</div>
-								<div class="col-lg-2">
-									<button id="move-right" class="btn btn-success fa fa-arrow-right fa-2x" style="width: 100%;"></button>
-								</div>
-								<div class="col-lg-2">
-									<button id="move-left" class="btn btn-danger fa fa-arrow-left fa-2x" style="width: 100%;"></button>
+                                <div class="col-sm-2 col-md-2 col-lg-2">
+                                    <button id="save" class="btn btn-primary fa fa-check-square-o fa-2x fullwidth" disabled></button>
 								</div>
 				            </div>
 					</div>
@@ -54,10 +55,15 @@
 			<div class="clearfix"></div>
 
 			<div class="col-lg-6" style="margin-top: 40px;">
-                <div class="content-panel" id="pito">
+                <div class="content-panel">
 					<section id="no-more-tables">
+					
 						<h3 class="text-center titlecolor" style="margin:0px;padding: 0px;">Publicadores</h3>
-
+                       
+                        <div class="col-lg-6">
+                            <input type="text" id="filtro1" class="form-control" placeholder="Buscar...">
+                        </div>
+                        
                     	<table id="publics" class="display table table-condensed cf" cellspacing="0" style="font-size:14px;" width:"100%">
                         	<thead class="cf">				
 								<tr>
@@ -100,7 +106,7 @@
                         	<thead class="cf">				
 								<tr>
 									<th>
-										<input type="checkbox" id="selectAll" />
+										<input type="checkbox" id="selectAll2" />
 									</th>
 									<th class="numeric text-center">Publicador</th>
 									<th class="numeric text-center">Tipo Precursorado
@@ -120,7 +126,6 @@
 			</div>
 		</div>
 	</div>		
-
 		</div> 
 </div> 
 
@@ -148,7 +153,15 @@
 									      "sZeroRecords": "No se Encontraron Registros",
 									     }
 					    });
-
+            
+            //estilisando los filtros
+                $('#publics_length').hide()
+                $('#publics_filter').hide()
+                $('#filtro1').on( 'keyup change', function () {
+                                $('#publics').dataTable().fnFilter(this.value);
+                            });
+            //fin de estilos
+            
 			nombrar	= 	$('#nombrar').DataTable({
 							columnDefs: [{
 					            orderable: false,
@@ -190,6 +203,16 @@
             }
 
         })
+        
+        $('#selectAll2').click(function(){
+
+			if(this.checked){ 
+                nombrar.rows().select();
+            } else {
+                nombrar.rows().deselect();
+            }
+
+        })
 		
 		//cambiar de tabla 
 			$('#move-right').click(function(){
@@ -198,18 +221,18 @@
 				nodo = ""
 
 				cmb =   '<select class="form-control">\
-				 			<option value="1">1 mes</option>\
-				 			<option value="2">2 meses</option>\
-				 			<option value="3">3 meses</option>\
-				 			<option value="0">Indefinido</option>\
-				 		<select>'
+							<option value="1">1 mes</option>\
+							<option value="2">2 meses</option>\
+							<option value="3">3 meses</option>\
+							<option value="0">Indefinido</option>\
+						<select>'
 
 				cmbPrecur=  '<select class="form-control">\
 								<option value="2">Auxiliar</option>\
 								<option value="1">Auxiliar (Campañas)</option>\
 								<option value="3">Regular</option>\
 								<option value="4">Especial</option>\
-				 			<select>'
+							<select>'
 
 				row = publics.rows('.selected').data()
 				tr = $('#publics tr.selected')
@@ -223,11 +246,25 @@
 						            cmbPrecur,
 						            cmb,
 						        ]).draw().node()
-
-					$(nodo).attr('id', ''+tr[key].id)
+ 
+					$(nodo).attr({
+                        id: ''+tr[key].id,
+                        fechaBau: value[2],
+                        Tbau: value[3],
+                    })   
 				})
+                
+                if ($('#move-left').is(':disabled') && tr.length > 0)
+                    $('#move-left').removeAttr('disabled')
+                
+                if (publics.data().length == 0)
+                    $(this).attr('disabled', true)
+                    
+                if ($('div.datepicker > input').val())
+                    $('#save').removeAttr('disabled')
+                
 			})
-
+            
 			$('#move-left').click(function(){
 				row = ""
 				col = ""
@@ -236,19 +273,41 @@
 				row = nombrar.rows('.selected').data()
 				tr = $('#nombrar tr.selected')
 				nombrar.rows('.selected').remove().draw()
-				
-				$.each(row, function(key, value){
 
+				$.each(row, function(key, value){
 					nodo = publics.row.add([
 									col,
 						            value[1],
-						            2016-05-19,
-						            12
+                                    $(tr[key]).attr('fechaBau'),
+                                    $(tr[key]).attr('Tbau')
 						        ]).draw().node()
 
-					$(nodo).attr('id', ''+tr[key].id)
+                    $(nodo).attr('id', ''+tr[key].id).find('td').addClass("numeric text-center")
 				})
+
+                if ($('#move-right').is(':disabled') && tr.length > 0)
+                    $('#move-right').removeAttr('disabled')
+                
+                if (nombrar.data().length == 0)
+                    $(this).attr('disabled', true)
+                    $('#save').attr('disabled', true)
+                
 			})
+
+            $('span.input-group-addon').click(function(){
+                if (nombrar.data().length > 0)
+                    $('#save').removeAttr('disabled')
+            })
+            
+            $('div.datepicker > input').on( 'keyup change', function (){
+                
+                if($(this).val() && nombrar.data().length > 0){
+                    $('#save').removeAttr('disabled')
+                } else {
+                    $('#save').attr('disabled', true)
+                }
+                
+            });
 
 		//fin de cambiar de tabla
 
