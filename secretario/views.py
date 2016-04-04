@@ -64,8 +64,13 @@ def conPub(request):
           return HttpResponse(json.dumps(datos))
 
 def conPubs(request):
-     msg=request.session['msgpub']
-     request.session['msgpub']=""
+     try:
+          request.session['msgpub']
+     except KeyError:
+          msg=""
+     else:
+          msg=request.session['msgpub']
+          request.session['msgpub']=""
      c=[]
      cont=0
      pubs={}
@@ -335,3 +340,9 @@ def NombrarPrecur(request):
      else:
           msg=msg.values()
      return HttpResponse(json.dumps(msg))
+
+def conPrecs(request):
+     cont=0
+     precur={}
+     p=Publicador.objects.filter(pubprecursor__status=True)
+
