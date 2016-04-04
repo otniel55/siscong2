@@ -19,7 +19,6 @@ urlpatterns = [
     url(r'^informe/registrar/$', views.viewInfo, name='viewInfo'),
 	url(r'^regInf/$', views.regInf, name='regInf'),
 	url(r'^(?P<vista>[1-2]+)/(?P<idPub>[0-9]+)/Tarjeta/(?P<y>[0-9]+)/$', views.tarjeta, name='tarjeta'),
-    url(r'^(?P<idGrupo>[0-9]+)/grupoPublicador/$', views.conGrupoofPubs, name='conGrupoofPubs'),
 	url(r'^conPubG/$', views.conPubG, name='conPubG'),
 	url(r'^Publicador/verTarjeta$', views.verTarjetaPub, name='verTarjetaPub'),
     url(r'^Precursores/horas/$', views.editPrecur, name='editPrecur'),

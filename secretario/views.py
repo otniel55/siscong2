@@ -30,8 +30,22 @@ def grupos_registrar(request):
      return  HttpResponse(json.dumps(msg))
         
 def conGrupo(request):
-     cGrupo = traerGrupo()
-     return render(request, 'conGrupo.html', {'form': cGrupo})
+     try:
+          request.session['idgrupo']
+     except KeyError:
+          cGrupo = traerGrupo()
+          on = 0
+     else:
+          fkgrupo = request.session['idgrupo']
+          if fkgrupo == "":
+               cGrupo = traerGrupo()
+               on = 0
+          else:
+               cGrupo = traerGrupo(initial={'Encargado': fkgrupo })
+               request.session['idgrupo']=""
+               on = 1
+
+     return render(request, 'conGrupo.html', {'form': cGrupo, 'onPub': on })
 
 def datGrupo(request,idGrupo):
      g = GruposPred.objects.get(pk=idGrupo)
@@ -47,10 +61,6 @@ def datGrupo(request,idGrupo):
             'modalGrupo': modalGrupo, 'modalInfo': modalInfo, 'mes': mes,'y':y,
             }
      return render(request, 'datGrupo.html',datos)
-
-def conGrupoofPubs(request, idGrupo):
-     cGrupo = traerGrupo(initial={'Encargado': idGrupo})
-     return render(request, 'conGrupo.html', {'form': cGrupo, 'onPub': 1 })
 
 def conPub(request):
      cont=0
@@ -249,6 +259,7 @@ def regInf(request):
 
 def tarjeta(request, vista, idPub, y):
      p=Publicador.objects.get(pk=idPub)
+     request.session['idgrupo'] = p.FKgrupo.pk
      inf=Informe.objects.filter(year=y, FKpub=idPub).order_by('mes')
      if len(inf)>0:
           datos={'pub':inf, 'p':p}
