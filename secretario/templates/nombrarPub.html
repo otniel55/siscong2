@@ -23,7 +23,7 @@
 							<div class="row">
                                
                                 <div class="col-sm-2 col-md-2 col-lg-2">
-                                    <button id="move-right" class="btn btn-success fa fa-arrow-right fa-2x  fullwidth"></button>
+                                    <button id="move-right" class="btn btn-success fa fa-arrow-right fa-2x fullwidth"></button>
                                 </div>
                                 
                                 <div class="col-sm-2 col-md-2 col-lg-2">
@@ -288,9 +288,10 @@
                 if ($('#move-right').is(':disabled') && tr.length > 0)
                     $('#move-right').removeAttr('disabled')
                 
-                if (nombrar.data().length == 0)
+                if (nombrar.data().length == 0){
                     $(this).attr('disabled', true)
                     $('#save').attr('disabled', true)
+                }
                 
 			})
 
