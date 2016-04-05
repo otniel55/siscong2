@@ -8,6 +8,7 @@ urlpatterns = [
 	url(r'^grupos/registrar/$', views.registrarGrupo, name='registrarGrupo'),
     url(r'^registrar/grupos/$', views.grupos_registrar, name='grupos_registrar'),
     url(r'^consultar/grupos/$', views.conGrupo, name='conGrupo'),
+    url(r'^(?P<idGrupo>[0-9]+)/grupoPublicador/$', views.conGrupoofPubs, name='conGrupoofPubs'),
     url(r'^(?P<idGrupo>[0-9]+)/datos_grupo/$', views.datGrupo, name='datGrupo'),
     url(r'^regPubli/$', views.regPubli, name='regPubli'),
     url(r'^conPub/$', views.conPub, name='conPub'),

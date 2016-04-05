@@ -47,6 +47,10 @@ def conGrupo(request):
 
      return render(request, 'conGrupo.html', {'form': cGrupo, 'onPub': on })
 
+def conGrupoofPubs(request, idGrupo):
+     cGrupo = traerGrupo(initial={'Encargado': idGrupo})
+     return render(request, 'conGrupo.html', {'form': cGrupo, 'onPub': 1 })
+
 def datGrupo(request,idGrupo):
      g = GruposPred.objects.get(pk=idGrupo)
      p = Publicador.objects.filter(FKgrupo=g.pk)
