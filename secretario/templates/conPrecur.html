@@ -11,16 +11,21 @@
 				<h3 class="text-center"><i class="fa fa-angle-right"></i>Consulta de Precursores</h3>
 			</div>
 
-	<div class="form-horizontal style-form">
+	<div class="style-form">
 		{% csrf_token %}
 		<div class="form-group">
+
 
             <div class="col-lg-3" style="margin-top: 28px">
                 {{ precur.precur }}
             </div>
             
             <div class="col-lg-3" style="margin-top: 28px">
-                <select id="status" class="form-control" disabled>
+                <input type="checkbox" id="status" checked>
+            </div>
+
+            <div class="col-lg-3" style="margin-top: 28px">
+                <select id="status" class="form-control">
                     <option value="">Estados</option>
                     <option value=1>Activo</option>
                     <option value=2>Finalizado</option>
@@ -28,7 +33,7 @@
             </div>
             
             <div class="col-lg-3" style="margin-top: 28px">
-                <select id="anno" class="form-control" disabled>
+                <select id="anno" class="form-control">
                     <option value="">seleccione</option>
                     <option value=1>Activo</option>
                     <option value=2>Desactivo</option>
@@ -41,15 +46,30 @@
                 <div class="content-panel">
 
                     <h3 class="text-center titlecolor" style="margin:0px;padding: 0px;">Datos del Precursor Auxiliar</h3>
+                    <fieldset class="form-inline">
+                        <legend>Precursorado Activo</legend>
+                            <label for="" class="col-md-2">Fecha de Inicio:</label>
+                            <div class="col-md-2">
+                                <span id="fechaI" class="preAux">2016-04</span>
+                            </div>
+
+                            <label for="" class="col-md-2">Fecha de Fin:</label>
+                            <div class="col-md-2">
+                                <span id="fechaC" class="preAux">2016-06</span>
+                            </div>
+
+                            <label for="" class="col-md-2">Duración:</label>
+                            <div class="col-md-2">
+                                <span id="duracion" class="preAux">2 meses</span>
+                            </div>
+                    </fieldset>
 
                     <section id="no-more-tables" style="margin-top: 20px;">
 
                         <table id="public" class="table table-bordered table-striped table-condensed cf" style="font-size:14px;">
                             <thead class="cf">
                                 <tr>
-                                    <th class="numeric text-center">Fecha de Inicio</th>
-                                    <th class="numeric text-center">Fecha de Conclución</th>
-                                    <th class="numeric text-center">Duración</th>
+                                    <th class="numeric text-center">Fecha</th>
                                     <th class="numeric text-center">Horas Requeridas</th>
                                     <th class="numeric text-center">Horas Informadas</th>
                                     <th class="numeric text-center" style="width:8%;">Objetivo</th>
@@ -57,22 +77,12 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="numeric nombre" data-title="Nombre y Apellido">
-
-                                    </td>
                                     <td class="numeric text-center" data-title="Edad">
-
                                     </td>
                                     <td class="numeric text-center bau" data-title="Fecha de Bautismo">
-
                                     </td>
                                     <td class="numeric" data-title="Grupo Asignado" >
-
                                     </td>
-
-                                    <td class="numeric estado"  data-title="Estado">
-                                    </td>
-
                                     <td class="numeric estado"  data-title="Estado" style="width:8%; background-color:#09B20F">
                                     </td>
                                 </tr>
@@ -137,25 +147,37 @@
        
         </div>
 </div>
+
 {% endblock %}
+
 {% block scripts %}
+
     <script>
+
+            $("#status").bootstrapSwitch({
+                disabled: true,
+                onText: 'Activo',
+                offText: 'Inactivo',
+                offColor: 'danger',
+                indeterminate: true
+            });
+
         $("#id_precur").change(function(){
-            if ($.trim(this.value)!=""){
-                if ($.trim($("#status").val())==""){
-                    $("#status").removeAttr("disabled")
-                }else{
-                    traerPrecur()
-                }
+            if (this.value != ""){
+                $("#status").bootstrapSwitch('disabled', false);
             } else{
-                $("#status").attr("disabled", "true")
+                $("#status").bootstrapSwitch('toggleIndeterminate')
+                $("#status").bootstrapSwitch('toggleDisabled')
             }
         })
-        $("#status").change(function(){
-            if ($.trim(this.value)!=""){
-                traerPrecur()
+
+        $("div.bootstrap-switch-container > span").click(function(){
+            if( !$("#status").bootstrapSwitch('disabled') ){
+                x = $("#status").bootstrapSwitch('state')
+                console.log( x == false ? 0 : 1 )
             }
         })
+
         function traerPrecur(){
             $.post("{% url 'secretario:conPrecs' %}", {'precur':$("#id_precur").val(), 'status':$("#status").val(), csrfmiddlewaretoken:'{{ csrf_token }}'},
            function(res){
@@ -164,4 +186,5 @@
             })
         }
     </script>
+
 {% endblock %}
