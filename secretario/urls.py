@@ -29,4 +29,5 @@ urlpatterns = [
     url(r'^consultar/Precursor/$', views.conPrec, name='conPrec'),
     url(r'^conPrecs/$', views.conPrecs, name='conPrecs'),
     url(r'^historia/precursor/(?P<pub>[0-9]+)/(?P<year>[0-9]+)/(?P<tipo>[0-9]+)/$', views.historiaPrec, name='historiaPrec'),
+    url(r'^conYear/$', views.yearServicio, name='yearServicio'),
 ]

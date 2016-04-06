@@ -153,6 +153,7 @@
 {% block scripts %}
 
     <script>
+        $.post("{% url 'secretario:yearServicio' %}", {'prec':3, 'pub':1, csrfmiddlewaretoken:'{{ csrf_token }}'},function(res){res=JSON.parse(res);console.log(res)})
 
             $("#status").bootstrapSwitch({
                 disabled: true,

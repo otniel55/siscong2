@@ -389,7 +389,6 @@ def conPrecs(request):
                               years.append(x.yearIni)
                     precs[cont]={'pk':i.pk, 'nombre':i.nombre+" "+i.apellido}
                     cont+=1
-
                data = {'p':precs}
           else:
                data={'msg':'No hay ningun registro de este tipo de precursor'}
@@ -445,5 +444,62 @@ def historiaPrec(request, pub, year, tipo):
                     datosp={'msg':"Esta persona no ha realizado el precursorado en ese lapso de tiempo o nunca ha sido precursor."}
      return render(request, "tarjetaPrec.html", datosp)
 
+def yearServicio(request):
+     y=[]
+     data={}
+     pub=int(request.POST['pub'])
+     prec=int(request.POST['prec'])
+     if prec==3 or prec==4:
+          try:
+               Publicador.objects.get(pk=pub)
+          except(KeyError, Publicador.DoesNotExist):
+               data={'msg':"Publicador no existe"}
+          else:
+               precur=PubPrecursor.objects.filter(FKpub=pub, FKprecursor=prec).order_by("-yearIni", "-mesIni")
+               for p in precur:
+                    if p.status:
+                         yearFin=datetime.date.today().year
+                         mesFin=datetime.date.today().month
+                    else:
+                         mesFin=p.mesIni
+                         yearFin=p.yearIni
+                         for i in range(1,p.duracion):
+                              mesFin+=1
+                              if mesFin==13:
+                                   mesFin+=1
+                                   yearFin+=1
+                    for x in (arrayYear(p.mesIni, p.yearIni, mesFin, yearFin)):
+                         y.append(x)
+               data={'years':quitarRep(y)}
+     else:
+          data={'msg':'Este tipo de precursor no tiene habilitada esta opcion'}
+     return HttpResponse(json.dumps(data))
 
-#
+def arrayYear(mesI,yearI,mesF,yearF):
+     years=[]
+     intervaloY=yearF-yearI
+     for i in range(0, intervaloY+1):
+          if mesI<9:
+               years.append([yearI-1,yearI])
+          else:
+               years.append([yearI, yearI+1])
+          yearI+=1
+     if mesI<9 and mesF>8:
+          years.append([yearI-1,yearI])
+     elif mesI>8 and mesF<9:
+          years.pop()
+     return years
+
+def quitarRep(arreglo):
+     arreglo.sort(reverse=True)
+     cont=0
+     cont2=0
+     for i in arreglo:
+          for j in arreglo:
+               if i==j:
+                    cont2+=1
+                    if cont2>1:
+                         arreglo.pop(cont)
+          cont+=1
+          cont2=0
+     return arreglo
