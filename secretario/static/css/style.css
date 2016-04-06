@@ -2292,18 +2292,46 @@ label {
     padding: 0px;
 }
 
-
-
-
-
-
-
-
-
 .tabla-top {
     margin-top: 40px;
 }
 
 .preAux {
     font-size: 20px;
+}
+
+.ficha {
+    margin-top: 20px;
+    font-size: 24px;
+    padding-bottom: 20px;
+}
+
+.ficha dt {
+    color: darkcyan;
+    text-align: right;
+    display: inline-block;
+    width: 46%;
+    margin: 0xp;
+    padding: 0px;
+    margin-bottom: 10px;
+}
+
+.ficha dd {
+    font-size: 20px;
+    color: #000000;
+    text-align: center;
+    display: inline-block;
+    width: 50%;
+    margin-left: 2%;
+}
+
+
+.FichaHe {
+    font-weight: 600;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    width: 100%;
+    background-color: #ffd777;
+    border-bottom: 2px;
+    border-bottom-color: dimgray;
 }
