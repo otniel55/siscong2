@@ -25,15 +25,13 @@
             </div>
 
             <div class="col-lg-3" style="margin-top: 28px">
-                <select id="status" class="form-control">
-                    <option value="">Estados</option>
-                    <option value=1>Activo</option>
-                    <option value=2>Finalizado</option>
+                <select id="precur" class="form-control">
+                    <option value="">Seleccione El Precursor</option>
                 </select>
             </div>
             
             <div class="col-lg-3" style="margin-top: 28px">
-                <select id="anno" class="form-control">
+                <select id="periodo" class="form-control">
                     <option value="">seleccione</option>
                     <option value=1>Activo</option>
                     <option value=2>Desactivo</option>
@@ -155,17 +153,41 @@
     <script>
         $.post("{% url 'secretario:yearServicio' %}", {'prec':3, 'pub':1, csrfmiddlewaretoken:'{{ csrf_token }}'},function(res){res=JSON.parse(res);console.log(res)})
 
-            $("#status").bootstrapSwitch({
-                disabled: true,
-                onText: 'Activo',
-                offText: 'Inactivo',
-                offColor: 'danger',
-                indeterminate: true
-            });
+        function getPrecur(status){
+            $.post("{% url 'secretario:conPrecs' %}",{
+                'precur': $("#id_precur").val(),
+                'status': status,
+                csrfmiddlewaretoken:'{{ csrf_token }}'
+            })
+            .success(function(res){
+                res=JSON.parse(res)
+                console.log(res)
+
+                $('#precur option:first').siblings().detach()
+
+                $.each(res.p, function(key, value){
+                    $('#precur').append(new Option(""+value.nombre, ""+value.pk))
+                })
+            })
+        }
+
+        $("#status").bootstrapSwitch({
+            disabled: true,
+            onText: 'Activo',
+            offText: 'Inactivo',
+            offColor: 'danger',
+            indeterminate: true
+        });
 
         $("#id_precur").change(function(){
             if (this.value != ""){
-                $("#status").bootstrapSwitch('disabled', false);
+                $("#status").bootstrapSwitch('disabled', false)
+
+                if( !$("#status").bootstrapSwitch('indeterminate') ){
+                    x = $("#status").bootstrapSwitch('state')
+                    status = x == false ? 0 : 1
+                    getPrecur(status)
+                }
             } else{
                 $("#status").bootstrapSwitch('toggleIndeterminate')
                 $("#status").bootstrapSwitch('toggleDisabled')
@@ -175,17 +197,10 @@
         $("div.bootstrap-switch-container > span").click(function(){
             if( !$("#status").bootstrapSwitch('disabled') ){
                 x = $("#status").bootstrapSwitch('state')
-                console.log( x == false ? 0 : 1 )
+                status = x == false ? 0 : 1
+                getPrecur(status)
             }
         })
-
-        function traerPrecur(){
-            $.post("{% url 'secretario:conPrecs' %}", {'precur':$("#id_precur").val(), 'status':$("#status").val(), csrfmiddlewaretoken:'{{ csrf_token }}'},
-           function(res){
-                res=JSON.parse(res)
-                console.log(res)
-            })
-        }
     </script>
 
 {% endblock %}
