@@ -8,6 +8,7 @@ from django.views import generic
 import json
 import datetime
 from django.utils import timezone
+from django.db.models import Q
 
 def index(request):
      return render(request, 'layout.html', {})
@@ -376,10 +377,10 @@ def conPrecs(request):
      except(KeyError, Precursor.DoesNotExist):
           data={'msg':"Precursorado no existe"}
      else:
-          if status==3:
-               p=Publicador.objects.filter(pubprecursor__FKprecursor=prec)
-          else:
+          if status:
                p=Publicador.objects.filter(pubprecursor__FKprecursor=prec, pubprecursor__status=status)
+          else:
+               p=Publicador.objects.filter(pubprecursor__FKprecursor=prec, pubprecursor__status=status).exclude(pubprecursor__status=not status)
           if len(p)>0:
                for i in p:
                     if prec==3 or prec==4:
@@ -395,6 +396,9 @@ def conPrecs(request):
      return HttpResponse(json.dumps(data))
 
 def historiaPrec(request, pub, year, tipo):
+     if tipo==3 or tipo==4:
+          yearI=year[0:4]
+          yearF=year[5:]
      cont=0
      datosp={}
      try:
@@ -445,49 +449,63 @@ def historiaPrec(request, pub, year, tipo):
      return render(request, "tarjetaPrec.html", datosp)
 
 def yearServicio(request):
+     normalY=0
      y=[]
      data={}
      pub=int(request.POST['pub'])
      prec=int(request.POST['prec'])
-     if prec==3 or prec==4:
+     try:
+          Precursor.objects.get(pk=prec)
+     except(KeyError, Precursor.DoesNotExist):
+          data={"msg":"tipo de Precursorado no existe"}
+     else:
           try:
                Publicador.objects.get(pk=pub)
           except(KeyError, Publicador.DoesNotExist):
                data={'msg':"Publicador no existe"}
           else:
-               precur=PubPrecursor.objects.filter(FKpub=pub, FKprecursor=prec).order_by("-yearIni", "-mesIni")
-               for p in precur:
-                    if p.status:
-                         yearFin=datetime.date.today().year
-                         mesFin=datetime.date.today().month
-                    else:
-                         mesFin=p.mesIni
-                         yearFin=p.yearIni
-                         for i in range(1,p.duracion):
-                              mesFin+=1
-                              if mesFin==13:
+               if prec==2:
+                    normalY=1
+                    precur=PubPrecursor.objects.filter(Q(FKprecursor=prec) | Q(FKprecursor=1), FKpub=pub).order_by("-yearIni", "-mesIni")
+               else:
+                    precur=PubPrecursor.objects.filter(FKpub=pub, FKprecursor=prec).order_by("-yearIni", "-mesIni")
+               if len(precur)>0:
+                    for p in precur:
+                         if p.status:
+                              yearFin=datetime.date.today().year
+                              mesFin=datetime.date.today().month
+                         else:
+                              mesFin=p.mesIni
+                              yearFin=p.yearIni
+                              for i in range(1,p.duracion):
                                    mesFin+=1
-                                   yearFin+=1
-                    for x in (arrayYear(p.mesIni, p.yearIni, mesFin, yearFin)):
-                         y.append(x)
-               data={'years':quitarRep(y)}
-     else:
-          data={'msg':'Este tipo de precursor no tiene habilitada esta opcion'}
+                                   if mesFin==13:
+                                        mesFin+=1
+                                        yearFin+=1
+                         for x in (arrayYear(p.mesIni, p.yearIni, mesFin, yearFin, normalY)):
+                              y.append(x)
+                    data={'years':quitarRep(y)}
+               else:
+                    data={'msg':"Esta persona nunca ha sido precursor."}
      return HttpResponse(json.dumps(data))
 
-def arrayYear(mesI,yearI,mesF,yearF):
+def arrayYear(mesI,yearI,mesF,yearF, normalY=0):
      years=[]
      intervaloY=yearF-yearI
      for i in range(0, intervaloY+1):
-          if mesI<9:
-               years.append([yearI-1,yearI])
+          if normalY==1:
+               years.append(yearI)
           else:
-               years.append([yearI, yearI+1])
+               if mesI<9:
+                    years.append([yearI-1,yearI])
+               else:
+                    years.append([yearI, yearI+1])
           yearI+=1
-     if mesI<9 and mesF>8:
-          years.append([yearI-1,yearI])
-     elif mesI>8 and mesF<9:
-          years.pop()
+     if normalY==0:
+          if mesI<9 and mesF>8:
+               years.append([yearI-1,yearI])
+          elif mesI>8 and mesF<9:
+               years.pop()
      return years
 
 def quitarRep(arreglo):
