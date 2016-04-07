@@ -38,7 +38,7 @@
 
                 <div class="clearfix"></div>
 
-				<div id="fichaPrecur" class="col-lg-12" style=";margin-top:40px;margin-bottom:30px;"></div>
+				<div id="fichaPrecur" class="col-lg-12" style="display:none;margin-top:40px;margin-bottom:30px;"></div>
 
             </div>
         </div>
@@ -50,10 +50,12 @@
 {% block scripts %}
 
     <script>
+
         $(document).ready(function(){
             $("#id_precur option[value='1']").detach()
-            var ficha = $('#fichaPrecur')
         })
+
+        var ficha = $('#fichaPrecur')
 
         function getPrecur(status){
             $.post("{% url 'secretario:conPrecs' %}",{
@@ -120,11 +122,11 @@
                     $('#periodo option:first').siblings().detach()
 					if ($("#id_precur").val()=="2"){
 						$.each(res.years, function(key, value){
-							$('#periodo').append(new Option(value))
+							$('#periodo').append(new Option(value, value))
 						})
 					}else{
 						$.each(res.years, function(key, value){
-							$('#periodo').append(new Option(""+value[0]+'-'+value[1], ""+value[0]+'-'+value[1]))
+							$('#periodo').append(new Option(value[0]+'-'+value[1], value[0]+'-'+value[1]))
 						})
 					}
                 })
@@ -134,31 +136,33 @@
             }
         })
 
-//        $("#periodo").change(function(){
-//            if( ficha.is(":hidden") ){
-//
-//                if( $(this).val() ){
-//                    ficha.load('../', function(){
-//                        ficha.show( 'blind', 1000 )
-//                    })
-//                };
-//
-//            } else {
-//                if( $(this).val() ){
-//                    ficha.hide('blind', 1000, function(){
-//                        ficha.load('../', function(){
-//                            ficha.show( 'blind', 1000 );
-//                        });
-//                    })
-//                } else {
-//                    ficha.hide('blind', 1000, function(){})
-//                }
-//            }
-//        })
-		
-		$("#periodo").change(function(){
-			$("#fichaPrecur").load("../../historia/precursor/"+this.value)
-		})
+        $("#periodo").change(function(){
+            if( ficha.is(":hidden") ){
+
+                if( $(this).val() ){
+                    year = this.value
+
+                    ficha.load("../../historia/precursor/"+year, function(){
+                        ficha.show( 'blind', 1000 )
+                        $('#AS').html(year)
+                    })
+                };
+
+            } else {
+                if( $(this).val() ){
+                    year = this.value
+
+                    ficha.hide('blind', 1000, function(){
+                        ficha.load("../../historia/precursor/"+year, function(){
+                            ficha.show( 'blind', 1000 )
+                            $('#AS').html(year)
+                        })
+                    })
+                } else {
+                    ficha.hide('blind', 1000, function(){})
+                }
+            }
+        })
 
     </script>
 

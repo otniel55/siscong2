@@ -1,5 +1,4 @@
-{{ ficha }}
-{{ datos }}
+
 <div class="row tabla-top">
     <div class="col-lg-4">
         <div class="content-panel" style="padding:0px;">
@@ -11,17 +10,23 @@
 
             <h3 class="text-center" style="color:#000000">Ultimos Datos Obetenidos</h3>
             <dl class="ficha">
+
                 <dt>Nombre y Apellido:</dt>
-                <dd>Otniel Acevedo</dd>
+                <dd>{{ ficha.nombre }}</dd>
 
                 <dt>Fecha de Inicio:</dt>
-                <dd>2016-04</dd>
+                <dd>{{ ficha.fechaI }}</dd>
 
                 <dt>Fecha de Fin:</dt>
-                <dd>2016-06</dd>
+                <dd>{{ ficha.fechaF }}</dd>
 
-                <dt>Duración:</dt>
-                <dd>2 meses</dd>
+                {% if ficha.duracion == 0 %}
+                    <dt>Duración:</dt>
+                    <dd>Indefinido</dd>
+                {% else %}
+                    <dt>Duración:</dt>
+                    <dd>{{ ficha.duracion }}</dd>
+                {% endif %}
             </dl>
 
         </div>
@@ -31,7 +36,7 @@
         <div class="content-panel">
 
             <h3 class="text-center titlecolor" style="margin-bottom:10px;">
-               Informe de Actividad del Año: <span style="color: darkcyan;">2016</span>
+               Informe de Actividad del Año: <span id="AS" style="color: darkcyan;"></span>
             </h3>
             <section id="no-more-tables" style="margin-top: 20px;">
 
@@ -45,16 +50,27 @@
                         </tr>
                     </thead>
                     <tbody>
+                      {{ datos }}
+                       {% for info in datos %}
                         <tr>
-                            <td class="numeric text-center" data-title="Edad">
+                            <td class="numeric text-center" data-title="Fecha">
+                                {{ info.fecha|date:"F" }}
                             </td>
-                            <td class="numeric text-center bau" data-title="Fecha de Bautismo">
+                            <td class="numeric text-center" data-title="Horas Requeridas">
+                                {{ info.horasR }}
                             </td>
-                            <td class="numeric" data-title="Grupo Asignado" >
+                            <td class="numeric text-center" data-title="Horas Informadas">
+                                {{ info.horasI }}
                             </td>
-                            <td class="numeric estado"  data-title="Estado" style="width:8%; background-color:#09B20F">
-                            </td>
+                            {% if info.obj == 1 %}
+                                <td class="numeric"  data-title="Objetivo" style="width:8%; background-color:#09B20F">
+                                </td>
+                            {% else %}
+                                <td class="numeric"  data-title="Objetivo" style="width:8%; background-color:#af0000">
+                                </td>
+                            {% endif %}
                         </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </section>
