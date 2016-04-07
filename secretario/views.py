@@ -105,14 +105,18 @@ def conPubs(request):
      pubs=pubs.values()
      return render(request, 'conPubs.html',{'pub':pubs,'msg':msg})
 
+def getDiferenciaMes(mesI, yearI, mesF, yearF):
+     if yearF==yearI:
+          meses=(mesF-1)-mesI
+     else:
+          mesYear=(yearF-yearI)*12
+          mesYear=mesYear-mesI
+          meses=mesYear+(mesF-1)
+     return meses
+
 def obtenerStatus(mes, year):
      hoy=datetime.date.today()
-     if hoy.year==year:
-          meses=(hoy.month-1)-mes
-     else:
-          mesYear=(hoy.year-year)*12
-          mesYear=mesYear-mes
-          meses=mesYear+(hoy.month-1)
+     meses=getDiferenciaMes(mes,year,hoy.month,hoy.year)
      if meses<1:
           meses=0
           status=0
@@ -367,6 +371,7 @@ def conPrecs(request):
      cont=0
      precs={}
      prec=int(request.POST['precur'])
+     request.session['precur']=prec
      status=int(request.POST['status'])
      if status==1:
           status=True
@@ -395,65 +400,68 @@ def conPrecs(request):
                data={'msg':'No hay ningun registro de este tipo de precursor'}
      return HttpResponse(json.dumps(data))
 
-def historiaPrec(request, pub, year, tipo):
-     if tipo==3 or tipo==4:
-          yearI=year[0:4]
-          yearF=year[5:]
+def historiaPrec(request, year):
+     ficha={'on':0}
+     data={}
      cont=0
-     datosp={}
+     mesPrecur=[]
+     hoy=datetime.date.today()
+     prec=request.session['precur']
+     pub=request.session['pubprec']
      try:
-          p=Publicador.objects.get(pk=pub)
+          Publicador.objects.get(pk=pub)
      except(KeyError, Publicador.DoesNotExist):
-          datosp={'msg':'Publicador no existe'}
+          data={'msg':"Publicador no registrado en el sistema"}
+          pg="tarjetaPrecAux.html"
      else:
-          try:
-               Precursor.objects.get(pk=tipo)
-          except(KeyError, Precursor.DoesNotExist):
-               datosp={'msg':"tipo de precursorado no existe"}
-          else:
-               if tipo==1 or tipo==2:
-                    precur=PubPrecursor.obejects.filter(FKpub=pub, FKprecursor=tipo).order_by('-yearIni', '-mesIni')
-               else:
-                    precur=PubPrecursor.obejects.filter(FKpub=pub, FKprecursor=tipo, yearIni=year).order_by('-mesIni')
-               if len(precur)>0:
-                    for i in precur:
-                         mes=i.mesIni
-                         year=i.yearIni
-                         duracion=i.duracion
+          if prec==2 or prec==1:
+               pg="tarjetaPrecAux.html"
+               p=PubPrecursor.objects.filter(Q(FKprecursor=2) | Q(FKprecursor=1), FKpub=pub, yearIni=year).order_by("-mesIni")
+               if len(p)>0:
+                    if p[0].duracion==0:
+                         FechaF="Realizando hasta la actualidad"
+                         duracion=getDiferenciaMes(p[0].mesIni, p[0].yearIni, hoy.month,hoy.year)+1
+                    else:
+                         FechaF=getFechaFin(p[0].mesIni, p[0].yearIni, p[0].duracion)
+                         FechaF=str(FechaF[0])+"-"+str(FechaF[1])
+                         duracion=p[0].duracion
+                    ficha={'nombre':p[0].FKpub.nombre+" "+p[0].FKpub.apellido, 'fechaI':str(p[0].mesIni)+"-"+str(p[0].yearIni), 'fechaF':FechaF, 'duracion':duracion}
+                    for precu in p:
+                         m=precu.mesIni
+                         y=precu.yearIni
                          while duracion>0:
-                              status=2
-                              try:
-                                   inf=Informe.objects.get(FKpub=pub, mes=mes, year=year)
-                              except(KeyError, Informe.DoesNotExist):
-                                   h="No informo"
-                              else:
-                                   h=inf.horas
-                                   if h>=i.FKprecursor.horas:
-                                        status=1
-                              mes+=1
-                              if mes==13:
-                                   mes=1
-                                   year+=1
+                              mesPrecur.append([m, y, precu.FKprecursor.horas])
+                              m+=1
+                              if m==13:
+                                   m=1
+                                   y+=1
                               duracion-=1
-                              if tipo==1 or tipo==2:
-                                   datosp[cont]={'tipoPrecur':i.FKprecursor.nombre, 'horasExigidas': i.FKprecursor.horas, 'horasHechas':h}
+                    for f in mesPrecur:
+                         try:
+                              inf=Informe.objects.get(FKpub=pub, mes=f[0], year=f[1])
+                         except(KeyError, Informe.DoesNotExist):
+                              data[cont]={'msg':"No informo en la fehcha:"+str(f[0])+"-"+str(f[1])}
+                         else:
+                              if inf.horas>=f[2]:
+                                   obj=1
                               else:
-                                   if h!="No informo":
-                                        datosp[cont]={'mes':inf.mes, 'horas':inf.horas, 'publicaciones':inf.publicaciones, 'videos':inf.videos, 'revisitas':inf.revisitas, 'estudios': inf.estudios}
-                                   else:
-                                        datosp[cont]={'msg':h}
-                              cont+=1
-                              datosp=datosp.values()
+                                   obj=0
+                              data[cont]={'fecha':str(f[0])+"-"+str(f[1]), 'horasR':f[2], 'horasI':inf.horas, 'obj':obj}
+                         cont+=1
+                    data=data.values()
                else:
-                    datosp={'msg':"Esta persona no ha realizado el precursorado en ese lapso de tiempo o nunca ha sido precursor."}
-     return render(request, "tarjetaPrec.html", datosp)
+                    data={'msg':"Esta persona no ha hecho el precursorado en el anio "+year}
+          else:
+               pg=pg="tarjetaPrecReg.html"
+     return render(request, pg, {'ficha':ficha, 'datos':data})
 
 def yearServicio(request):
      normalY=0
      y=[]
      data={}
      pub=int(request.POST['pub'])
-     prec=int(request.POST['prec'])
+     request.session['pubprec']=pub
+     prec=request.session['precur']
      try:
           Precursor.objects.get(pk=prec)
      except(KeyError, Precursor.DoesNotExist):
@@ -475,19 +483,24 @@ def yearServicio(request):
                               yearFin=datetime.date.today().year
                               mesFin=datetime.date.today().month
                          else:
-                              mesFin=p.mesIni
-                              yearFin=p.yearIni
-                              for i in range(1,p.duracion):
-                                   mesFin+=1
-                                   if mesFin==13:
-                                        mesFin+=1
-                                        yearFin+=1
+                              fFin=getFechaFin(p.mesIni, p.yearIni, p.duracion)
+                              mesFin=fFin[0]
+                              yearFin=fFin[1]
                          for x in (arrayYear(p.mesIni, p.yearIni, mesFin, yearFin, normalY)):
                               y.append(x)
                     data={'years':quitarRep(y)}
                else:
                     data={'msg':"Esta persona nunca ha sido precursor."}
      return HttpResponse(json.dumps(data))
+
+def getFechaFin(mesI, yearI, duracion):
+     for i in range(1, duracion):
+          mesI+=1
+          if mesI==13:
+               mesI+=1
+               yearI+=1
+     fecha=[mesI, yearI]
+     return fecha
 
 def arrayYear(mesI,yearI,mesF,yearF, normalY=0):
      years=[]

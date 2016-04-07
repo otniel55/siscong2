@@ -38,7 +38,7 @@
 
                 <div class="clearfix"></div>
 
-				<div id="fichaPrecur" class="col-lg-12" style="display:none;margin-top:40px;margin-bottom:30px;"></div>
+				<div id="fichaPrecur" class="col-lg-12" style=";margin-top:40px;margin-bottom:30px;"></div>
 
             </div>
         </div>
@@ -63,7 +63,6 @@
             })
             .success(function(res){
                 res = JSON.parse(res)
-
                 $('#precur option:first').siblings().detach()
                 $('#precur').removeAttr('disabled')
 
@@ -112,7 +111,6 @@
         $("#precur").change(function(){
             if ( $(this).val() ){
                 $.post("{% url 'secretario:yearServicio' %}",{
-                    'prec': $("#id_precur").val(),
                     'pub': $(this).val(),
                     csrfmiddlewaretoken:'{{ csrf_token }}'
                 })
@@ -120,10 +118,15 @@
                     res = JSON.parse(res)
                     $('#periodo').removeAttr('disabled')
                     $('#periodo option:first').siblings().detach()
-
-                    $.each(res.years, function(key, value){
-                        $('#periodo').append(new Option(""+value[0]+'-'+value[1], ""+value[0]+'-'+value[1]))
-                    })
+					if ($("#id_precur").val()=="2"){
+						$.each(res.years, function(key, value){
+							$('#periodo').append(new Option(value))
+						})
+					}else{
+						$.each(res.years, function(key, value){
+							$('#periodo').append(new Option(""+value[0]+'-'+value[1], ""+value[0]+'-'+value[1]))
+						})
+					}
                 })
             } else {
                 $('#periodo').attr('disabled', true)
@@ -131,27 +134,31 @@
             }
         })
 
-        $("#periodo").change(function(){
-            if( ficha.is(":hidden") ){
-
-                if( $(this).val() ){
-                    ficha.load('../', function(){
-                        ficha.show( 'blind', 1000 )
-                    })
-                };
-
-            } else {
-                if( $(this).val() ){
-                    ficha.hide('blind', 1000, function(){
-                        ficha.load('../', function(){
-                            ficha.show( 'blind', 1000 );
-                        });
-                    })
-                } else {
-                    ficha.hide('blind', 1000, function(){})
-                }
-            }
-        })
+//        $("#periodo").change(function(){
+//            if( ficha.is(":hidden") ){
+//
+//                if( $(this).val() ){
+//                    ficha.load('../', function(){
+//                        ficha.show( 'blind', 1000 )
+//                    })
+//                };
+//
+//            } else {
+//                if( $(this).val() ){
+//                    ficha.hide('blind', 1000, function(){
+//                        ficha.load('../', function(){
+//                            ficha.show( 'blind', 1000 );
+//                        });
+//                    })
+//                } else {
+//                    ficha.hide('blind', 1000, function(){})
+//                }
+//            }
+//        })
+		
+		$("#periodo").change(function(){
+			$("#fichaPrecur").load("../../historia/precursor/"+this.value)
+		})
 
     </script>
 
