@@ -383,16 +383,17 @@ def conPrecs(request):
           data={'msg':"Precursorado no existe"}
      else:
           if status:
-               p=Publicador.objects.filter(pubprecursor__FKprecursor=prec, pubprecursor__status=status)
+               if prec==2 or prec==1:
+                    p=Publicador.objects.filter(Q(pubprecursor__FKprecursor=1) | Q(pubprecursor__FKprecursor=2), pubprecursor__status=status)
+               else:
+                    p=Publicador.objects.filter(pubprecursor__FKprecursor=prec, pubprecursor__status=status)
           else:
-               p=Publicador.objects.filter(pubprecursor__FKprecursor=prec, pubprecursor__status=status).exclude(pubprecursor__status=not status)
+               if prec==2 or prec==1:
+                    p=Publicador.objects.filter(Q(pubprecursor__FKprecursor=1) | Q(pubprecursor__FKprecursor=2), pubprecursor__status=status).exclude(pubprecursor__status=not status)
+               else:
+                    p=Publicador.objects.filter(pubprecursor__FKprecursor=prec, pubprecursor__status=status).exclude(pubprecursor__status=not status)
           if len(p)>0:
                for i in p:
-                    if prec==3 or prec==4:
-                         pubprec=PubPrecursor.objects.filter(FKpub=i.pk)
-                         for x in pubprec:
-                              cont+=1
-                              years.append(x.yearIni)
                     precs[cont]={'pk':i.pk, 'nombre':i.nombre+" "+i.apellido}
                     cont+=1
                data = {'p':precs}
@@ -451,8 +452,12 @@ def historiaPrec(request, year):
                     data=data.values()
                else:
                     data={'msg':"Esta persona no ha hecho el precursorado en el anio "+year}
-          else:
+                    p=PubPrecursor.objects.filter(Q(yearIni=year[0:4]) | Q(yearIni=year[5:]) ,FKprecursor=prec, FKpub=pub).order_by("-yearIni", "-mesIni")
+
+          elif prec==1 or prec==2:
                pg=pg="tarjetaPrecReg.html"
+
+
      return render(request, pg, {'ficha':ficha, 'datos':data})
 
 def yearServicio(request):
