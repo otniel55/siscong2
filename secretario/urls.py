@@ -28,6 +28,6 @@ urlpatterns = [
     url(r'^modPub/$', views.modPub, name='modPub'),
     url(r'^consultar/Precursor/$', views.conPrec, name='conPrec'),
     url(r'^conPrecs/$', views.conPrecs, name='conPrecs'),
-    url(r'^historia/precursor/(?P<year>[0-9]+)/$', views.historiaPrec, name='historiaPrec'),
+    url(r'^historia/precursor/(?P<year>[a-zA-Z0-9]+)/$', views.historiaPrec, name='historiaPrec'),
     url(r'^conYear/$', views.yearServicio, name='yearServicio'),
 ]

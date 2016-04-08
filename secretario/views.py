@@ -402,63 +402,163 @@ def conPrecs(request):
      return HttpResponse(json.dumps(data))
 
 def historiaPrec(request, year):
+     cont=0
+     precurTrue=[]
+     entrar=False
      ficha={'on':0}
      data={}
-     cont=0
      mesPrecur=[]
      hoy=datetime.date.today()
      prec=request.session['precur']
      pub=request.session['pubprec']
-     try:
-          Publicador.objects.get(pk=pub)
-     except(KeyError, Publicador.DoesNotExist):
-          data={'msg':"Publicador no registrado en el sistema"}
+     if prec==2 or prec==1:
           pg="tarjetaPrecAux.html"
+          entrar=True
+          iniM=1
+          iniY=int(year)
+          finM=12
+          finY=int(year)
+     elif prec==3 or prec==4:
+          pg="tarjetaPrecReg.html"
+          entrar=True
+          iniM=9
+          iniY=int(year[0:4])
+          finM=8
+          finY=int(year[4:])
      else:
-          if prec==2 or prec==1:
-               pg="tarjetaPrecAux.html"
-               p=PubPrecursor.objects.filter(Q(FKprecursor=2) | Q(FKprecursor=1), FKpub=pub, yearIni=year).order_by("-mesIni")
+          pg="tarjetaPrecAux.html"
+          data={'msg':"Tipo de precursorado no existe"}
+     if entrar:
+          try:
+               Publicador.objects.get(pk=pub)
+          except(KeyError, Publicador.DoesNotExist):
+               data={'msg': "Publicador(a) no esta registrado en el sistema"}
+          else:
+               if prec==2:
+                    p=PubPrecursor.objects.filter(Q(FKprecursor=1) | Q(FKprecursor=2),FKpub=pub).order_by("-yearIni", "-mesIni")
+               elif prec==3 or prec==4:
+                    p=PubPrecursor.objects.filter(FKpub=pub, FKprecursor=prec).order_by("-yearIni", "-mesIni").order_by("-yearIni", "-mesIni")
                if len(p)>0:
-                    if p[0].duracion==0:
-                         FechaF="Realizando hasta la actualidad"
-                         duracion=getDiferenciaMes(p[0].mesIni, p[0].yearIni, hoy.month,hoy.year)+1
-                    else:
-                         FechaF=getFechaFin(p[0].mesIni, p[0].yearIni, p[0].duracion)
-                         FechaF=str(FechaF[0])+"-"+str(FechaF[1])
-                         duracion=p[0].duracion
-                    ficha={'nombre':p[0].FKpub.nombre+" "+p[0].FKpub.apellido, 'fechaI':str(p[0].mesIni)+"-"+str(p[0].yearIni), 'fechaF':FechaF, 'duracion':duracion}
-                    for precu in p:
-                         m=precu.mesIni
-                         y=precu.yearIni
-                         while duracion>0:
-                              mesPrecur.append([m, y, precu.FKprecursor.horas])
-                              m+=1
-                              if m==13:
-                                   m=1
-                                   y+=1
-                              duracion-=1
-                    for f in mesPrecur:
-                         try:
-                              inf=Informe.objects.get(FKpub=pub, mes=f[0], year=f[1])
-                         except(KeyError, Informe.DoesNotExist):
-                              data[cont]={'msg':"No informo en la fehcha:"+str(f[0])+"-"+str(f[1])}
-                         else:
-                              if inf.horas>=f[2]:
-                                   obj=1
+                    for prec in p:
+                         if cont==0:
+                              if prec.duracion==0:
+                                   fEnd="Realizando Precursorado hasta la actualidad"
+                                   fMonth=hoy.month
+                                   fYear=hoy.year
+                                   duracion=getDiferenciaMes(prec.mesIni,prec.yearIni,fMonth,fYear)+1
                               else:
-                                   obj=0
-                              data[cont]={'fecha':str(f[0])+"-"+str(f[1]), 'horasR':f[2], 'horasI':inf.horas, 'obj':obj}
+                                   fEnd=getFechaFin(prec.mesIni,prec.yearIni,prec.duracion)
+                                   fMonth=fEnd[0]
+                                   fYear=fEnd[1]
+                                   fEnd=str(fMonth)+"-"+str(fYear)
+                                   duracion=prec.duracion
+                              nombre=prec.FKpub.nombre+" "+prec.FKpub.apellido
+                              fechaI=str(prec.mesIni)+"-"+str(prec.yearIni)
+                              if request.session['precur']==1 or request.session['precur']==2:
+                                   ficha={'nombre':nombre, 'fechaI':fechaI, 'fechaF':fEnd, 'duracion':duracion}
+                              else:
+                                   duracion=getTiempo(p)
+                                   ficha={'nombre':nombre, 'fechaI': fechaI, 'fechaBau':prec.FKpub.fechaBau, 'duracion':duracion}
+                         if prec.duracion==0:
+                              mesFin=hoy.month
+                              yearFin=hoy.year
+                         else:
+                              fechaFin=getFechaFin(prec.mesIni, prec.yearIni, prec.duracion)
+                              mesFin=fechaFin[0]
+                              yearFin=fechaFin[1]
+                              lol=str(mesFin)+"-"+str(yearFin)
+                         duracion=getDiferenciaMes(iniM,iniY,mesFin,yearFin)
+                         duracionIni=getDiferenciaMes(prec.mesIni,prec.yearIni,finM,finY)
+                         if duracion > -2 and duracionIni > -2:
+                              precurTrue.append(prec)
                          cont+=1
-                    data=data.values()
+                    cont=0
+                    if len(precurTrue)>0:
+                         for pre in precurTrue:
+                              if cont==0:
+                                   if pre.duracion==0:
+                                        fEnd="Realizando Precursorado hasta la actualidad"
+                                        fMonth=hoy.month
+                                        fYear=hoy.year
+                                        duracion=getDiferenciaMes(pre.mesIni,pre.yearIni,fMonth,fYear)+1
+                                   else:
+                                        fEnd=getFechaFin(pre.mesIni,pre.yearIni,pre.duracion)
+                                        fMonth=fEnd[0]
+                                        fYear=fEnd[1]
+                                        fEnd=str(fMonth)+"-"+str(fYear)
+                                        duracion=pre.duracion
+                              else:
+                                   fEnd=getFechaFin(pre.mesIni,pre.yearIni,pre.duracion)
+                                   fMonth=fEnd[0]
+                                   fYear=fEnd[1]
+                                   duracion=pre.duracion
+                              fFin=getDiferenciaMes(finM, finY, fMonth, fYear)
+                              if fFin > -2:
+                                   fMonth=finM
+                                   fYear=finY
+                              iMonth=pre.mesIni
+                              iYear=pre.yearIni
+                              fIni=getDiferenciaMes(iniM,iniY,iMonth,iYear)
+                              if fIni < -1:
+                                  iMonth=iniM
+                                  iYear=iniY
+                              while duracion>0:
+                                   mesPrecur.append([iMonth, iYear, pre.FKprecursor.horas])
+                                   iMonth+=1
+                                   if iMonth==13:
+                                        iMonth=1
+                                        iYear+=1
+                                   duracion-=1
+                              cont+=1
+                         cont=0
+                         for f in mesPrecur:
+                              try:
+                                   inf=Informe.objects.get(FKpub=pub, mes=f[0], year=f[1])
+                              except(KeyError, Informe.DoesNotExist):
+                                   data[cont]={'msg':"No informo en la fecha "+str(f[0])+"-"+str(f[1])}
+                              else:
+                                   if inf.horas>=f[2]:
+                                        obj=1
+                                   else:
+                                        obj=0
+                                   data[cont]={'fecha':datetime.date(f[1],f[0],15), 'horasR':f[2], 'horasI':inf.horas, 'obj':obj}
+                              cont+=1
+                         data=data.values()
+                    else:
+                         data={'msg':"Esta persona no fue precursor en el periodo "+year}
                else:
-                    data={'msg':"Esta persona no ha hecho el precursorado en el anio "+year}
-                    p=PubPrecursor.objects.filter(Q(yearIni=year[0:4]) | Q(yearIni=year[5:]) ,FKprecursor=prec, FKpub=pub).order_by("-yearIni", "-mesIni")
-
-          elif prec==1 or prec==2:
-               pg=pg="tarjetaPrecReg.html"
-
-
+                    data={'msg':"Este Publicador nunca ha sido precursor"}
      return render(request, pg, {'ficha':ficha, 'datos':data})
+
+def getTiempo(precurs):
+     tiempo=""
+     mes=0
+     year=0
+     duracion=0
+     hoy=datetime.date.today()
+     for p in precurs:
+          if p.duracion==0:
+               dur=getDiferenciaMes(p.mesIni, p.yearIni, hoy.month, hoy.year)+1
+          else:
+               dur=p.duracion
+          duracion+=dur
+     for i in range(0, duracion):
+          mes+=1
+          if mes==12:
+               year+=1
+               mes=0
+     if year>0:
+          tiempo=str(year)+" anio"
+          if year>1:
+               tiempo+="s"
+          if mes>0:
+               tiempo+=" y "
+     if mes>0:
+          tiempo+=str(mes)+" mes"
+          if mes>1:
+               tiempo+="es"
+     return tiempo
+
 
 def yearServicio(request):
      normalY=0
