@@ -437,7 +437,7 @@ def historiaPrec(request, year):
                if prec==2:
                     p=PubPrecursor.objects.filter(Q(FKprecursor=1) | Q(FKprecursor=2),FKpub=pub).order_by("-yearIni", "-mesIni")
                elif prec==3 or prec==4:
-                    p=PubPrecursor.objects.filter(FKpub=pub, FKprecursor=prec).order_by("-yearIni", "-mesIni").order_by("-yearIni", "-mesIni")
+                    p=PubPrecursor.objects.filter(FKpub=pub, FKprecursor=prec).order_by("-yearIni", "-mesIni")
                if len(p)>0:
                     for prec in p:
                          if cont==0:
@@ -477,7 +477,6 @@ def historiaPrec(request, year):
                          for pre in precurTrue:
                               if cont==0:
                                    if pre.duracion==0:
-                                        fEnd="Realizando Precursorado hasta la actualidad"
                                         fMonth=hoy.month
                                         fYear=hoy.year
                                         duracion=getDiferenciaMes(pre.mesIni,pre.yearIni,fMonth,fYear)+1
@@ -485,7 +484,6 @@ def historiaPrec(request, year):
                                         fEnd=getFechaFin(pre.mesIni,pre.yearIni,pre.duracion)
                                         fMonth=fEnd[0]
                                         fYear=fEnd[1]
-                                        fEnd=str(fMonth)+"-"+str(fYear)
                                         duracion=pre.duracion
                               else:
                                    fEnd=getFechaFin(pre.mesIni,pre.yearIni,pre.duracion)
@@ -502,26 +500,40 @@ def historiaPrec(request, year):
                               if fIni < -1:
                                   iMonth=iniM
                                   iYear=iniY
+                              duracion=getDiferenciaMes(iMonth,iYear,fMonth,fYear)+2
                               while duracion>0:
                                    mesPrecur.append([iMonth, iYear, pre.FKprecursor.horas])
+                                   if iMonth==hoy.month and iYear==hoy.year:
+                                        mesPrecur.pop()
                                    iMonth+=1
                                    if iMonth==13:
                                         iMonth=1
                                         iYear+=1
                                    duracion-=1
+                              mesPrecur.sort()
                               cont+=1
                          cont=0
+                         acum=0
                          for f in mesPrecur:
+                              horasT=len(mesPrecur)*f[2]
                               try:
                                    inf=Informe.objects.get(FKpub=pub, mes=f[0], year=f[1])
                               except(KeyError, Informe.DoesNotExist):
                                    data[cont]={'msg':"No informo en la fecha "+str(f[0])+"-"+str(f[1])}
                               else:
-                                   if inf.horas>=f[2]:
-                                        obj=1
+                                   if request.session['precur'] in (1,2):
+                                        if inf.horas>=f[2]:
+                                             obj=1
+                                        else:
+                                             obj=0
+                                        data[cont]={'fecha':datetime.date(f[1],f[0],15), 'horasR':f[2], 'horasI':inf.horas, 'obj':obj}
                                    else:
-                                        obj=0
-                                   data[cont]={'fecha':datetime.date(f[1],f[0],15), 'horasR':f[2], 'horasI':inf.horas, 'obj':obj}
+                                        acum+=inf.horas
+                                        if acum>=f[2]*(cont+1):
+                                             obj=1
+                                        else:
+                                             obj=0
+                                        data[cont]={'fecha':datetime.date(f[1],f[0],15), 'horasI':inf.horas, 'horasA':acum, 'horasT':horasT, 'horasRes':horasT-acum, 'obj':obj}
                               cont+=1
                          data=data.values()
                     else:
