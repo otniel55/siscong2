@@ -1,14 +1,13 @@
 
 <div class="row tabla-top">
     <div class="col-lg-4">
-        <div class="content-panel" style="padding:0px;">
+        <div id="fichaPre" class="content-panel" style="padding:0px;">
             <div class="FichaHe">
                 <p class="text-center" style="margin:0px;padding:0px;font-size:30px;">
                     <span  style="color:white;">Ficha de Precursor</span>
                 </p>
             </div>
 
-            <h3 class="text-center" style="color:#000000">Ultimos Datos Obetenidos</h3>
             <dl class="ficha">
                 <dt>Nombre y Apellido:</dt>
                 <dd>{{ ficha.nombre }}</dd>
@@ -30,7 +29,7 @@
         <div class="content-panel">
 
             <h3 class="text-center titlecolor" style="margin-bottom:10px;">
-               Informe de Actividad del Año de Servicio:{{ datos }}<span style="color: darkcyan;">2015-2016</span>
+               Informe de Actividad del Año de Servicio: <span style="color: darkcyan;">2015-2016</span>
             </h3>
 
             <section id="no-more-tables" style="margin-top: 20px;">
@@ -41,35 +40,43 @@
                             <th class="numeric text-center">Fecha</th>
                             <th class="numeric text-center">Horas Realizadas</th>
                             <th class="numeric text-center">Horas Acumuladas</th>
-                            <th class="numeric text-center">Total de Horas</th>
-                            <th class="numeric text-center">Total Restante</th>
+                            <th class="numeric text-center">Horas Restante</th>
                             <th class="numeric text-center" style="width:8%;">Objetivo</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td class="numeric nombre" data-title="Nombre y Apellido">
+                        {% for info in datos %}
+                            <tr>
+                                <td class="numeric text-center" data-title="Fecha">
+                                    {{ info.fecha|date:"F" }}
+                                </td>
+                                <td class="numeric text-center" data-title="Horas Realizadas">
+                                    {{ info.horasI }}
+                                </td>
+                                <td class="numeric text-center" data-title="Horas Acumuladas">
+                                    {{ info.horasA }}
+                                </td>
+                                <td class="numeric text-center" data-title="Horas Restante" >
+                                    {{ info.horasRes }}
+                                </td>
 
-                            </td>
-                            <td class="numeric text-center" data-title="Edad">
-
-                            </td>
-                            <td class="numeric text-center bau" data-title="Fecha de Bautismo">
-
-                            </td>
-                            <td class="numeric" data-title="Grupo Asignado" >
-
-                            </td>
-
-                            <td class="numeric estado"  data-title="Estado">
-                            </td>
-
-                            <td class="numeric estado"  data-title="Estado">
-                            </td>
-                        </tr>
+                                {% if info.obj == 1 %}
+                                    <td class="numeric"  data-title="Objetivo" style="width:8%; background-color:#09B20F">
+                                    </td>
+                                {% elif info.obj == 2 %}
+                                    <td class="numeric"  data-title="Objetivo" style="width:8%; background-color:#669999">
+                                    </td>
+                                {% else %}
+                                    <td class="numeric"  data-title="Objetivo" style="width:8%; background-color:#af0000">
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </section>
         </div>
     </div>
 </div>
+
+{% include 'modalBajaPrecur.html' %}

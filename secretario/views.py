@@ -502,7 +502,7 @@ def historiaPrec(request, year):
                                   iYear=iniY
                               duracion=getDiferenciaMes(iMonth,iYear,fMonth,fYear)+2
                               while duracion>0:
-                                   mesPrecur.append([iMonth, iYear, pre.FKprecursor.horas])
+                                   mesPrecur.append([iYear, iMonth, pre.FKprecursor.horas, pre.duracion])
                                    if iMonth==hoy.month and iYear==hoy.year:
                                         mesPrecur.pop()
                                    iMonth+=1
@@ -512,29 +512,44 @@ def historiaPrec(request, year):
                                    duracion-=1
                               mesPrecur.sort()
                               cont+=1
-                         cont=0
                          acum=0
-                         for f in mesPrecur:
-                              horasT=len(mesPrecur)*f[2]
-                              try:
-                                   inf=Informe.objects.get(FKpub=pub, mes=f[0], year=f[1])
-                              except(KeyError, Informe.DoesNotExist):
-                                   data[cont]={'msg':"No informo en la fecha "+str(f[0])+"-"+str(f[1])}
-                              else:
-                                   if request.session['precur'] in (1,2):
-                                        if inf.horas>=f[2]:
-                                             obj=1
+                         cont=0
+                         if len(mesPrecur)>0:
+                              for f in mesPrecur:
+                                   if cont==0:
+                                        if f[3]==0:
+                                             horasT=(12-(f[1]-iniM))*f[2]
                                         else:
-                                             obj=0
-                                        data[cont]={'fecha':datetime.date(f[1],f[0],15), 'horasR':f[2], 'horasI':inf.horas, 'obj':obj}
+                                             horasT=len(mesPrecur)*f[2]
+                                   try:
+                                        inf=Informe.objects.get(FKpub=pub, mes=f[1], year=f[0])
+                                   except(KeyError, Informe.DoesNotExist):
+                                        if request.session['precur'] in (1, 2):
+                                             data[cont]={'fecha':datetime.date(f[0],f[1],15), 'horasR':f[2], 'horasI':0, 'obj':0}
+                                        else:
+                                             data[cont] = {'fecha': datetime.date(f[0], f[1], 15), 'horasI':0, 'horasA':acum, 'horasRes':horasT-acum, 'obj':0}
                                    else:
-                                        acum+=inf.horas
-                                        if acum>=f[2]*(cont+1):
-                                             obj=1
+                                        if request.session['precur'] in (1,2):
+                                             if inf.horas>=f[2]:
+                                                  obj=1
+                                             else:
+                                                  obj=0
+                                             data[cont]={'fecha':datetime.date(f[0],f[1],15), 'horasR':f[2], 'horasI':inf.horas, 'obj':obj}
                                         else:
-                                             obj=0
-                                        data[cont]={'fecha':datetime.date(f[1],f[0],15), 'horasI':inf.horas, 'horasA':acum, 'horasT':horasT, 'horasRes':horasT-acum, 'obj':obj}
-                              cont+=1
+                                             acum+=inf.horas
+                                             if acum>=f[2]*(cont):
+                                                  obj=1
+                                             else:
+                                                  obj=0
+                                             data[cont]={'fecha':datetime.date(f[0],f[1],15), 'horasI':inf.horas, 'horasA':acum, 'horasRes':horasT-acum, 'obj':obj}
+                                   cont=cont+1
+                         else:
+                              precursor=Precursor.objects.get(pk=request.session['precur'])
+                              horasR=precursor.horas
+                              if request.session['precur'] in (1, 2):
+                                   data[cont] = {'fecha': datetime.date(hoy.year, hoy.month, 15), 'horasR': horasR, 'horasI': "En curso",'obj': 2}
+                              else:
+                                   data[cont] = {'fecha': datetime.date(hoy.year, hoy.month, 15), 'horasI': "En curso", 'horasA': 0,'horasRes': horasR*12, 'obj': 2}
                          data=data.values()
                     else:
                          data={'msg':"Esta persona no fue precursor en el periodo "+year}
@@ -578,7 +593,7 @@ def yearServicio(request):
      data={}
      pub=int(request.POST['pub'])
      request.session['pubprec']=pub
-     prec=request.session['precur']
+     prec=int(request.session['precur'])
      try:
           Precursor.objects.get(pk=prec)
      except(KeyError, Precursor.DoesNotExist):
@@ -614,7 +629,7 @@ def getFechaFin(mesI, yearI, duracion):
      for i in range(1, duracion):
           mesI+=1
           if mesI==13:
-               mesI+=1
+               mesI=1
                yearI+=1
      fecha=[mesI, yearI]
      return fecha
@@ -651,3 +666,29 @@ def quitarRep(arreglo):
           cont+=1
           cont2=0
      return arreglo
+
+def darBaja(request):
+     hoy=datetime.date.today()
+     data={}
+     try:
+          pub=request.session['pubprec']
+     except(KeyError):
+          data={'msg':"Seleccione un Precursor"}
+     else:
+          try:
+               Publicador.objects.get(pk=pub)
+          except(KeyError, Publicador.DoesNotExist):
+               data={'msg':"Publicador no esta esta registrado en el sistema"}
+          else:
+               try:
+                    precur=PubPrecursor.objects.get(FKpub=pub, status=True)
+               except(KeyError, PubPrecursor.DoesNotExist):
+                    data={'msg':"Precursor no esta activo o nunca fue precursor"}
+               else:
+                    precur.status=False
+                    precur.duracion=getDiferenciaMes(precur.mesIni, precur.yearIni, hoy.month, hoy.year)+1
+                    precur.save()
+                    data={'msg':"Precursor dado de baja"}
+          return HttpResponse(json.dumps(data))
+
+

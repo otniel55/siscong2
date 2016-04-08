@@ -1,14 +1,13 @@
 
 <div class="row tabla-top">
     <div class="col-lg-4">
-        <div class="content-panel" style="padding:0px;">
+        <div id="fichaPre" class="content-panel" style="padding:0px;">
             <div class="FichaHe">
                 <p class="text-center" style="margin:0px;padding:0px;font-size:30px;">
                     <span  style="color:white;">Ficha de Precursor</span>
                 </p>
             </div>
 
-            <h3 class="text-center" style="color:#000000">Ultimos Datos Obetenidos</h3>
             <dl class="ficha">
                 <dt>Nombre y Apellido:</dt>
                 <dd>{{ ficha.nombre }}</dd>
@@ -49,26 +48,28 @@
                         </tr>
                     </thead>
                     <tbody>
-                      {{ datos }}
                        {% for info in datos %}
-                        <tr>
-                            <td class="numeric text-center" data-title="Fecha">
-                                {{ info.fecha|date:"F" }}
-                            </td>
-                            <td class="numeric text-center" data-title="Horas Requeridas">
-                                {{ info.horasR }}
-                            </td>
-                            <td class="numeric text-center" data-title="Horas Informadas">
-                                {{ info.horasI }}
-                            </td>
-                            {% if info.obj == 1 %}
-                                <td class="numeric"  data-title="Objetivo" style="width:8%; background-color:#09B20F">
+                            <tr>
+                                <td class="numeric text-center" data-title="Fecha">
+                                    {{ info.fecha|date:"F" }}
                                 </td>
-                            {% else %}
-                                <td class="numeric"  data-title="Objetivo" style="width:8%; background-color:#af0000">
+                                <td class="numeric text-center" data-title="Horas Requeridas">
+                                    {{ info.horasR }}
                                 </td>
-                            {% endif %}
-                        </tr>
+                                <td class="numeric text-center" data-title="Horas Informadas">
+                                    {{ info.horasI }}
+                                </td>
+                                {% if info.obj == 1 %}
+                                    <td class="numeric"  data-title="Objetivo" style="width:8%; background-color:#09B20F">
+                                    </td>
+                                {% elif info.obj == 2 %}
+                                    <td class="numeric"  data-title="Objetivo" style="width:8%; background-color:#669999">
+                                    </td>
+                                {% else %}
+                                    <td class="numeric"  data-title="Objetivo" style="width:8%; background-color:#af0000">
+                                    </td>
+                                {% endif %}
+                            </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -76,3 +77,5 @@
         </div>
     </div>
 </div>
+
+{% include 'modalBajaPrecur.html' %}

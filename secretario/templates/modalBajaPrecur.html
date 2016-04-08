@@ -1,0 +1,47 @@
+
+<div class="modal fade" id="Mdlbaja" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header" style="background-color: #9d1818;">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Bajas De Precursor</h4>
+			</div>
+
+			<div class="modal-body">
+				<h4 class="text-center"></h4>
+			</div>
+
+			<div class="modal-footer">
+                <div class="col-xs-6">
+                    <button id="si" class="btn btn-danger" data-dismiss="modal">SI</button>
+                </div>
+			    <div class="col-xs-1">
+                    <button class="btn btn-info" data-dismiss="modal">NO</button>
+                </div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+
+    $('#si').click(function(){
+        $.post("{% url 'secretario:darBaja' %}", {csrfmiddlewaretoken:'{{ csrf_token }}'})
+        .success(function(res){
+            res = JSON.parse(res)
+            console.log(res)
+        })
+    })
+
+    if( status == 1 ){
+        $('#fichaPre').append('<button id="baja" class="btn btn-danger baja" data-toggle="modal" data-target="#Mdlbaja">Dar de Baja</button>')
+
+        $('#baja').click(function(){
+            nom = $('dl.ficha > dd:first').html()
+            $('#Mdlbaja h4:eq(1)').html('Esta Seguro que Desea dar de Baja al Precursor '+nom+'?')
+        })
+    }
+
+
+
+</script>
