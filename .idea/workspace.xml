@@ -5,7 +5,8 @@
       <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/.name" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/secretario/static/css/style.css" afterPath="$PROJECT_DIR$/secretario/static/css/style.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/secretario/templates/conPrecur.html" afterPath="$PROJECT_DIR$/secretario/templates/conPrecur.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/secretario/templates/conPrecur.html"
+              afterPath="$PROJECT_DIR$/secretario/templates/conPrecur.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/secretario/templates/tarjetaPrecAux.html" afterPath="$PROJECT_DIR$/secretario/templates/tarjetaPrecAux.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/secretario/templates/tarjetaPrecReg.html" afterPath="$PROJECT_DIR$/secretario/templates/tarjetaPrecReg.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/secretario/urls.py" afterPath="$PROJECT_DIR$/secretario/urls.py" />
