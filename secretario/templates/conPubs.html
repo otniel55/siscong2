@@ -111,8 +111,8 @@
 														</dl>
 													</div>
 												</td>
-											{% else %}
-												<td class="numeric estado" id="{{x.id}}" data-title="Estado" style="width:8%;background-color: #009999"><!--#669999 color para los q no cumplieron con sus horas-->
+											{% elif x.status ==  3 %}
+												<td class="numeric estado" id="{{x.id}}" data-title="Estado" style="width:8%;background-color: #009999">
 
 													<div style="display: none">
 														<dl>
@@ -124,6 +124,24 @@
 
 															<dt>Conclusiones:</dt>
 															<dd id="dgConclu">Publicador Nuevo</dd>
+														</dl>
+													</div>
+												</td>
+											{% else %}
+												<td class="numeric estado" id="{{x.id}}" data-title="Estado" style="width:8%;background-color: #669999">
+													<div style="display: none">
+														<dl>
+															<dt>Estado:</dt>
+															<dd id="dgEstado">Activo</dd>
+
+															<dt>Fecha del Ultimo Informe:</dt>
+															<dd id="dgFecha">{{ x.fecha }}</dd>
+
+															<dt>Intervalo:</dt>
+															<dd id="dgInt">{{ x.intervalo }}</dd>
+
+															<dt>Conclusiones:</dt>
+															<dd id="dgConclu">No alcanzó el promedio de horas que realizan los publicadores</dd>
 														</dl>
 													</div>
 												</td>

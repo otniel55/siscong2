@@ -79,6 +79,7 @@ def conPub(request):
           return HttpResponse(json.dumps(datos))
 
 def conPubs(request):
+     promInf=[]
      try:
           request.session['msgpub']
      except KeyError:
@@ -96,6 +97,32 @@ def conPubs(request):
                status=obtenerStatus(inf[0].mes, inf[0].year)[0]
                intervalo=obtenerStatus(inf[0].mes, inf[0].year)[1]
                fecha=str(inf[0].mes)+"-"+str(inf[0].year)
+               if status==0:
+                    mesi=inf[0].mes
+                    yeari=inf[0].year
+                    mesi-=1
+                    if mesi==0:
+                         mesi=12
+                         yeari-=1
+                    informes=Informe.objects.filter(mes=mesi, year=yeari)
+                    if len(informes)>0:
+                         for infs in informes:
+                              add=True
+                              pre=PubPrecursor.objects.filter(FKpub=i.pk).order_by("-yearIni", "-mesIni")
+                              if len(pre)>0:
+                                   if pre[0].duracion==0:
+                                        add=False
+                                   else:
+                                        fechaF=getFechaFin(pre[0].mesIni,pre[0].yearIni,pre[0].duracion)
+                                        diferencia=getDiferenciaMes(fechaF[0],fechaF[1],mesi,yeari)
+                                        if diferencia<0:
+                                             add=False
+                              if add:
+                                   promInf.append(infs.horas)
+                         if prom(promInf)>inf[0].horas:
+                              status=4
+                    else:
+                         status=0
           else:
                status=3
                intervalo="Este publicador nunca ha informado"
@@ -104,6 +131,13 @@ def conPubs(request):
           cont=cont+1
      pubs=pubs.values()
      return render(request, 'conPubs.html',{'pub':pubs,'msg':msg})
+
+def prom(nums):
+     acum=0
+     for i in nums:
+          acum+=i
+     acum=acum//len(nums)
+     return acum
 
 def getDiferenciaMes(mesI, yearI, mesF, yearF):
      if yearF==yearI:
@@ -749,6 +783,6 @@ def darBaja(request):
                     precur.duracion=getDiferenciaMes(precur.mesIni, precur.yearIni, hoy.month, hoy.year)+1
                     precur.save()
                     data={'msg':"Precursor dado de baja"}
-          return HttpResponse(json.dumps(data))
+     return HttpResponse(json.dumps(data))
 
 
