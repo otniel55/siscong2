@@ -348,7 +348,7 @@ def modInf(request):
           msg={"msg":"no existe un informe que haya sido registrado en esa fecha"}
      else:
           if inf.horas==horas and inf.revisitas==revisitas and inf.estudios==estudios and inf.publicaciones==publicaciones and inf.videos==videos:
-               msg={"msg":"Usted no ha realizado ningún cambio"}
+               msg={"msg":"Usted no ha realizado ningun cambio"}
           else:
                inf.horas=horas
                inf.revisitas=revisitas

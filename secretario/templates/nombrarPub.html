@@ -335,6 +335,16 @@
                     })   
 				})
                 
+                $('#nombrar td:nth-child(3) > select').change(function(){
+                    if($(this).val() == 3){
+                        hermano = $(this).parent().next()
+                        hermano.children().detach()
+                        hermano.append('<input type="text" placeholder="Nro de Precur" class="form-control" />')
+                    } else {
+                        console.log('feo')
+                    }
+                })
+
                 if ($('#move-left').is(':disabled') && row.length > 0)
                     $('#move-left').removeAttr('disabled')
                 

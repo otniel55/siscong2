@@ -2343,7 +2343,7 @@ label {
     margin-bottom: 30px;
 }
 
-#nombrar select {
+#nombrar select, input[type="text"] {
     font-size: 12px;
     height: 28px;
 }
