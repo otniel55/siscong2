@@ -302,12 +302,18 @@ def regInf(request):
      return HttpResponse(json.dumps(msg))
 
 def tarjeta(request, vista, idPub, y):
+     cont=0
+     inf={}
      p=Publicador.objects.get(pk=idPub)
      request.session['idgrupo'] = p.FKgrupo.pk
-     inf=Informe.objects.filter(year=y, FKpub=idPub).order_by('mes')
-     if len(inf)>0:
+     infs=Informe.objects.filter(year=y, FKpub=idPub).order_by('mes')
+     if len(infs)>0:
           request.session['tarjetaPub']=idPub
           request.session['tarjetaY']=y
+          for i in infs:
+               inf[cont]={'mes':datetime.date(2016,i.mes,4), 'horas':i.horas, 'publicaciones':i.publicaciones, 'videos':i.videos, 'revisitas':i.revisitas, 'estudios':i.estudios}
+               cont+=1
+          inf=inf.values()
           datos={'pub':inf, 'p':p}
      else:
           datos={'vacio':1}
@@ -352,8 +358,6 @@ def modInf(request):
                inf.save()
                msg={"msg":"Datos del informe modificados con exito"}
      HttpResponse(json.dumps(msg))
-
-
 
 def conPubG(request):
      cont=0
