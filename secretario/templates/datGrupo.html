@@ -137,17 +137,17 @@
 	$("#btnMod").click(function(){
 		a=$("#id_auxiliar").val()
 		e=$("#id_encargado").val()
-		if ($.trim(a)!="" && $.trim(e)!=""){
+		//if ($.trim(a)!="" && $.trim(e)!=""){
 			$.post("{% url 'secretario:modGrup' %}", {'id':encargado, 'enc':e, 'aux':a, csrfmiddlewaretoken:'{{ csrf_token }}'}, function(res){
 				res=JSON.parse(res)
 				if (res.on==1){
 					window.location="{% url 'secretario:conGrupo' %}"
-					alert(res.msg)
+					console.log(res.msg)
 				} else {
-					alert(res.msg)
+					console.log(res.msg)
 				}
 			})
-		}
+		//}
 	})
 
 	$("#regInf").click(function(){

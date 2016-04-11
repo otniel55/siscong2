@@ -17,19 +17,43 @@ def registrarGrupo(request):
      form = CrearGrupo()
      return render(request, 'regGrupo.html', {'form': form})
 
+def validarVacio(elements):
+     elemento=[]
+     vacio=True
+     for i in elements.keys():
+          if elements[i].strip()=="":
+               vacio=False
+               elemento.append(i)
+     return [vacio, elemento]
+
 def grupos_registrar(request):
-     _encargado=request.POST['encargado'].upper()
-     _auxiliar=request.POST['auxiliar'].upper()
-     try:
-          verificar = GruposPred.objects.get(encargado=_encargado)
-     except(KeyError, GruposPred.DoesNotExist):
-          grupo=GruposPred(encargado=_encargado, auxiliar=_auxiliar)
-          grupo.save()
-          msg={'msg':"Grupo Registrado con exito"}
+     msg={}
+     validar=validarVacio(request.POST)
+     if validar[0]:
+          _encargado=request.POST['encargado'].upper()
+          _auxiliar=request.POST['auxiliar'].upper()
+          _encargado=_encargado.strip()
+          _auxiliar=_auxiliar.strip()
+          try:
+               verificar = GruposPred.objects.get(encargado=_encargado)
+          except(KeyError, GruposPred.DoesNotExist):
+               grupo=GruposPred(encargado=_encargado, auxiliar=_auxiliar)
+               grupo.save()
+               msg={'msg':"Grupo Registrado con exito"}
+          else:
+               msg = {'msg': "Este encargado se encuentra en otro grupo"}
      else:
-          msg = {'msg': "Este encargado se encuentra en otro grupo"}
+          msg=msgVacio(validar[1])
      return  HttpResponse(json.dumps(msg))
-        
+
+def msgVacio(vacios):
+     msg={}
+     cont=0
+     for i in vacios:
+          msg[cont]={i:"campo vacio"}
+          cont+=1
+     return msg
+
 def conGrupo(request):
      try:
           request.session['idgrupo']
@@ -45,7 +69,6 @@ def conGrupo(request):
                cGrupo = traerGrupo(initial={'Encargado': fkgrupo })
                request.session['idgrupo']=""
                on = 1
-
      return render(request, 'conGrupo.html', {'form': cGrupo, 'onPub': on })
 
 def conGrupoofPubs(request, idGrupo):
@@ -261,18 +284,24 @@ def modPub(request):
      return render(request, 'conPubs.html')
 
 def modGrup(request):
-     _encargado=request.POST['enc']
-     _auxiliar=request.POST['aux']
-     _pk=request.POST['id']
-     try:
-          g=GruposPred.objects.get(pk=_pk)
-     except(KeyError, GruposPred.DoesNotExist):
-          msg={'msg':'Grupo no existe'}
+     validar=validarVacio(request.POST)
+     if validar[0]:
+          _encargado=request.POST['enc'].upper()
+          _auxiliar=request.POST['aux'].upper()
+          _auxiliar=_auxiliar.strip()
+          _encargado=_encargado.strip()
+          _pk=request.POST['id']
+          try:
+               g=GruposPred.objects.get(pk=_pk)
+          except(KeyError, GruposPred.DoesNotExist):
+               msg={'msg':'Grupo no existe'}
+          else:
+               g.encargado=_encargado
+               g.auxiliar=_auxiliar
+               g.save()
+               msg={'msg':'Grupo modificado con exito', 'on':1}
      else:
-          g.encargado=_encargado
-          g.auxiliar=_auxiliar
-          g.save()
-          msg={'msg':'Grupo modificado con exito', 'on':1}
+          msg=msgVacio(validar[1])
      return HttpResponse(json.dumps(msg))
 
 def viewInfo(request):
