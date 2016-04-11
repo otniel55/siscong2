@@ -353,6 +353,11 @@ def NombrarPrecur(request):
                     else:
                          pubP = PubPrecursor(FKpub=pub, FKprecursor=prec, duracion=x['duracion'], mesIni=mes, yearIni=year, status=True)
                          pubP.save()
+                         if prec.pk in (3, 4):
+                              try:
+                                   nro=nroPrec.objects.get(FKpub=pub.pk)
+                              except(KeyError, nroPrec.DoesNotExist):
+                                   pub.nroprec_set.create(nroPrec=request.POST['nroPrec'])
                          msg[cont] = {'msg': 'el publicador' + x['id'] + 'fue nombrado con exito'}
           cont += 1
      if validaciones:
@@ -457,8 +462,10 @@ def historiaPrec(request, year):
                               if request.session['precur']==1 or request.session['precur']==2:
                                    ficha={'nombre':nombre, 'fechaI':fechaI, 'fechaF':fEnd, 'duracion':duracion}
                               else:
+                                   nrop=nroPrec.objects.get(FKpub=prec.FKpub.pk)
+                                   nro=nrop.nroPrec
                                    duracion=getTiempo(p)
-                                   ficha={'nombre':nombre, 'fechaI': fechaI, 'fechaBau':prec.FKpub.fechaBau, 'duracion':duracion}
+                                   ficha={'nombre':nombre, 'fechaI': fechaI, 'fechaBau':prec.FKpub.fechaBau, 'duracion':duracion, 'nroPrec':nro}
                          if prec.duracion==0:
                               mesFin=hoy.month
                               yearFin=hoy.year

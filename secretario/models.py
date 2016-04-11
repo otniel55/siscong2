@@ -67,3 +67,10 @@ class PubPrecursor(models.Model):
 	mesIni = models.IntegerField()
 	yearIni=models.IntegerField()
 	status=models.BooleanField()
+
+class nroPrec(models.Model):
+	FKpub = models.ForeignKey(
+        'Publicador',
+        on_delete = models.CASCADE,
+    )
+	nroPrec=models.IntegerField()
