@@ -79,6 +79,7 @@ def conPub(request):
           return HttpResponse(json.dumps(datos))
 
 def conPubs(request):
+     bajaAuto()
      promInf=[]
      try:
           request.session['msgpub']
@@ -388,6 +389,7 @@ def editPrecur(request):
      return render(request, 'editPrecur.html', {'precur': Precursor.objects.all()})
 
 def vistaNombrar(request):
+     bajaAuto()
      cont=0
      p={}
      pubs=Publicador.objects.exclude(fechaBau__startswith="No").exclude(pubprecursor__status=True)
@@ -399,6 +401,7 @@ def vistaNombrar(request):
      return render(request, 'nombrarPub.html', {'pub':p, 'precur':precur})
 
 def NombrarPrecur(request):
+     bajaAuto()
      validaciones=True
      cont=0
      msg={}
@@ -454,10 +457,12 @@ def NombrarPrecur(request):
      return HttpResponse(json.dumps(msg))
 
 def conPrec(request):
+     bajaAuto()
      precur= precursorados()
      return render(request, 'conPrecur.html', {'precur':precur})
 
 def conPrecs(request):
+     bajaAuto()
      contaux=0
      years=[]
      cont=0
@@ -494,6 +499,7 @@ def conPrecs(request):
      return HttpResponse(json.dumps(data))
 
 def historiaPrec(request, year):
+     bajaAuto()
      cont=0
      precurTrue=[]
      entrar=False
@@ -682,6 +688,7 @@ def getTiempo(precurs):
 
 
 def yearServicio(request):
+     bajaAuto()
      normalY=0
      y=[]
      data={}
@@ -785,4 +792,13 @@ def darBaja(request):
                     data={'msg':"Precursor dado de baja"}
      return HttpResponse(json.dumps(data))
 
-
+def bajaAuto():
+     hoy=datetime.date.today()
+     precs=PubPrecursor.objects.filter(Q(FKprecursor=1) | Q(FKprecursor=2),status=True)
+     for i in precs:
+          if i.duracion!=0:
+               fechaF=getFechaFin(i.mesIni,i.yearIni, i.duracion)
+               diferenciaMes=getDiferenciaMes(fechaF[0],fechaF[1], hoy.month, hoy.year)
+               if diferenciaMes>-1:
+                    i.status=False
+                    i.save()
