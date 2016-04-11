@@ -93,6 +93,22 @@
 							</tbody>
 						</table>
 
+                        <div style="height:40px;">
+                            <nav style="float:right;">
+                              <ul class="pagination">
+                                <li>
+                                  <a href="#" aria-label="P">
+                                    <span aria-hidden="true">&laquo;</span>
+                                  </a>
+                                </li>
+                                <li>
+                                  <a href="#" aria-label="N">
+                                    <span aria-hidden="true">&raquo;</span>
+                                  </a>
+                                </li>
+                              </ul>
+                            </nav>
+                        </div>
 					</section>
 				</div>
 			</div>
@@ -126,6 +142,22 @@
 							</tbody>
 						</table>
 
+                        <div style="height:40px;">
+                            <nav style="float:right;">
+                              <ul class="pagination">
+                                <li>
+                                  <a href="#" aria-label="P">
+                                    <span aria-hidden="true">&laquo;</span>
+                                  </a>
+                                </li>
+                                <li>
+                                  <a href="#" aria-label="N">
+                                    <span aria-hidden="true">&raquo;</span>
+                                  </a>
+                                </li>
+                              </ul>
+                            </nav>
+                        </div>
 					</section>
 				</div>
 			</div>
@@ -166,6 +198,7 @@
             //estilisando los filtros
                 $('#publics_length').hide()
                 $('#publics_filter').hide()
+                $('#publics_paginate').hide()
                 $('#filtro1').on( 'keyup change', function () {
                                 $('#publics').dataTable().fnFilter(this.value);
                             });
@@ -211,7 +244,37 @@
 
 		    alto = $('#tabla1')[0].clientHeight
         	$('div.content-panel').height(alto+'px')
-		});
+
+            j = publics.data().length
+
+            if(j>=10){
+                x = 1
+                idx = 0
+                while(j>0){
+                    j = j - 10
+
+                    $('ul.pagination > li:eq('+idx+')').after(
+                        '<li><a href="#" aria-label="'+x+'">'+x+'</a></li>'
+                    )
+                    idx++
+                    x++
+                }
+            }
+
+            $('ul.pagination > li > a').click(function(){
+                val = $(this).attr('aria-label')
+                console.log(val)
+
+                if(val === 'N'){
+                    publics.page( 'next' ).draw( 'page' );
+                } else if (val === 'P'){
+                    publics.page( 'previous' ).draw( 'page' );
+                } else {
+                    publics.page( val-1 ).draw( 'page' );
+                }
+            })
+
+		})//fin del inicio del documento
 
 		$('#selectAll').click(function(){
 
