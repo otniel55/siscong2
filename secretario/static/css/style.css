@@ -2347,3 +2347,22 @@ label {
     font-size: 12px;
     height: 28px;
 }
+
+.btnPrecur {
+    background-color: transparent;
+    border: none;
+    height: 20px;
+}
+
+.cabecero {
+    margin:0px;
+    padding:0px;
+    margin-top: 15px;
+}
+
+
+
+.Nfilter {
+    margin-top: 15px;
+    margin-bottom: 20px;
+}

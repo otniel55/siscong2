@@ -21,20 +21,12 @@
 
 					<div class="col-lg-6 col-md-offset-3">
 							<div class="row">
-                               
-                                <div class="col-sm-2 col-md-2 col-lg-2">
-                                    <button id="move-right" class="btn btn-success fa fa-arrow-right fa-2x fullwidth"></button>
-                                </div>
-                                
-                                <div class="col-sm-2 col-md-2 col-lg-2">
-                                    <button id="move-left" class="btn btn-danger fa fa-arrow-left fa-2x fullwidth" disabled></button>
-                                </div>
-                                
-                                <div class="form-inline col-lg-6" style="margin-top:3px;">
-									<div class="form-group" >
+
+                                <div class="form-inline col-lg-6" style="margin-top:7px;">
+									<div class="form-group">
                                         <label for="fechaIni">Fecha de Inicio:</label>
-                                        <div class='input-group date datepicker mrg-bottom'>
-                                            <input type="text" class="form-control">
+                                        <div class='input-group date datepicker'>
+                                            <input type="text" class="form-control" style="font-size:16px;">
                                             <span class="input-group-addon">
                                                 <span class="fa fa-calendar">
                                                 </span>
@@ -42,6 +34,14 @@
                                         </div>
                                     </div>
 					            </div>
+
+                                <div class="col-sm-2 col-md-2 col-lg-2">
+                                    <button id="move-right" class="btn btn-success fa fa-arrow-right fa-2x fullwidth"></button>
+                                </div>
+
+                                <div class="col-sm-2 col-md-2 col-lg-2">
+                                    <button id="move-left" class="btn btn-danger fa fa-arrow-left fa-2x fullwidth" disabled></button>
+                                </div>
 
                                 <div class="col-sm-2 col-md-2 col-lg-2">
                                     <button id="save" class="btn btn-primary fa fa-check-square-o fa-2x fullwidth" disabled></button>
@@ -58,9 +58,9 @@
                 <div class="content-panel">
 					<section id="tabla1">
 					
-						<h3 class="text-center titlecolor" style="margin:0px;padding: 0px;">Publicadores</h3>
+						<h3 class="text-center titlecolor cabecero">Publicadores</h3>
                        
-                        <div class="col-lg-6">
+                        <div class="col-lg-6 Nfilter">
                             <input type="text" id="filtro1" class="form-control" placeholder="Buscar...">
                         </div>
                         
@@ -93,9 +93,9 @@
 							</tbody>
 						</table>
 
-                        <div style="height:40px;">
-                            <nav style="float:right;">
-                              <ul class="pagination">
+                        <div style="height:80px;">
+                            <nav class="col-lg-6 col-md-offset-3">
+                              <ul id="pager1" class="pagination pager">
                                 <li>
                                   <a href="#" aria-label="P">
                                     <span aria-hidden="true">&laquo;</span>
@@ -117,9 +117,9 @@
                 <div class="content-panel">
 					<section id="tabla2">
 
-                       <h3 class="text-center titlecolor" style="margin:0px;padding: 0px;">Publicadores Que Seran Nombrados</h3>
+                       <h3 class="text-center titlecolor cabecero">Publicadores Que Seran Nombrados</h3>
 
-                        <div class="col-lg-6">
+                        <div class="col-lg-6 Nfilter">
                             <input type="text" id="filtro2" class="form-control" placeholder="Buscar...">
                         </div>
 
@@ -130,21 +130,29 @@
 										<input type="checkbox" id="selectAll2" />
 									</th>
 									<th class="numeric text-center" style="width:45%;">Nombre y Apellido</th>
-									<th class="numeric text-center" style="width:30%;">Tipo Precursorado
-										<div class="col-lg-12">
-											{{ precur.precur }}
-										</div>
+									<th class="numeric text-center" style="width:30%;">
+                                        <div class="btn-group">
+                                          <button class="btnPrecur dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                              Tipo Precursorado <span class="fa fa-caret-square-o-down"></span>
+                                          </button>
+                                          <ul class="dropdown-menu">
+                                            <li><a href="#" val="2">Auxiliar</a></li>
+                                            <li><a href="#" val="1">Auxiliar (Campañas)</a></li>
+                                            <li><a href="#" val="3">Regular</a></li>
+                                            <li><a href="#" val="4">Especial</a></li>
+                                          </ul>
+                                        </div>
 									</th>
-									<th class="numeric text-center" style="width:20%;">Duracion</th>
+									<th class="numeric text-center" style="width:20%;"></th>
 								</tr>
 							</thead>
 							<tbody>
 							</tbody>
 						</table>
 
-                        <div style="height:40px;">
-                            <nav style="float:right;">
-                              <ul class="pagination">
+                        <div style="height:80px;">
+                            <nav class="col-lg-6 col-md-offset-3">
+                              <ul id="pager2" class="pagination pager">
                                 <li>
                                   <a href="#" aria-label="P">
                                     <span aria-hidden="true">&laquo;</span>
@@ -171,6 +179,80 @@
 {% block scripts %}
 	<script>
 		var publics, nombrar
+
+        var cmb =   '<select class="form-control" disabled>\
+                        <option value="1">1 mes</option>\
+                        <option value="2">2 meses</option>\
+                        <option value="3">3 meses</option>\
+                        <option value="0">Indefinido</option>\
+                    <select>'
+
+        function createPager(tabla, nro){
+            filas = tabla.data().length
+
+            if(filas > 10){
+                page = 1
+                index = 0
+                while(filas>0){
+                    filas = filas - 10
+
+                    $('#pager'+nro+' > li:eq('+index+')').after(
+                        '<li><a href="#" aria-label="'+index+'">'+page+'</a></li>'
+                    )
+
+                    index++
+                    page++
+                }
+            }
+
+            $('#pager'+nro+' > li > a').click(function(){
+                val = $(this).attr('aria-label')
+
+                if(val === 'N'){
+                    tabla.page( 'next' ).draw( 'page' );
+                } else if (val === 'P'){
+                    tabla.page( 'previous' ).draw( 'page' );
+                } else {
+                    val = parseInt(val)
+                    tabla.page( val ).draw( 'page' );
+                }
+
+                reajustarTables()
+            })
+        }
+
+        function showPager(pgS, pgH, tablaE, tablaA){
+            if($('#pager'+pgS).children().length == 2 && tablaE.data().length > 10){
+                $('#pager'+pgS).show().children().show()
+                createPager(tablaE, pgS)
+            }
+
+            if(tablaA.data().length > 10){
+                $('#pager'+pgH).children().each(function(){
+                    if( !$(this).is(':first-child') && !$(this).is(':last-child')){
+                        $(this).detach()
+                    }
+                })
+                createPager(tablaA, pgH)
+            } else {
+                $('#pager'+pgH).children().each(function(){
+                    if( !$(this).is(':first-child') && !$(this).is(':last-child')){
+                        $(this).detach()
+                    }
+                }).hide()
+            }
+        }
+
+        function reajustarTables(){
+            alto1 = $('#tabla1')[0].clientHeight
+            alto2 = $('#tabla2')[0].clientHeight
+
+            if(alto1 >= alto2){
+                $('div.content-panel').height(alto1+'px')
+            } else {
+                $('div.content-panel').height(alto2+'px')
+            }
+        }
 
 		$(document).ready(function(){
 		    publics =   $('#publics').DataTable({
@@ -229,6 +311,7 @@
             //estilisando los filtros
                 $('#nombrar_length').hide()
                 $('#nombrar_filter').hide()
+                $('#nombrar_paginate').hide()
                 $('#filtro2').on( 'keyup change', function () {
                                 $('#nombrar').dataTable().fnFilter(this.value);
                             });
@@ -242,37 +325,12 @@
 							        }
 		    })
 
-		    alto = $('#tabla1')[0].clientHeight
-        	$('div.content-panel').height(alto+'px')
+            //asignacion de altura de las tablas
+            reajustarTables()
 
-            j = publics.data().length
-
-            if(j>=10){
-                x = 1
-                idx = 0
-                while(j>0){
-                    j = j - 10
-
-                    $('ul.pagination > li:eq('+idx+')').after(
-                        '<li><a href="#" aria-label="'+x+'">'+x+'</a></li>'
-                    )
-                    idx++
-                    x++
-                }
-            }
-
-            $('ul.pagination > li > a').click(function(){
-                val = $(this).attr('aria-label')
-                console.log(val)
-
-                if(val === 'N'){
-                    publics.page( 'next' ).draw( 'page' );
-                } else if (val === 'P'){
-                    publics.page( 'previous' ).draw( 'page' );
-                } else {
-                    publics.page( val-1 ).draw( 'page' );
-                }
-            })
+            //creacion del pager
+                createPager(publics, 1)
+                $('#pager2').hide()
 
 		})//fin del inicio del documento
 
@@ -296,20 +354,41 @@
 
         })
 		
+        $('.dropdown-menu > li > a').click(function(){
+            valAll = $(this).attr('val')
+
+            if(nombrar.data().length > 0){
+                col3 = nombrar.column( 2 ).nodes().to$()
+
+                col3.each(function(){
+                    $(this).children().val(valAll)
+
+                    hermano = $(this).next()
+
+                    if( valAll == 3 || valAll == 4 ){
+                        hermano.children().detach()
+                        hermano.append('<input type="text" placeholder="Nro de Precursor" class="form-control" />')
+                    } else {
+                        if ( hermano.children().is('input') ){
+                            hermano.children().detach()
+                            hermano.append(cmb).children().removeAttr('disabled')
+                        } else {
+                            if(hermano.children().is(':disabled'))
+                                hermano.children().removeAttr('disabled')
+                        }
+                    }
+                })
+            }
+        })
+
+
 		//cambiar de tabla 
 			$('#move-right').click(function(){
 				row = ""
 				col = ""
 				nodo = ""
-
-				cmb =   '<select class="form-control">\
-							<option value="1">1 mes</option>\
-							<option value="2">2 meses</option>\
-							<option value="3">3 meses</option>\
-							<option value="0">Indefinido</option>\
-						<select>'
-
-				cmbPrecur=  '<select class="form-control">\
+				cmbPrecur =  '<select class="form-control">\
+                                <option value>Tipo de Precursorado</option>\
 								<option value="2">Auxiliar</option>\
 								<option value="1">Auxiliar (Campañas)</option>\
 								<option value="3">Regular</option>\
@@ -335,15 +414,32 @@
                     })   
 				})
                 
-                $('#nombrar td:nth-child(3) > select').change(function(){
-                    if($(this).val() == 3){
-                        hermano = $(this).parent().next()
+                if( $('#selectAll').is(':checked') )
+                    $('#selectAll').removeProp('checked')
+
+                //obtener todos los nodos de la columna
+                col3 = nombrar.column( 2 ).nodes().to$()
+
+                //asignar evento a los select de la columna
+                $( col3.children() ).change(function(){
+                    hermano = $(this).parent().next()
+                    value = $(this).val()
+
+                    if(value == 3 || value == 4){
                         hermano.children().detach()
-                        hermano.append('<input type="text" placeholder="Nro de Precur" class="form-control" />')
+                        hermano.append('<input type="text" placeholder="Nro de Precursor" class="form-control" />')
+                    } else if ( $(this).val() ){
+                        if ( hermano.children().is('input') ){
+                            hermano.children().detach()
+                            hermano.append(cmb).children().removeAttr('disabled')
+                        } else {
+                            if(hermano.children().is(':disabled'))
+                                hermano.children().removeAttr('disabled')
+                        }
                     } else {
-                        console.log('feo')
+                        hermano.children().attr('disabled', true)
                     }
-                })
+                })//fin del evento
 
                 if ($('#move-left').is(':disabled') && row.length > 0)
                     $('#move-left').removeAttr('disabled')
@@ -353,17 +449,12 @@
                     
                 if ($('div.datepicker > input').val())
                     $('#save').removeAttr('disabled')
-                
-                //reajustar el height de las tablas
-                alto1 = $('#tabla1')[0].clientHeight
-                alto2 = $('#tabla2')[0].clientHeight
 
-                if(alto2 >= alto1){
-        	        $('div.content-panel').height(alto2+'px')
-                } else {
-                    $('div.content-panel').height(alto1+'px')
-                }
-			})
+                reajustarTables()
+
+                showPager(2, 1, nombrar, publics)
+
+			})//fin del moveright
             
 			$('#move-left').click(function(){
 				row = ""
@@ -386,6 +477,9 @@
                     $(nodo).attr('id', ''+rowNode[key].id).find('td').addClass("numeric text-center")
 				})
 
+                if( $('#selectAll2').is(':checked') )
+                    $('#selectAll2').removeProp('checked')
+
                 if ($('#move-right').is(':disabled') && row.length > 0)
                     $('#move-right').removeAttr('disabled')
                 
@@ -393,17 +487,12 @@
                     $(this).attr('disabled', true)
                     $('#save').attr('disabled', true)
                 }
-                
-                //reajustar el height de las tablas
-                alto1 = $('#tabla1')[0].clientHeight
-                alto2 = $('#tabla2')[0].clientHeight
 
-                if(alto1 >= alto2){
-        	        $('div.content-panel').height(alto1+'px')
-                } else {
-                    $('div.content-panel').height(alto2+'px')
-                }
-			})
+                reajustarTables()
+
+                showPager(1, 2, publics, nombrar)
+
+			})//fin del moveleft
 
             $('span.input-group-addon').click(function(){
                 if (nombrar.data().length > 0)
@@ -421,46 +510,75 @@
             });
 
 		//fin de cambiar de tabla
-
-		$('#id_precur').change(function(){
-			$('td:nth-child(3) > select').val(this.value)
-		})
 		
 		$('#save').click(function(){
-			tr = ""
 			pubs = []
+            cmbNull = 0
+            nroPreNull = 0
 
 			fechaIni = $('div.datepicker > input').val()
 
-			tr = $('#nombrar tbody tr')
+			rows = nombrar.rows().nodes()
 
-			$('#nombrar tbody tr').each(function(){
-				pubs.push({
-		            id: $(this).attr('id'),
-		            'duracion': $(this).find('td:eq(3) > select').val(),
-		            'precur': $(this).find('td:eq(2) > select').val()
-        		})    
+			$.each(rows ,function(key, value){
+                id = $(value).attr('id')
+
+                cmb1 = $(value).find('td:eq(2)').children()
+                cmb1.css('border-color', '#ccc')
+                precur = cmb1.val()
+
+                cmb2 = $(value).find('td:eq(3)').children()
+                cmb2.css('border-color', '#ccc')
+                valPrecur = cmb2.val()
+
+                if(precur == ""){
+                    cmbNull++
+                    cmb1.css('border-color', 'red')
+                }
+
+                if( precur == 3 || precur == 4){
+                    if(valPrecur == ""){
+                        nroPreNull++
+                        cmb2.css('border-color', 'red')
+                    }else{
+                        pubs.push({
+                            'id': id,
+                            'precur': precur,
+                            'duracion': 0,
+                            'nroPrec': valPrecur
+                        })
+                    }
+                } else {
+                    pubs.push({
+                        'id': id,
+                        'precur': precur,
+                        'duracion': valPrecur
+                    })
+                }
 			})
 
+            if(cmbNull > 0 || nroPreNull > 0){
+                alert('Algunos Campos Se Encuentran Vacios')
+            } else {
+                $.post("{% url 'secretario:NombrarPrecur' %}",
+                        {
+                          'fechaIni': fechaIni,
+                          'pub': JSON.stringify(pubs),
+                          csrfmiddlewaretoken:'{{ csrf_token }}'
+                        })
+                        .success(function(res){
+                            res=JSON.parse(res)
+                            console.log(res)
+                        })
+            }
 
-			$.post("{% url 'secretario:NombrarPrecur' %}",
-					{
-					  'fechaIni': fechaIni,
-					  'pub': JSON.stringify(pubs),
-					  csrfmiddlewaretoken:'{{ csrf_token }}'
-					})
-					.success(function(res){
-						res=JSON.parse(res)
-						console.log(res)
-					})
-			
-			x = {
+            x = {
 					  'fechaIni': fechaIni,
 					  'pub': JSON.stringify(pubs),
 					  csrfmiddlewaretoken:'{{ csrf_token }}'
 					}
 
-			console.log(x)
+            console.log(x)
 		})
 		
 </script>
