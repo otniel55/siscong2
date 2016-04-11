@@ -56,7 +56,7 @@
 
 			<div class="col-lg-6" style="margin-top: 40px;">
                 <div class="content-panel">
-					<section id="no-more-tables">
+					<section id="tabla1">
 					
 						<h3 class="text-center titlecolor" style="margin:0px;padding: 0px;">Publicadores</h3>
                        
@@ -67,7 +67,7 @@
                     	<table id="publics" class="display table table-condensed cf" cellspacing="0" style="font-size:14px;" width:"100%">
                         	<thead class="cf">				
 								<tr>
-									<th>
+									<th style="width:5%;">
 										<input type="checkbox" id="selectAll" />
 									</th>
 									<th class="numeric text-center">Nombre y Apellido</th>
@@ -99,22 +99,27 @@
 
 			<div class="col-lg-6" style="margin-top: 40px;">
                 <div class="content-panel">
-					<section id="no-more-tables">
-						<h3 class="text-center titlecolor" style="margin:0px;padding: 0px;">Publicadores Que Seran Nombrados</h3>
+					<section id="tabla2">
+
+                       <h3 class="text-center titlecolor" style="margin:0px;padding: 0px;">Publicadores Que Seran Nombrados</h3>
+
+                        <div class="col-lg-6">
+                            <input type="text" id="filtro2" class="form-control" placeholder="Buscar...">
+                        </div>
 
                     	<table id="nombrar" class="display table table-condensed cf" cellspacing="0" style="font-size:14px;" width:"100%">
                         	<thead class="cf">				
 								<tr>
-									<th>
+									<th style="width:5%;">
 										<input type="checkbox" id="selectAll2" />
 									</th>
-									<th class="numeric text-center">Publicador</th>
-									<th class="numeric text-center">Tipo Precursorado
+									<th class="numeric text-center" style="width:45%;">Nombre y Apellido</th>
+									<th class="numeric text-center" style="width:30%;">Tipo Precursorado
 										<div class="col-lg-12">
 											{{ precur.precur }}
 										</div>
 									</th>
-									<th class="numeric text-center">Duracion</th>
+									<th class="numeric text-center" style="width:20%;">Duracion</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -151,6 +156,10 @@
 							"oLanguage": {
 									      "sInfoEmpty": "La Tabla esta Vacia",
 									      "sZeroRecords": "No se Encontraron Registros",
+                                          "oPaginate": {
+                                                          "sNext": "Siguiente",
+                                                          "sPrevious": "Anterior"
+                                                        }
 									     }
 					    });
             
@@ -173,14 +182,24 @@
 					            selector: 'td:first-child',
 					        },
 					        order: [[ 1, 'asc' ]],
-					    	"bPaginate":false,
 							"bInfo":false,
-							"bFilter":false,
 							"oLanguage": {
 									      "sInfoEmpty": "La Tabla esta Vacia",
 									      "sZeroRecords": "No se Encontraron Registros",
+                                          "oPaginate": {
+                                                          "sNext": "Siguiente",
+                                                          "sPrevious": "Anterior"
+                                                        }
 									     }
 						})
+
+            //estilisando los filtros
+                $('#nombrar_length').hide()
+                $('#nombrar_filter').hide()
+                $('#filtro2').on( 'keyup change', function () {
+                                $('#nombrar').dataTable().fnFilter(this.value);
+                            });
+            //fin de estilos
 
 		    $('.datepicker').datetimepicker({
 				format: 'MM-YYYY',
@@ -190,8 +209,8 @@
 							        }
 		    })
 
-		    alto = $('div.content-panel')[0].clientHeight
-        	$('div.content-panel').css('height', alto+'px')
+		    alto = $('#tabla1')[0].clientHeight
+        	$('div.content-panel').height(alto+'px')
 		});
 
 		$('#selectAll').click(function(){
@@ -235,7 +254,6 @@
 							<select>'
 
 				row = publics.rows('.selected').data()
-				tr = $('#publics tr.selected')
 				publics.rows('.selected').remove().draw()
 
 				$.each(row, function(key, value){
@@ -248,13 +266,13 @@
 						        ]).draw().node()
  
 					$(nodo).attr({
-                        id: ''+tr[key].id,
+                        id: row[key].DT_RowId,
                         fechaBau: value[2],
                         Tbau: value[3],
                     })   
 				})
                 
-                if ($('#move-left').is(':disabled') && tr.length > 0)
+                if ($('#move-left').is(':disabled') && row.length > 0)
                     $('#move-left').removeAttr('disabled')
                 
                 if (publics.data().length == 0)
@@ -263,6 +281,15 @@
                 if ($('div.datepicker > input').val())
                     $('#save').removeAttr('disabled')
                 
+                //reajustar el height de las tablas
+                alto1 = $('#tabla1')[0].clientHeight
+                alto2 = $('#tabla2')[0].clientHeight
+
+                if(alto2 >= alto1){
+        	        $('div.content-panel').height(alto2+'px')
+                } else {
+                    $('div.content-panel').height(alto1+'px')
+                }
 			})
             
 			$('#move-left').click(function(){
@@ -271,21 +298,22 @@
 				nodo = ""
 
 				row = nombrar.rows('.selected').data()
-				tr = $('#nombrar tr.selected')
+                rowNode = nombrar.rows('.selected').nodes()
+
 				nombrar.rows('.selected').remove().draw()
 
 				$.each(row, function(key, value){
 					nodo = publics.row.add([
 									col,
 						            value[1],
-                                    $(tr[key]).attr('fechaBau'),
-                                    $(tr[key]).attr('Tbau')
+                                    $(rowNode[key]).attr('fechaBau'),
+                                    $(rowNode[key]).attr('Tbau')
 						        ]).draw().node()
 
-                    $(nodo).attr('id', ''+tr[key].id).find('td').addClass("numeric text-center")
+                    $(nodo).attr('id', ''+rowNode[key].id).find('td').addClass("numeric text-center")
 				})
 
-                if ($('#move-right').is(':disabled') && tr.length > 0)
+                if ($('#move-right').is(':disabled') && row.length > 0)
                     $('#move-right').removeAttr('disabled')
                 
                 if (nombrar.data().length == 0){
@@ -293,6 +321,15 @@
                     $('#save').attr('disabled', true)
                 }
                 
+                //reajustar el height de las tablas
+                alto1 = $('#tabla1')[0].clientHeight
+                alto2 = $('#tabla2')[0].clientHeight
+
+                if(alto1 >= alto2){
+        	        $('div.content-panel').height(alto1+'px')
+                } else {
+                    $('div.content-panel').height(alto2+'px')
+                }
 			})
 
             $('span.input-group-addon').click(function(){
