@@ -475,7 +475,7 @@ def NombrarPrecur(request):
                                         try:
                                              nro=nroPrec.objects.get(FKpub=pub.pk)
                                         except(KeyError, nroPrec.DoesNotExist):
-                                             pub.nroprec_set.create(nroPrec=request.POST['nroPrec'])
+                                             pub.nroprec_set.create(nroPrec=x['nroPrec'])
                                    msg[cont] = {'msg': 'el publicador' + x['id'] + 'fue nombrado con exito'}
                               else:
                                    msg[cont] = {'msg': 'el publicador' + x['id'] + 'tenia un precursorado activo en la fecha que usted acaba de asignar'}
