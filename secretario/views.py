@@ -340,25 +340,40 @@ def NombrarPrecur(request):
                msg[cont] = {'msg': 'el publicador' + x['id'] + 'no esta registrado'}
                validaciones = False
           else:
-               verificar = PubPrecursor.objects.filter(FKpub=x['id'], status=True)
-               if len(verificar) > 0:
-                    msg[cont] = {'msg': 'el publicador' + x['id'] + 'ya es precursor'}
-                    validaciones = False
+               try:
+                    prec=Precursor.objects.get(pk=x['precur'])
+               except(KeyError, Precursor.DoesNotExist):
+                    msg[cont]={'msg':'El precursorado'+ x['precur'] + ' no existe'}
+                    validaciones=False
                else:
-                    try:
-                         prec=Precursor.objects.get(pk=x['precur'])
-                    except(KeyError, Precursor.DoesNotExist):
-                         msg[cont]={'msg':'El precursorado'+ x['precur'] + ' no existe'}
-                         validaciones=False
+                    verificar = PubPrecursor.objects.filter(FKpub=x['id'], status=True)
+                    if len(verificar) > 0:
+                         msg[cont] = {'msg': 'el publicador' + x['id'] + 'ya es precursor'}
+                         validaciones = False
                     else:
-                         pubP = PubPrecursor(FKpub=pub, FKprecursor=prec, duracion=x['duracion'], mesIni=mes, yearIni=year, status=True)
-                         pubP.save()
-                         if prec.pk in (3, 4):
-                              try:
-                                   nro=nroPrec.objects.get(FKpub=pub.pk)
-                              except(KeyError, nroPrec.DoesNotExist):
-                                   pub.nroprec_set.create(nroPrec=request.POST['nroPrec'])
-                         msg[cont] = {'msg': 'el publicador' + x['id'] + 'fue nombrado con exito'}
+                         if pub.fechaBau[0]!='N':
+                              precurs=PubPrecursor.objects.filter(FKpub=pub.pk).order_by("-yearIni", "-mesIni")
+                              if len(precurs)==0:
+                                   diferencia=0
+                              else:
+                                   iniF=getFechaFin(precurs[0].mesIni,precurs[0].yearIni,precurs[0].duracion)
+                                   iniMes=iniF[0]
+                                   iniYear=iniF[1]
+                                   diferencia=getDiferenciaMes(iniMes,iniYear, mes, year)
+                              if diferencia>-1:
+                                   pubP = PubPrecursor(FKpub=pub, FKprecursor=prec, duracion=x['duracion'], mesIni=mes, yearIni=year, status=True)
+                                   pubP.save()
+                                   if prec.pk in (3, 4):
+                                        try:
+                                             nro=nroPrec.objects.get(FKpub=pub.pk)
+                                        except(KeyError, nroPrec.DoesNotExist):
+                                             pub.nroprec_set.create(nroPrec=request.POST['nroPrec'])
+                                   msg[cont] = {'msg': 'el publicador' + x['id'] + 'fue nombrado con exito'}
+                              else:
+                                   msg[cont] = {'msg': 'el publicador' + x['id'] + 'tenia un precursorado activo en la fecha que usted acaba de asignar'}
+                         else:
+                              msg[cont] = {'msg': 'el publicador' + x['id'] + 'no esta bautizado'}
+                              validaciones=False
           cont += 1
      if validaciones:
           msg={'msg':'Los publicadores han sido nombrados precursores.'}
