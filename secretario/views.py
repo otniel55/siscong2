@@ -92,7 +92,7 @@ def datGrupo(request,idGrupo):
      try:
           g = GruposPred.objects.get(pk=idGrupo)
      except(KeyError, GruposPred.DoesNotExist):
-          datos={"msg":"Este grupo no está registrado"}
+          datos={"msg":"Este grupo no esta registrado"}
      else:
           request.session['conGrupoId']=idGrupo
           p = Publicador.objects.filter(FKgrupo=g.pk)
