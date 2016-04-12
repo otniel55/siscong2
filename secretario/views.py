@@ -909,3 +909,6 @@ def bajaAuto():
                if diferenciaMes>-1:
                     i.status=False
                     i.save()
+
+def errorPage(request):
+     return render(request, 'page404.html', {})
