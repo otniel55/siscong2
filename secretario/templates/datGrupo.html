@@ -1,183 +1,190 @@
-<div class="row">
-
-	<h3 class="text-center titlecolor">Informacion del Grupo</h3>
-
-		{% csrf_token %}
-		
-		<div class="col-lg-4 col-md-offset-4">
-			{{ form }}
-		</div>
-
-		<div class="clearfix"></div>
-
-		<div class="col-lg-2 col-md-offset-5" style="margin-top: 30px;">
-        	<button id="btnMod" type="submit" class="btn btn-success" style="width:100%">Modificar</button>
-		</div>
-
-		<div class="clearfix"></div>
-
-		<div id="pubs" class="col-lg-6 col-lg-offset-3">
-            <div class="content-panel">
-            	<h3 class="text-center sinmrg" style="margin-bottom:10px;">Publicadores del Grupo # {{ num }}</h3>
-				<section id="no-more-tables">
-                	<table class="table table-bordered table-striped table-condensed cf" style="font-size:16px;">
-                    	<thead class="cf">				
-							<tr>
-								<th class="numeric text-center" style="border-right:0px;width:85%;">Nombre y Apellido</th>
-								<th class="numeric" style="border-left:0px;width:15%;"></th>
-							</tr>
-						</thead>
-						<tbody>
-						{% for pub in publicadores %}
-							<tr>
-								<td class="numeric" data-title="Nombre y Apellido" style="border-right:0px;width:80%;">
-									<a href="{% url 'secretario:tarjeta' 1 pub.pk y %}">{{ pub.nombre|upper }} {{ pub.apellido|upper }}</a>
-								</td>
-								<td class="numeric text-center" data-title="" style="border-left:0px;width:20%;" id="{{ pub.pk }}">
-									<button class="btn btn-danger fa fa-trash" data-toggle="modal" data-target="#pubGroup"></button>
-
-									<button class="btn btn-info fa fa-plus" data-toggle="modal" data-target="#informe" style="margin-left:20px;"></button>
-								</td>
-							</tr>
-						{% endfor %}
-						</tbody>
-					</table>
-				</section>
-			</div>
-		</div>	
-</div>
-
-
-<div class="modal fade" id="informe" role="dialog">
-	<div class="modal-dialog modal-md">
-		<div class="modal-content">
-			<div class="modal-header">
-			  <button type="button" class="close" data-dismiss="modal">&times;</button>
-			  <h4 class="modal-title">Registrar Informe</h4>
-			</div>
-
-			<div class="modal-body">
-				{{ modalInfo }}
-
-	        	{{ mes.fecha.label_tag }}
-	            <div class='input-group date datepicker mrg-bottom'>
-	                {{ mes.fecha }} 
-	                <span class="input-group-addon">
-	                    <span class="glyphicon glyphicon-calendar">
-	                    </span>
-	                </span>
-	            </div>
-			</div>
-
-			<div class="modal-footer">
-				<button id="snAct" type="button" class="btn btn-warning">Sin Actividad</button>
-			 	<button id="regInf" type="button" class="btn btn-primary" data-dismiss="modal">Registrar</button>
-			</div>
-		</div>
-	</div>
-</div>
-
-<div class="modal fade" id="pubGroup" role="dialog">
-	<div class="modal-dialog modal-sm">
-		<div class="modal-content">
-			<div class="modal-header">
-			  <button type="button" class="close" data-dismiss="modal">&times;</button>
-			  <h4 class="modal-title">Cambiar de Grupo</h4>
-			</div>
-			
-			<div class="modal-body">
-				{{ modalPub }}
-				{{ modalGrupo }}
-			</div>
-
-			<div class="modal-footer">
-			  <button id="changeP" type="button" class="btn btn-default" data-dismiss="modal">Cambiar</button>
-			</div>
-		</div>
-	</div>
-</div>
-
-
+{% if msg %}
+<div> </div>
 <script>
+	console.log("{{msg}}")
+</script>
+{% else %}
+	<div class="row">
 
-	var id
-	var inputsInfo = $(':input','#informe')
+		<h3 class="text-center titlecolor">Informacion del Grupo</h3>
 
-	$("td > button:nth-child(1)").click(function(){
-		id=0
-		id = this.parentNode.id
+			{% csrf_token %}
 
-		$.post("{% url 'secretario:conPub' %}", {'id':id, csrfmiddlewaretoken:'{{ csrf_token }}'}, 
-		function(r){
-			resp = JSON.parse(r)
-			$('.modal-body > #id_Encargado').find('option[value="'+resp['pub'].grupo+'"]').attr('selected', true);
-			$('#id_nombre').val(resp['pub'].nombre.toUpperCase())
-			$('#id_apellido').val(resp['pub'].apellido.toUpperCase())
+			<div class="col-lg-4 col-md-offset-4">
+				{{ form }}
+			</div>
+
+			<div class="clearfix"></div>
+
+			<div class="col-lg-2 col-md-offset-5" style="margin-top: 30px;">
+				<button id="btnMod" type="submit" class="btn btn-success" style="width:100%">Modificar</button>
+			</div>
+
+			<div class="clearfix"></div>
+
+			<div id="pubs" class="col-lg-6 col-lg-offset-3">
+				<div class="content-panel">
+					<h3 class="text-center sinmrg" style="margin-bottom:10px;">Publicadores del Grupo # {{ num }}</h3>
+					<section id="no-more-tables">
+						<table class="table table-bordered table-striped table-condensed cf" style="font-size:16px;">
+							<thead class="cf">
+								<tr>
+									<th class="numeric text-center" style="border-right:0px;width:85%;">Nombre y Apellido</th>
+									<th class="numeric" style="border-left:0px;width:15%;"></th>
+								</tr>
+							</thead>
+							<tbody>
+							{% for pub in publicadores %}
+								<tr>
+									<td class="numeric" data-title="Nombre y Apellido" style="border-right:0px;width:80%;">
+										<a href="{% url 'secretario:tarjeta' 1 pub.pk y %}">{{ pub.nombre|upper }} {{ pub.apellido|upper }}</a>
+									</td>
+									<td class="numeric text-center" data-title="" style="border-left:0px;width:20%;" id="{{ pub.pk }}">
+										<button class="btn btn-danger fa fa-trash" data-toggle="modal" data-target="#pubGroup"></button>
+
+										<button class="btn btn-info fa fa-plus" data-toggle="modal" data-target="#informe" style="margin-left:20px;"></button>
+									</td>
+								</tr>
+							{% endfor %}
+							</tbody>
+						</table>
+					</section>
+				</div>
+			</div>
+	</div>
+
+
+	<div class="modal fade" id="informe" role="dialog">
+		<div class="modal-dialog modal-md">
+			<div class="modal-content">
+				<div class="modal-header">
+				  <button type="button" class="close" data-dismiss="modal">&times;</button>
+				  <h4 class="modal-title">Registrar Informe</h4>
+				</div>
+
+				<div class="modal-body">
+					{{ modalInfo }}
+
+					{{ mes.fecha.label_tag }}
+					<div class='input-group date datepicker mrg-bottom'>
+						{{ mes.fecha }}
+						<span class="input-group-addon">
+							<span class="glyphicon glyphicon-calendar">
+							</span>
+						</span>
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<button id="snAct" type="button" class="btn btn-warning">Sin Actividad</button>
+					<button id="regInf" type="button" class="btn btn-primary" data-dismiss="modal">Registrar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="pubGroup" role="dialog">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+				  <button type="button" class="close" data-dismiss="modal">&times;</button>
+				  <h4 class="modal-title">Cambiar de Grupo</h4>
+				</div>
+
+				<div class="modal-body">
+					{{ modalPub }}
+					{{ modalGrupo }}
+				</div>
+
+				<div class="modal-footer">
+				  <button id="changeP" type="button" class="btn btn-default" data-dismiss="modal">Cambiar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<script>
+
+		var id
+		var inputsInfo = $(':input','#informe')
+
+		$("td > button:nth-child(1)").click(function(){
+			id=0
+			id = this.parentNode.id
+
+			$.post("{% url 'secretario:conPub' %}", {'id':id, csrfmiddlewaretoken:'{{ csrf_token }}'},
+			function(r){
+				resp = JSON.parse(r)
+				$('.modal-body > #id_Encargado').find('option[value="'+resp['pub'].grupo+'"]').attr('selected', true);
+				$('#id_nombre').val(resp['pub'].nombre.toUpperCase())
+				$('#id_apellido').val(resp['pub'].apellido.toUpperCase())
+			})
 		})
-	})
 
-	$("td > button:nth-child(2)").click(function(){
-		id=0
-		id = this.parentNode.id
-		inputsInfo.val("")
-	})
-
-	$("#changeP").click(function(){
-		idgrupo = $('.modal-body > #id_Encargado').val()
-		$.post("{% url 'secretario:cambiarPub' %}", {'id':id, 'grupo': idgrupo, csrfmiddlewaretoken:'{{ csrf_token }}'}, function(res){
-			res=JSON.parse(res)
-			console.log(res)
-			if (res.on==1){
-				row = $('#'+id).parents('tr')
-				row.fadeOut()
-			}
+		$("td > button:nth-child(2)").click(function(){
+			id=0
+			id = this.parentNode.id
+			inputsInfo.val("")
 		})
-	})
 
-	$("#btnMod").click(function(){
-		a=$("#id_auxiliar").val()
-		e=$("#id_encargado").val()
-		//if ($.trim(a)!="" && $.trim(e)!=""){
-			$.post("{% url 'secretario:modGrup' %}", {'id':encargado, 'enc':e, 'aux':a, csrfmiddlewaretoken:'{{ csrf_token }}'}, function(res){
+		$("#changeP").click(function(){
+			idgrupo = $('.modal-body > #id_Encargado').val()
+			$.post("{% url 'secretario:cambiarPub' %}", {'id':id, 'grupo': idgrupo, csrfmiddlewaretoken:'{{ csrf_token }}'}, function(res){
 				res=JSON.parse(res)
+				console.log(res)
 				if (res.on==1){
-					window.location="{% url 'secretario:conGrupo' %}"
-					console.log(res.msg)
-				} else {
-					console.log(res.msg)
+					row = $('#'+id).parents('tr')
+					row.fadeOut()
 				}
 			})
-		//}
-	})
+		})
 
-	$("#regInf").click(function(){
-		$.post("{% url 'secretario:regInf' %}",
-			   {'horas': inputsInfo.eq(1).val(), 
-				'publicaciones': inputsInfo.eq(2).val(), 
-				'videos': inputsInfo.eq(3).val(), 
-				'revisitas': inputsInfo.eq(4).val(), 
-				'estudios': inputsInfo.eq(5).val(), 
-				'fecha': inputsInfo.eq(6).val(), 
-				'publicador': id, 
-				 csrfmiddlewaretoken:'{{ csrf_token }}'}, 
-				function(res){
+		$("#btnMod").click(function(){
+			a=$("#id_auxiliar").val()
+			e=$("#id_encargado").val()
+			//if ($.trim(a)!="" && $.trim(e)!=""){
+				$.post("{% url 'secretario:modGrup' %}", {'enc':e, 'aux':a, csrfmiddlewaretoken:'{{ csrf_token }}'}, function(res){
 					res=JSON.parse(res)
-					console.log(res)
+					if (res.on==1){
+						window.location="{% url 'secretario:conGrupo' %}"
+						console.log(res.msg)
+					} else {
+						console.log(res)
+					}
 				})
-	})
+			//}
+		})
 
-	$('#snAct').click(function(){
-		inputsInfo.val(0)
-		inputsInfo.eq(6).val("")
-	})
+		$("#regInf").click(function(){
+			$.post("{% url 'secretario:regInf' %}",
+				   {'horas': inputsInfo.eq(1).val(),
+					'publicaciones': inputsInfo.eq(2).val(),
+					'videos': inputsInfo.eq(3).val(),
+					'revisitas': inputsInfo.eq(4).val(),
+					'estudios': inputsInfo.eq(5).val(),
+					'fecha': inputsInfo.eq(6).val(),
+					'publicador': id,
+					 csrfmiddlewaretoken:'{{ csrf_token }}'},
+					function(res){
+						res=JSON.parse(res)
+						console.log(res)
+					})
+		})
 
-	$(document).ready(function() {
-		$( ".datepicker" ).datetimepicker({
-            format: 'MM-YYYY',
-            widgetPositioning: {
-	            horizontal: 'right',
-	            vertical: 'auto'
-	        }
-	    })
-	});
-</script>
+		$('#snAct').click(function(){
+			inputsInfo.val(0)
+			inputsInfo.eq(6).val("")
+		})
+
+		$(document).ready(function() {
+			$( ".datepicker" ).datetimepicker({
+				format: 'MM-YYYY',
+				widgetPositioning: {
+					horizontal: 'right',
+					vertical: 'auto'
+				}
+			})
+		});
+	</script>
+{% endif %}

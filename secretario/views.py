@@ -17,13 +17,26 @@ def registrarGrupo(request):
      form = CrearGrupo()
      return render(request, 'regGrupo.html', {'form': form})
 
-def validarVacio(elements):
+def validarVacio(elements, numerosKeys=[], fechaKeys=[]):
      elemento=[]
      vacio=True
      for i in elements.keys():
-          if elements[i].strip()=="":
-               vacio=False
-               elemento.append(i)
+          if i in numerosKeys:
+               try:
+                    int(elements[i])
+               except(ValueError):
+                    vacio=False
+                    elemento.append(i)
+          elif i in fechaKeys:
+               try:
+                    datetime.date(int(elements[i][0:4]), int(elements[i][5:7]), int(elements[i][8:]))
+               except(ValueError):
+                    vacio=False
+                    elemento.append(i)
+          else:
+               if elements[i].strip()=="":
+                    vacio=False
+                    elemento.append(i)
      return [vacio, elemento]
 
 def grupos_registrar(request):
@@ -50,7 +63,7 @@ def msgVacio(vacios):
      msg={}
      cont=0
      for i in vacios:
-          msg[cont]={i:"campo vacio"}
+          msg[cont]={i:"campo invalido"}
           cont+=1
      return msg
 
@@ -76,18 +89,22 @@ def conGrupoofPubs(request, idGrupo):
      return render(request, 'conGrupo.html', {'form': cGrupo, 'onPub': 1 })
 
 def datGrupo(request,idGrupo):
-     g = GruposPred.objects.get(pk=idGrupo)
-     p = Publicador.objects.filter(FKgrupo=g.pk)
-
-     formDatGrupo = CrearGrupo(instance=g)
-     formPub = modalPub()
-     modalGrupo = traerGrupo()
-     modalInfo = regInforme()
-     mes = mesInfor()
-     y=datetime.date.today().year
-     datos = {'form': formDatGrupo, 'publicadores': p, 'num': g.pk, 'modalPub': formPub, 
-            'modalGrupo': modalGrupo, 'modalInfo': modalInfo, 'mes': mes,'y':y,
-            }
+     try:
+          g = GruposPred.objects.get(pk=idGrupo)
+     except(KeyError, GruposPred.DoesNotExist):
+          datos={"msg":"Este grupo no está registrado"}
+     else:
+          request.session['conGrupoId']=idGrupo
+          p = Publicador.objects.filter(FKgrupo=g.pk)
+          formDatGrupo = CrearGrupo(instance=g)
+          formPub = modalPub()
+          modalGrupo = traerGrupo()
+          modalInfo = regInforme()
+          mes = mesInfor()
+          y=datetime.date.today().year
+          datos = {'form': formDatGrupo, 'publicadores': p, 'num': g.pk, 'modalPub': formPub,
+                 'modalGrupo': modalGrupo, 'modalInfo': modalInfo, 'mes': mes,'y':y,
+                 }
      return render(request, 'datGrupo.html',datos)
 
 def conPub(request):
@@ -132,7 +149,7 @@ def conPubs(request):
                     if len(informes)>0:
                          for infs in informes:
                               add=True
-                              pre=PubPrecursor.objects.filter(FKpub=i.pk).order_by("-yearIni", "-mesIni")
+                              pre=PubPrecursor.objects.filter(FKpub=infs.FKpub.pk).order_by("-yearIni", "-mesIni")
                               if len(pre)>0:
                                    if pre[0].duracion==0:
                                         add=False
@@ -143,10 +160,9 @@ def conPubs(request):
                                              add=False
                               if add:
                                    promInf.append(infs.horas)
-                         if prom(promInf)>inf[0].horas:
-                              status=4
-                    else:
-                         status=0
+                         if len(promInf)>0:
+                              if prom(promInf)>inf[0].horas:
+                                   status=4
           else:
                status=3
                intervalo="Este publicador nunca ha informado"
@@ -201,105 +217,143 @@ def regPubli(request):
      return render(request, 'regPubli.html', {'form': formPub, 'form2': cmbGrupo})
 
 def publicReg(request):
-     _nombre=request.POST['nombre'].upper()
-     _apellido=request.POST['apellido'].upper()
-     _telefono=request.POST['telefono']
-     _direccion =request.POST['direccion'].upper()
-     _email=request.POST['email'].upper()
-     _fechaBau=request.POST['fechaBau']
-     _fechaNa=request.POST['fechaNa']
-     _grupo=request.POST['Encargado']
-     try:
-          pub=Publicador.objects.get(nombre=_nombre, apellido=_apellido, fechaNa=_fechaNa)
-     except(KeyError, Publicador.DoesNotExist):
+     nums=['Encargado']
+     vFechas=['fechaNa']
+     validar=validarVacio(request.POST, nums, vFechas)
+     if validar[0]:
+          datosP=trimUpper(request.POST, ['email', 'fechaBau'])
+          _nombre=datosP['nombre']
+          _apellido=datosP['apellido']
+          _telefono=datosP['telefono']
+          _direccion =datosP['direccion']
+          _email=datosP['email']
+          _fechaBau=datosP['fechaBau']
+          _fechaNa=datosP['fechaNa']
+          _grupo=datosP['Encargado']
           try:
-               g=GruposPred.objects.get(pk=_grupo)
-          except(KeyError, GruposPred.DoesNotExist):
-               msg={'msg':"El grupo no existe"}
+               pub=Publicador.objects.get(nombre=_nombre, apellido=_apellido, fechaNa=_fechaNa)
+          except(KeyError, Publicador.DoesNotExist):
+               try:
+                    g=GruposPred.objects.get(pk=_grupo)
+               except(KeyError, GruposPred.DoesNotExist):
+                    msg={'msg':"El grupo no existe"}
+               else:
+                    g.publicador_set.create(nombre=_nombre, apellido=_apellido, telefono=_telefono, direccion=_direccion,email=_email, fechaBau=_fechaBau, fechaNa=_fechaNa)
+                    msg={'msg':"Publicador Registrado con exito"}
           else:
-               g.publicador_set.create(nombre=_nombre, apellido=_apellido, telefono=_telefono, direccion=_direccion,email=_email, fechaBau=_fechaBau, fechaNa=_fechaNa)
-               msg={'msg':"Publicador Registrado con exito"}
+               msg={ 'msg': "Error! Este publicador ya esta registrado."}
      else:
-          msg={ 'msg': "Error! Este publicador ya esta registrado."}
+          msg=msgVacio(validar[1])
      return HttpResponse(json.dumps(msg))
 
 def cambiarPub(request):
-     _p=request.POST['id']
-     _g=request.POST['grupo']
-     try:
-          p=Publicador.objects.get(pk=_p)
-     except(KeyError, Publicador.DoesNotExist):
-          msg={'msg':'Publicador no existe'}
-     else:
+     validar=validarVacio(request.POST)
+     if validar[0]:
+          _p=request.POST['id']
+          _g=request.POST['grupo']
           try:
-               g=GruposPred.objects.get(pk=_g)
-          except(KeyError, GruposPred.DoesNotExist):
-               msg={'msg':'Grupo no existe'}
+               p=Publicador.objects.get(pk=_p)
+          except(KeyError, Publicador.DoesNotExist):
+               msg={'msg':'Publicador no existe'}
           else:
-               if p.FKgrupo.pk!=g.pk:
-                    Publicador.objects.filter(pk=_p).update(FKgrupo=g)
-                    msg={'msg':'El publicador ha sido movido con exito', 'on':1}
+               try:
+                    g=GruposPred.objects.get(pk=_g)
+               except(KeyError, GruposPred.DoesNotExist):
+                    msg={'msg':'Grupo no existe'}
                else:
-                    msg={'msg':'No hubo ningun cambio realizado'}
+                    if p.FKgrupo.pk!=g.pk:
+                         Publicador.objects.filter(pk=_p).update(FKgrupo=g)
+                         msg={'msg':'El publicador ha sido movido con exito', 'on':1}
+                    else:
+                         msg={'msg':'No hubo ningun cambio realizado'}
+     else:
+          msg=msgVacio(validar[1])
      return HttpResponse(json.dumps(msg))
 
 def traerPub(request, idpub):
-     request.session['pub']=idpub
-     p=Publicador.objects.get(pk=idpub)
-     formPub = regPub(instance=p)
-     cmbGrupo = traerGrupo(initial={'Encargado': p.FKgrupo.pk})
-     return render(request, 'regPubli.html', {'form': formPub, 'form2':cmbGrupo, 'on': 1})
+     try:
+          p=Publicador.objects.get(pk=idpub)
+     except(KeyError, Publicador.DoesNotExist):
+          data={'msg':"Publicador no existe!"}
+     else:
+          request.session['pub']=idpub
+          formPub = regPub(instance=p)
+          cmbGrupo = traerGrupo(initial={'Encargado': p.FKgrupo.pk})
+          data={'form': formPub, 'form2':cmbGrupo, 'on': 1}
+     return render(request, 'regPubli.html', data)
 
 def modPub(request):
-     _nombre=request.POST['nombre'].upper()
-     _apellido=request.POST['apellido'].upper()
-     _telefono=request.POST['telefono']
-     _direccion =request.POST['direccion'].upper()
-     _email=request.POST['email'].upper()
-     _fechaBau=request.POST['fechaBau']
-     _fechaNa=request.POST['fechaNa']
-     _grupo=request.POST['Encargado']
-     _id=request.session['pub']
-     try:
-        p=Publicador.objects.get(pk=_id)
-     except(KeyError, Publicador.DoesNotExist):
-        msg='Error, publicador no registrado'
-     else:
+     nums=['Encargado']
+     vFecha=['fechaNa']
+     validar=validarVacio(request.POST,nums,vFecha)
+     if validar[0]:
+          datosP=trimUpper(request.POST,['fechaBau', 'email'])
+          _nombre=datosP['nombre']
+          _apellido=datosP['apellido']
+          _telefono=datosP['telefono']
+          _direccion =datosP['direccion']
+          _email=datosP['email']
+          _fechaBau=datosP['fechaBau']
+          _fechaNa=datosP['fechaNa']
+          _grupo=datosP['Encargado']
           try:
-               g=GruposPred.objects.get(pk=_grupo)
-          except(KeyError, GruposPred.DoesNotExist):
-               msg='Grupo no existe'
+               _id=request.session['pub']
+          except KeyError:
+               msg="Error! Antes de modificar seleccione un publicador"
           else:
-               Publicador.objects.filter(pk=_id).update(FKgrupo=_grupo)
-               p.nombre=_nombre
-               p.apellido=_apellido
-               p.telefono=_telefono
-               p.direccion=_direccion
-               p.email=_email
-               p.fechaBau=_fechaBau
-               p.fechaNa=_fechaNa
-               p.save()
-               msg='Publicador modificado con exito'
+               p=Publicador.objects.get(pk=_id)
+               try:
+                    g=GruposPred.objects.get(pk=_grupo)
+               except(KeyError, GruposPred.DoesNotExist):
+                    msg='Grupo no existe'
+               else:
+                    Publicador.objects.filter(pk=_id).update(FKgrupo=_grupo)
+                    p.nombre=_nombre
+                    p.apellido=_apellido
+                    p.telefono=_telefono
+                    p.direccion=_direccion
+                    p.email=_email
+                    p.fechaBau=_fechaBau
+                    p.fechaNa=_fechaNa
+                    p.save()
+                    msg='Publicador modificado con exito'
+     else:
+          msg="Error introdujo algun campo invalido"
      request.session['msgpub']=msg
-     return render(request, 'conPubs.html')
+     return HttpResponse("")
+
+def trimUpper(elements, no=[]):
+     modElemets={}
+     for i in elements.keys():
+          if i not in no:
+               try:
+                    modElemets[i]=elements[i].upper().strip()
+               except(AttributeError):
+                    modElemets[i]=elements[i]
+          else:
+               modElemets[i]=elements[i]
+     return modElemets
 
 def modGrup(request):
      validar=validarVacio(request.POST)
      if validar[0]:
-          _encargado=request.POST['enc'].upper()
-          _auxiliar=request.POST['aux'].upper()
-          _auxiliar=_auxiliar.strip()
-          _encargado=_encargado.strip()
-          _pk=request.POST['id']
+          datosG=trimUpper(request.POST)
+          _encargado=datosG['enc']
+          _auxiliar=datosG['aux']
           try:
-               g=GruposPred.objects.get(pk=_pk)
-          except(KeyError, GruposPred.DoesNotExist):
-               msg={'msg':'Grupo no existe'}
+               _pk=request.session['conGrupoId']
+          except(KeyError):
+               msg={'msg':'Seleccione un grupo.'}
           else:
-               g.encargado=_encargado
-               g.auxiliar=_auxiliar
-               g.save()
-               msg={'msg':'Grupo modificado con exito', 'on':1}
+               try:
+                    g=GruposPred.objects.get(pk=_pk)
+               except(KeyError, GruposPred.DoesNotExist):
+                    msg={'msg':'Grupo no existe'}
+               else:
+                    g.encargado=_encargado
+                    g.auxiliar=_auxiliar
+                    g.save()
+                    msg={'msg':'Grupo modificado con exito', 'on':1}
      else:
           msg=msgVacio(validar[1])
      return HttpResponse(json.dumps(msg))
@@ -309,25 +363,29 @@ def viewInfo(request):
      return render(request, 'regInforme.html', {'form': formInfo})
 
 def regInf(request):
-     pass
-     _horas = request.POST['horas']
-     _publicaciones = request.POST['publicaciones']
-     _videos = request.POST['videos']
-     _revisitas = request.POST['revisitas']
-     _estudios = request.POST['estudios']
-     _fecha = request.POST['fecha']
-     _pub=request.POST['publicador']
-     try:
-          p=Publicador.objects.get(pk=_pub)
-     except(KeyError, Publicador.DoesNotExist):
-          msg={'msg':'Publicador no existe'}
-     else:
-          inf=Informe.objects.filter(mes=int(_fecha[0:2]), year=int(_fecha[3:]),FKpub=_pub)
-          if len(inf)==0:
-               p.informe_set.create(horas=_horas, publicaciones=_publicaciones, videos=_videos, revisitas=_revisitas, estudios=_estudios, mes=int(_fecha[0:2]), year=int(_fecha[3:]))
-               msg={'msg':'Informe Registrado con exito'}
+     nums=['horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'publicador']
+     validar=validarVacio(request.POST, nums)
+     if validar[0]:
+          _horas = request.POST['horas']
+          _publicaciones = request.POST['publicaciones']
+          _videos = request.POST['videos']
+          _revisitas = request.POST['revisitas']
+          _estudios = request.POST['estudios']
+          _fecha = request.POST['fecha']
+          _pub=request.POST['publicador']
+          try:
+               p=Publicador.objects.get(pk=_pub)
+          except(KeyError, Publicador.DoesNotExist):
+               msg={'msg':'Publicador no existe'}
           else:
-               msg={'msg':'Informe ya Fue registrado'}
+               inf=Informe.objects.filter(mes=int(_fecha[0:2]), year=int(_fecha[3:]),FKpub=_pub)
+               if len(inf)==0:
+                    p.informe_set.create(horas=_horas, publicaciones=_publicaciones, videos=_videos, revisitas=_revisitas, estudios=_estudios, mes=int(_fecha[0:2]), year=int(_fecha[3:]))
+                    msg={'msg':'Informe Registrado con exito'}
+               else:
+                    msg={'msg':'Informe ya Fue registrado'}
+     else:
+          msg=msgVacio(validar[1])
      return HttpResponse(json.dumps(msg))
 
 def tarjeta(request, vista, idPub, y):
@@ -439,54 +497,70 @@ def NombrarPrecur(request):
      cont=0
      msg={}
      p=json.loads(request.POST['pub'])
-     mes=request.POST['fechaIni'][0:2]
-     year=request.POST['fechaIni'][3:]
+     mes=int(request.POST['fechaIni'][0:2])
+     year=int(request.POST['fechaIni'][3:])
      for x in p:
           try:
-               pub = Publicador.objects.get(pk=x['id'])
-          except(KeyError, Publicador.DoesNotExist):
-               msg[cont] = {'msg': 'el publicador' + x['id'] + 'no esta registrado'}
-               validaciones = False
+               int(x['duracion'])
+          except ValueError:
+               validaciones=False
+               msg[cont] = {'msg': 'ha introducido una duracion en un formato no valido para el publicador ' + x['id'] + " pro favor introduzca solo numeros"}
           else:
                try:
-                    prec=Precursor.objects.get(pk=x['precur'])
-               except(KeyError, Precursor.DoesNotExist):
-                    msg[cont]={'msg':'El precursorado'+ x['precur'] + ' no existe'}
-                    validaciones=False
+                    pub = Publicador.objects.get(pk=x['id'])
+               except(KeyError, Publicador.DoesNotExist):
+                    msg[cont] = {'msg': 'el publicador' + x['id'] + 'no esta registrado'}
+                    validaciones = False
                else:
-                    verificar = PubPrecursor.objects.filter(FKpub=x['id'], status=True)
-                    if len(verificar) > 0:
-                         msg[cont] = {'msg': 'el publicador' + x['id'] + 'ya es precursor'}
-                         validaciones = False
+                    try:
+                         prec=Precursor.objects.get(pk=x['precur'])
+                    except(KeyError, Precursor.DoesNotExist):
+                         msg[cont]={'msg':'El precursorado'+ x['precur'] + ' no existe'}
+                         validaciones=False
                     else:
-                         if pub.fechaBau[0]!='N':
-                              precurs=PubPrecursor.objects.filter(FKpub=pub.pk).order_by("-yearIni", "-mesIni")
-                              if len(precurs)==0:
-                                   diferencia=0
-                              else:
-                                   iniF=getFechaFin(precurs[0].mesIni,precurs[0].yearIni,precurs[0].duracion)
-                                   iniMes=iniF[0]
-                                   iniYear=iniF[1]
-                                   diferencia=getDiferenciaMes(iniMes,iniYear, mes, year)
-                              if diferencia>-1:
-                                   pubP = PubPrecursor(FKpub=pub, FKprecursor=prec, duracion=x['duracion'], mesIni=mes, yearIni=year, status=True)
-                                   pubP.save()
-                                   if prec.pk in (3, 4):
-                                        try:
-                                             nro=nroPrec.objects.get(FKpub=pub.pk)
-                                        except(KeyError, nroPrec.DoesNotExist):
-                                             pub.nroprec_set.create(nroPrec=x['nroPrec'])
-                                   msg[cont] = {'msg': 'el publicador' + x['id'] + 'fue nombrado con exito'}
-                              else:
-                                   msg[cont] = {'msg': 'el publicador' + x['id'] + 'tenia un precursorado activo en la fecha que usted acaba de asignar'}
+                         verificar = PubPrecursor.objects.filter(FKpub=x['id'], status=True)
+                         if len(verificar) > 0:
+                              msg[cont] = {'msg': 'el publicador' + x['id'] + 'ya es precursor'}
+                              validaciones = False
                          else:
-                              msg[cont] = {'msg': 'el publicador' + x['id'] + 'no esta bautizado'}
-                              validaciones=False
-          cont += 1
+                              if pub.fechaBau[0]!='N':
+                                   precurs=PubPrecursor.objects.filter(FKpub=pub.pk).order_by("-yearIni", "-mesIni")
+                                   if len(precurs)==0:
+                                        diferencia=0
+                                   else:
+                                        iniF=getFechaFin(precurs[0].mesIni,precurs[0].yearIni,precurs[0].duracion)
+                                        iniMes=iniF[0]
+                                        iniYear=iniF[1]
+                                        diferencia=getDiferenciaMes(iniMes,iniYear, mes, year)
+                                   if diferencia>-1:
+                                        pubP = PubPrecursor(FKpub=pub, FKprecursor=prec, duracion=x['duracion'], mesIni=mes, yearIni=year, status=True)
+                                        pubP.save()
+                                        if prec.pk in (3, 4):
+                                             try:
+                                                  nro=nroPrec.objects.get(FKpub=pub.pk)
+                                             except(KeyError, nroPrec.DoesNotExist):
+                                                  try:
+                                                       int(x['nroPrec'])
+                                                  except ValueError:
+                                                       msg[cont] = {'msg': 'valor no valido para nro de precursor del publicador ' + x['id'] + ' por favor introduzca solo numeros'}
+                                                       pubP.delete()
+                                                       validaciones=False
+                                                  else:
+                                                       pub.nroprec_set.create(nroPrec=x['nroPrec'])
+                                                       msg[cont] = {'msg': 'el publicador' + x['id'] + 'fue nombrado con exito'}
+                                             else:
+                                                  msg[cont] = {'msg': 'el publicador' + x['id'] + 'fue nombrado con exito'}
+                                        else:
+                                             msg[cont] = {'msg': 'el publicador' + x['id'] + 'fue nombrado con exito'}
+                                   else:
+                                        msg[cont] = {'msg': 'el publicador ' + x['id'] + ' tenia un precursorado activo en la fecha que usted acaba de asignar'}
+                                        validaciones=False
+                              else:
+                                   msg[cont] = {'msg': 'el publicador' + x['id'] + 'no esta bautizado'}
+                                   validaciones=False
+          cont+= 1
      if validaciones:
           msg={'msg':'Los publicadores han sido nombrados precursores.'}
-     else:
-          msg=msg.values()
      return HttpResponse(json.dumps(msg))
 
 def conPrec(request):
