@@ -218,6 +218,7 @@ def regPubli(request):
      return render(request, 'regPubli.html', {'form': formPub, 'form2': cmbGrupo, 'url':2})
 
 def publicReg(request):
+     hoy=datetime.date.today()
      nums=['Encargado']
      vFechas=['fechaNa']
      validar=validarVacio(request.POST, nums, vFechas)
@@ -231,18 +232,22 @@ def publicReg(request):
           _fechaBau=datosP['fechaBau']
           _fechaNa=datosP['fechaNa']
           _grupo=datosP['Encargado']
-          try:
-               pub=Publicador.objects.get(nombre=_nombre, apellido=_apellido, fechaNa=_fechaNa)
-          except(KeyError, Publicador.DoesNotExist):
+          edad=hoy.year-int(_fechaNa[0:4])-((hoy.month, hoy.day)<(int(_fechaNa[5:7]), (int(_fechaNa[8:]))))
+          if edad>3:
                try:
-                    g=GruposPred.objects.get(pk=_grupo)
-               except(KeyError, GruposPred.DoesNotExist):
-                    msg={'msg':"El grupo no existe"}
+                    pub=Publicador.objects.get(nombre=_nombre, apellido=_apellido, fechaNa=_fechaNa)
+               except(KeyError, Publicador.DoesNotExist):
+                    try:
+                         g=GruposPred.objects.get(pk=_grupo)
+                    except(KeyError, GruposPred.DoesNotExist):
+                         msg={'msg':"El grupo no existe"}
+                    else:
+                         g.publicador_set.create(nombre=_nombre, apellido=_apellido, telefono=_telefono, direccion=_direccion,email=_email, fechaBau=_fechaBau, fechaNa=_fechaNa)
+                         msg={'msg':"Publicador Registrado con exito"}
                else:
-                    g.publicador_set.create(nombre=_nombre, apellido=_apellido, telefono=_telefono, direccion=_direccion,email=_email, fechaBau=_fechaBau, fechaNa=_fechaNa)
-                    msg={'msg':"Publicador Registrado con exito"}
+                    msg={ 'msg': "Error! Este publicador ya esta registrado."}
           else:
-               msg={ 'msg': "Error! Este publicador ya esta registrado."}
+               msg={'msg':"Error! Para ser registrado debe tener como minimo 4 anios"}
      else:
           msg=msgVacio(validar[1])
      return HttpResponse(json.dumps(msg))
@@ -497,6 +502,7 @@ def vistaNombrar(request):
      return render(request, 'nombrarPub.html', {'pub':p, 'precur':precur, 'url':3})
 
 def NombrarPrecur(request):
+     hoy=datetime.date.today()
      bajaAuto()
      validaciones=True
      cont=0
@@ -504,66 +510,70 @@ def NombrarPrecur(request):
      p=json.loads(request.POST['pub'])
      mes=int(request.POST['fechaIni'][0:2])
      year=int(request.POST['fechaIni'][3:])
-     for x in p:
-          try:
-               int(x['duracion'])
-          except ValueError:
-               validaciones=False
-               msg[cont] = {'msg': 'ha introducido una duracion en un formato no valido para el publicador ' + x['id'] + " pro favor introduzca solo numeros"}
-          else:
+     if getDiferenciaMes(int(mes), int(year),hoy.month, hoy.year)>-2:
+          for x in p:
                try:
-                    pub = Publicador.objects.get(pk=x['id'])
-               except(KeyError, Publicador.DoesNotExist):
-                    msg[cont] = {'msg': 'el publicador' + x['id'] + 'no esta registrado'}
-                    validaciones = False
+                    int(x['duracion'])
+               except ValueError:
+                    validaciones=False
+                    msg[cont] = {'msg': 'ha introducido una duracion en un formato no valido para el publicador ' + x['id'] + " pro favor introduzca solo numeros"}
                else:
                     try:
-                         prec=Precursor.objects.get(pk=x['precur'])
-                    except(KeyError, Precursor.DoesNotExist):
-                         msg[cont]={'msg':'El precursorado'+ x['precur'] + ' no existe'}
-                         validaciones=False
+                         pub = Publicador.objects.get(pk=x['id'])
+                    except(KeyError, Publicador.DoesNotExist):
+                         msg[cont] = {'msg': 'el publicador' + x['id'] + 'no esta registrado'}
+                         validaciones = False
                     else:
-                         verificar = PubPrecursor.objects.filter(FKpub=x['id'], status=True)
-                         if len(verificar) > 0:
-                              msg[cont] = {'msg': 'el publicador' + x['id'] + 'ya es precursor'}
-                              validaciones = False
+                         try:
+                              prec=Precursor.objects.get(pk=x['precur'])
+                         except(KeyError, Precursor.DoesNotExist):
+                              msg[cont]={'msg':'El precursorado'+ x['precur'] + ' no existe'}
+                              validaciones=False
                          else:
-                              if pub.fechaBau[0]!='N':
-                                   precurs=PubPrecursor.objects.filter(FKpub=pub.pk).order_by("-yearIni", "-mesIni")
-                                   if len(precurs)==0:
-                                        diferencia=0
-                                   else:
-                                        iniF=getFechaFin(precurs[0].mesIni,precurs[0].yearIni,precurs[0].duracion)
-                                        iniMes=iniF[0]
-                                        iniYear=iniF[1]
-                                        diferencia=getDiferenciaMes(iniMes,iniYear, mes, year)
-                                   if diferencia>-1:
-                                        pubP = PubPrecursor(FKpub=pub, FKprecursor=prec, duracion=x['duracion'], mesIni=mes, yearIni=year, status=True)
-                                        pubP.save()
-                                        if prec.pk in (3, 4):
-                                             try:
-                                                  nro=nroPrec.objects.get(FKpub=pub.pk)
-                                             except(KeyError, nroPrec.DoesNotExist):
+                              verificar = PubPrecursor.objects.filter(FKpub=x['id'], status=True)
+                              if len(verificar) > 0:
+                                   msg[cont] = {'msg': 'el publicador' + x['id'] + 'ya es precursor'}
+                                   validaciones = False
+                              else:
+                                   if pub.fechaBau[0]!='N':
+                                        precurs=PubPrecursor.objects.filter(FKpub=pub.pk).order_by("-yearIni", "-mesIni")
+                                        if len(precurs)==0:
+                                             diferencia=0
+                                        else:
+                                             iniF=getFechaFin(precurs[0].mesIni,precurs[0].yearIni,precurs[0].duracion)
+                                             iniMes=iniF[0]
+                                             iniYear=iniF[1]
+                                             diferencia=getDiferenciaMes(iniMes,iniYear, mes, year)
+                                        if diferencia>-1:
+                                             pubP = PubPrecursor(FKpub=pub, FKprecursor=prec, duracion=x['duracion'], mesIni=mes, yearIni=year, status=True)
+                                             pubP.save()
+                                             if prec.pk in (3, 4):
                                                   try:
-                                                       int(x['nroPrec'])
-                                                  except ValueError:
-                                                       msg[cont] = {'msg': 'valor no valido para nro de precursor del publicador ' + x['id'] + ' por favor introduzca solo numeros'}
-                                                       pubP.delete()
-                                                       validaciones=False
+                                                       nro=nroPrec.objects.get(FKpub=pub.pk)
+                                                  except(KeyError, nroPrec.DoesNotExist):
+                                                       try:
+                                                            int(x['nroPrec'])
+                                                       except ValueError:
+                                                            msg[cont] = {'msg': 'valor no valido para nro de precursor del publicador ' + x['id'] + ' por favor introduzca solo numeros'}
+                                                            pubP.delete()
+                                                            validaciones=False
+                                                       else:
+                                                            pub.nroprec_set.create(nroPrec=x['nroPrec'])
+                                                            msg[cont] = {'msg': 'el publicador' + x['id'] + 'fue nombrado con exito'}
                                                   else:
-                                                       pub.nroprec_set.create(nroPrec=x['nroPrec'])
                                                        msg[cont] = {'msg': 'el publicador' + x['id'] + 'fue nombrado con exito'}
                                              else:
                                                   msg[cont] = {'msg': 'el publicador' + x['id'] + 'fue nombrado con exito'}
                                         else:
-                                             msg[cont] = {'msg': 'el publicador' + x['id'] + 'fue nombrado con exito'}
+                                             msg[cont] = {'msg': 'el publicador ' + x['id'] + ' tenia un precursorado activo en la fecha que usted acaba de asignar'}
+                                             validaciones=False
                                    else:
-                                        msg[cont] = {'msg': 'el publicador ' + x['id'] + ' tenia un precursorado activo en la fecha que usted acaba de asignar'}
+                                        msg[cont] = {'msg': 'el publicador' + x['id'] + 'no esta bautizado'}
                                         validaciones=False
-                              else:
-                                   msg[cont] = {'msg': 'el publicador' + x['id'] + 'no esta bautizado'}
-                                   validaciones=False
-          cont+= 1
+               cont+= 1
+     else:
+          msg={'msg':"Error! no puede hacer un nombramientos del futuro"}
+          validaciones=False
      if validaciones:
           msg={'msg':'Los publicadores han sido nombrados precursores.'}
      return HttpResponse(json.dumps(msg))
