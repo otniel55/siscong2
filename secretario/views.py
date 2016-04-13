@@ -11,11 +11,11 @@ from django.utils import timezone
 from django.db.models import Q
 
 def index(request):
-     return render(request, 'layout.html', {})
+     return render(request, 'layout.html', {'url':0})
 
 def registrarGrupo(request):
      form = CrearGrupo()
-     return render(request, 'regGrupo.html', {'form': form})
+     return render(request, 'regGrupo.html', {'form': form, 'url':1})
 
 def validarVacio(elements, numerosKeys=[], fechaKeys=[]):
      elemento=[]
@@ -82,11 +82,11 @@ def conGrupo(request):
                cGrupo = traerGrupo(initial={'Encargado': fkgrupo })
                request.session['idgrupo']=""
                on = 1
-     return render(request, 'conGrupo.html', {'form': cGrupo, 'onPub': on })
+     return render(request, 'conGrupo.html', {'form': cGrupo, 'onPub': on, 'url':1 })
 
 def conGrupoofPubs(request, idGrupo):
      cGrupo = traerGrupo(initial={'Encargado': idGrupo})
-     return render(request, 'conGrupo.html', {'form': cGrupo, 'onPub': 1 })
+     return render(request, 'conGrupo.html', {'form': cGrupo, 'onPub': 1, 'url':1 })
 
 def datGrupo(request,idGrupo):
      try:
@@ -104,6 +104,7 @@ def datGrupo(request,idGrupo):
           y=datetime.date.today().year
           datos = {'form': formDatGrupo, 'publicadores': p, 'num': g.pk, 'modalPub': formPub,
                  'modalGrupo': modalGrupo, 'modalInfo': modalInfo, 'mes': mes,'y':y,
+                   'url':1,
                  }
      return render(request, 'datGrupo.html',datos)
 
@@ -170,7 +171,7 @@ def conPubs(request):
           pubs[cont]={'nombre':i.nombre, 'apellido':i.apellido, 'fechaBau':i.fechaBau, 'edad':obteneredad(i), 'FKgrupo':i.FKgrupo, 'id':i.pk, 'g':i.FKgrupo.pk, 'status': status, 'intervalo': intervalo, 'fecha':fecha}
           cont=cont+1
      pubs=pubs.values()
-     return render(request, 'conPubs.html',{'pub':pubs,'msg':msg})
+     return render(request, 'conPubs.html',{'pub':pubs,'msg':msg, 'url':2})
 
 def prom(nums):
      acum=0
@@ -214,7 +215,7 @@ def obteneredad(persona, tb=0):
 def regPubli(request):
      formPub = regPub()
      cmbGrupo = traerGrupo()
-     return render(request, 'regPubli.html', {'form': formPub, 'form2': cmbGrupo})
+     return render(request, 'regPubli.html', {'form': formPub, 'form2': cmbGrupo, 'url':2})
 
 def publicReg(request):
      nums=['Encargado']
@@ -279,7 +280,7 @@ def traerPub(request, idpub):
           request.session['pub']=idpub
           formPub = regPub(instance=p)
           cmbGrupo = traerGrupo(initial={'Encargado': p.FKgrupo.pk})
-          data={'form': formPub, 'form2':cmbGrupo, 'on': 1}
+          data={'form': formPub, 'form2':cmbGrupo, 'on': 1, 'url':2}
      return render(request, 'regPubli.html', data)
 
 def modPub(request):
@@ -363,6 +364,7 @@ def viewInfo(request):
      return render(request, 'regInforme.html', {'form': formInfo})
 
 def regInf(request):
+     hoy=datetime.date.today()
      nums=['horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'publicador']
      validar=validarVacio(request.POST, nums)
      if validar[0]:
@@ -373,17 +375,20 @@ def regInf(request):
           _estudios = request.POST['estudios']
           _fecha = request.POST['fecha']
           _pub=request.POST['publicador']
-          try:
-               p=Publicador.objects.get(pk=_pub)
-          except(KeyError, Publicador.DoesNotExist):
-               msg={'msg':'Publicador no existe'}
-          else:
-               inf=Informe.objects.filter(mes=int(_fecha[0:2]), year=int(_fecha[3:]),FKpub=_pub)
-               if len(inf)==0:
-                    p.informe_set.create(horas=_horas, publicaciones=_publicaciones, videos=_videos, revisitas=_revisitas, estudios=_estudios, mes=int(_fecha[0:2]), year=int(_fecha[3:]))
-                    msg={'msg':'Informe Registrado con exito'}
+          if getDiferenciaMes(int(_fecha[0:2]), int(_fecha[3:]),hoy.month, hoy.year)>-2:
+               try:
+                    p=Publicador.objects.get(pk=_pub)
+               except(KeyError, Publicador.DoesNotExist):
+                    msg={'msg':'Publicador no existe'}
                else:
-                    msg={'msg':'Informe ya Fue registrado'}
+                    inf=Informe.objects.filter(mes=int(_fecha[0:2]), year=int(_fecha[3:]),FKpub=_pub)
+                    if len(inf)==0:
+                         p.informe_set.create(horas=_horas, publicaciones=_publicaciones, videos=_videos, revisitas=_revisitas, estudios=_estudios, mes=int(_fecha[0:2]), year=int(_fecha[3:]))
+                         msg={'msg':'Informe Registrado con exito'}
+                    else:
+                         msg={'msg':'Error informe ya existe'}
+          else:
+               msg={'msg':"No puede introducir un informe del futuro"}
      else:
           msg=msgVacio(validar[1])
      return HttpResponse(json.dumps(msg))
@@ -400,9 +405,9 @@ def tarjeta(request, vista, idPub, y):
                inf[cont]={'mes':datetime.date(2016,i.mes,4), 'horas':i.horas, 'publicaciones':i.publicaciones, 'videos':i.videos, 'revisitas':i.revisitas, 'estudios':i.estudios}
                cont+=1
           inf=inf.values()
-          datos={'pub':inf, 'p':p}
+          datos={'pub':inf, 'p':p, 'url':2}
      else:
-          datos={'vacio':1}
+          datos={'vacio':1, 'url':2}
 
      if vista == '1':
           pagina = 'conTarjetaGrupoPub.html'
@@ -474,10 +479,10 @@ def verTarjetaPub(request):
           yearHoy=yearHoy-1
           cont+=1
      cGrupo = traerGrupo()
-     return render(request, 'verTarjetaPub.html', {'form': cGrupo, 'years':years})
+     return render(request, 'verTarjetaPub.html', {'form': cGrupo, 'years':years, 'url':2})
 
 def editPrecur(request):
-     return render(request, 'editPrecur.html', {'precur': Precursor.objects.all()})
+     return render(request, 'editPrecur.html', {'precur': Precursor.objects.all(), 'url':3})
 
 def vistaNombrar(request):
      bajaAuto()
@@ -489,7 +494,7 @@ def vistaNombrar(request):
           p[cont]={'pk':x.pk, 'nombre':x.nombre, 'apellido':x.apellido, 'tiempoB':obteneredad(x, 1), 'fechaBau':x.fechaBau}
           cont=cont+1
      p=p.values()
-     return render(request, 'nombrarPub.html', {'pub':p, 'precur':precur})
+     return render(request, 'nombrarPub.html', {'pub':p, 'precur':precur, 'url':3})
 
 def NombrarPrecur(request):
      bajaAuto()
@@ -566,7 +571,7 @@ def NombrarPrecur(request):
 def conPrec(request):
      bajaAuto()
      precur= precursorados()
-     return render(request, 'conPrecur.html', {'precur':precur})
+     return render(request, 'conPrecur.html', {'precur':precur, 'url':3})
 
 def conPrecs(request):
      bajaAuto()
