@@ -392,7 +392,6 @@ def tarjeta(request, vista, idPub, y):
      cont=0
      inf={}
      p=Publicador.objects.get(pk=idPub)
-     request.session['idgrupo'] = p.FKgrupo.pk
      infs=Informe.objects.filter(year=y, FKpub=idPub).order_by('mes')
      if len(infs)>0:
           request.session['tarjetaPub']=idPub
@@ -407,6 +406,7 @@ def tarjeta(request, vista, idPub, y):
 
      if vista == '1':
           pagina = 'conTarjetaGrupoPub.html'
+          request.session['idgrupo'] = p.FKgrupo.pk
      else:
           pagina = 'tarjetaPub.html'
 
