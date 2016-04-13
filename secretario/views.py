@@ -277,16 +277,18 @@ def cambiarPub(request):
      return HttpResponse(json.dumps(msg))
 
 def traerPub(request, idpub):
+     data={}
      try:
           p=Publicador.objects.get(pk=idpub)
      except(KeyError, Publicador.DoesNotExist):
-          data={'msg':"Publicador no existe!"}
+          pg="page404.html"
      else:
+          pg='regPubli.html'
           request.session['pub']=idpub
           formPub = regPub(instance=p)
           cmbGrupo = traerGrupo(initial={'Encargado': p.FKgrupo.pk})
           data={'form': formPub, 'form2':cmbGrupo, 'on': 1, 'url':2}
-     return render(request, 'regPubli.html', data)
+     return render(request, pg, data)
 
 def modPub(request):
      nums=['Encargado']
@@ -399,26 +401,31 @@ def regInf(request):
      return HttpResponse(json.dumps(msg))
 
 def tarjeta(request, vista, idPub, y):
+     datos={}
      cont=0
      inf={}
-     p=Publicador.objects.get(pk=idPub)
-     infs=Informe.objects.filter(year=y, FKpub=idPub).order_by('mes')
-     if len(infs)>0:
-          request.session['tarjetaPub']=idPub
-          request.session['tarjetaY']=y
-          for i in infs:
-               inf[cont]={'mes':datetime.date(2016,i.mes,4), 'horas':i.horas, 'publicaciones':i.publicaciones, 'videos':i.videos, 'revisitas':i.revisitas, 'estudios':i.estudios}
-               cont+=1
-          inf=inf.values()
-          datos={'pub':inf, 'p':p, 'url':2}
+     try:
+          p=Publicador.objects.get(pk=idPub)
+     except(KeyError, Publicador.DoesNotExist):
+          pagina="page404.html"
      else:
-          datos={'vacio':1, 'url':2}
+          infs=Informe.objects.filter(year=y, FKpub=idPub).order_by('mes')
+          if len(infs)>0:
+               request.session['tarjetaPub']=idPub
+               request.session['tarjetaY']=y
+               for i in infs:
+                    inf[cont]={'mes':datetime.date(2016,i.mes,4), 'horas':i.horas, 'publicaciones':i.publicaciones, 'videos':i.videos, 'revisitas':i.revisitas, 'estudios':i.estudios}
+                    cont+=1
+               inf=inf.values()
+               datos={'pub':inf, 'p':p, 'url':2}
+          else:
+               datos={'vacio':1, 'url':2}
 
-     if vista == '1':
-          pagina = 'conTarjetaGrupoPub.html'
-          request.session['idgrupo'] = p.FKgrupo.pk
-     else:
-          pagina = 'tarjetaPub.html'
+          if vista == '1':
+               pagina = 'conTarjetaGrupoPub.html'
+               request.session['idgrupo'] = p.FKgrupo.pk
+          else:
+               pagina = 'tarjetaPub.html'
 
      return render(request, pagina , datos)
 
