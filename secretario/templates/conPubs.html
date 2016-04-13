@@ -170,6 +170,11 @@
 
 {% block scripts %}
 	<script>
+
+        $(document).ready(function(){
+            $('li.sub-menu:eq(1) > a').click()
+        })
+
 		//dateTable
 
 			var table = $('#public').dataTable({

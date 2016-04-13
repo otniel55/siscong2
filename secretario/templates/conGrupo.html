@@ -37,6 +37,11 @@
 
 {% block scripts %}
 	<script>
+
+        $(document).ready(function(){
+            $('li.sub-menu:eq(0) > a').click()
+        })
+
 		$("#btnCon").click(function(){
 			encargado = $("#id_Encargado").val()
 			datpub = $("#datpub")

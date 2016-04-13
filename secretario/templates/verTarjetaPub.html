@@ -49,6 +49,11 @@
 {% endblock %}
 {% block scripts %}
 	<script>
+
+        $(document).ready(function(){
+            $('li.sub-menu:eq(1) > a').click()
+        })
+
 		//obtener todos los selects
 		combos = $('select')
 		datpub = $('#datpub')

@@ -60,47 +60,52 @@
 
 {% block scripts %}
 	<script>
-	var id = ''
-	var val = ''
 
-	$('#editPrecur tr td:nth-child(2), #editPrecur tr td:nth-child(3)').on('click',function(){
-        tr = $(this).parent('tr').index()
-        td=$("#editPrecur tr:nth-child("+(tr+1)+") td:nth-child(2)")
-		input = td.find('input').length
-		if(input == 0){
-			if(!Number.isInteger(id)){
-                btn=$("#editPrecur tr:nth-child("+(tr+1)+") td:nth-child(3) button")
-                btn.removeClass("btn-success")
-                btn.addClass("btn-primary")
-				id = td.parent('tr').index()
-				val = td.html().trim()
-				td.html(
-					"<input type'text' class='inputtrans' value='"+val+"' style='background:transparent;border:none;' />"
-					)
-				td.find('input')
-						.focus()
-						.focusout(function(){
-									$('tbody > tr:eq('+id+') > td:eq(1)').html(this.value)
-                                    btn.removeClass("btn-primary")
-                                    btn.add("btn-success")
-								})
+        $(document).ready(function(){
+            $('li.sub-menu:eq(2) > a').click()
+        })
 
-			} else {
-				id = td.parent('tr').index()
-				val = td.html().trim()
-                
-				td.html(
-					"<input type'text' class='inputtrans'' value='"+val+"' style='background:transparent;border:none;' />"
-					)
-				td.find('input')
-						.focus()
-						.focusout(function(){
-				            $('tbody > tr:eq('+id+') > td:eq(1)').html(this.value)
-				        })
+        var id = ''
+        var val = ''
 
-			}
-		}
-	})
+        $('#editPrecur tr td:nth-child(2), #editPrecur tr td:nth-child(3)').on('click',function(){
+            tr = $(this).parent('tr').index()
+            td=$("#editPrecur tr:nth-child("+(tr+1)+") td:nth-child(2)")
+            input = td.find('input').length
+            if(input == 0){
+                if(!Number.isInteger(id)){
+                    btn=$("#editPrecur tr:nth-child("+(tr+1)+") td:nth-child(3) button")
+                    btn.removeClass("btn-success")
+                    btn.addClass("btn-primary")
+                    id = td.parent('tr').index()
+                    val = td.html().trim()
+                    td.html(
+                        "<input type'text' class='inputtrans' value='"+val+"' style='background:transparent;border:none;' />"
+                        )
+                    td.find('input')
+                            .focus()
+                            .focusout(function(){
+                                        $('tbody > tr:eq('+id+') > td:eq(1)').html(this.value)
+                                        btn.removeClass("btn-primary")
+                                        btn.add("btn-success")
+                                    })
+
+                } else {
+                    id = td.parent('tr').index()
+                    val = td.html().trim()
+
+                    td.html(
+                        "<input type'text' class='inputtrans'' value='"+val+"' style='background:transparent;border:none;' />"
+                        )
+                    td.find('input')
+                            .focus()
+                            .focusout(function(){
+                                $('tbody > tr:eq('+id+') > td:eq(1)').html(this.value)
+                            })
+
+                }
+            }
+        })
 
 	</script>
 {% endblock %}

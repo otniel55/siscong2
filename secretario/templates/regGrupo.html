@@ -37,6 +37,9 @@
 
 {% block scripts %}
 	<script>
+        $(document).ready(function(){
+            $('li.sub-menu:eq(0) > a').click()
+        })
 
 		$('#btnSave').click(function(){
 
