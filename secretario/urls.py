@@ -31,5 +31,5 @@ urlpatterns = [
     url(r'^historia/precursor/(?P<year>[a-zA-Z0-9]+)/$', views.historiaPrec, name='historiaPrec'),
     url(r'^conYear/$', views.yearServicio, name='yearServicio'),
     url(r'^darBaja/$', views.darBaja, name='darBaja'),
-    url(r'^404/$', views.errorPage, name='errorPage'),
+    url(r'^registrar/usuario/$', views.usuReg(), name='usuReg'),
 ]

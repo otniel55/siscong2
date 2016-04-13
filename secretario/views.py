@@ -910,5 +910,6 @@ def bajaAuto():
                     i.status=False
                     i.save()
 
-def errorPage(request):
-     return render(request, 'page404.html', {})
+def usuReg(request):
+     return render(request, 'usuReg.html')
+
