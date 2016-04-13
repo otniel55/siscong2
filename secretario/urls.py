@@ -32,4 +32,5 @@ urlpatterns = [
     url(r'^conYear/$', views.yearServicio, name='yearServicio'),
     url(r'^darBaja/$', views.darBaja, name='darBaja'),
     url(r'^registrar/usuario/$', views.usuReg, name='usuReg'),
+    url(r'^regusu/$', views.Regusu, name='Regusu'),
 ]

@@ -935,3 +935,5 @@ def bajaAuto():
 def usuReg(request):
      return render(request, 'usuReg.html')
 
+def Regusu(request):
+     pass
