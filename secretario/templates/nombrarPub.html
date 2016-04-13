@@ -36,15 +36,15 @@
 					            </div>
 
                                 <div class="col-sm-2 col-md-2 col-lg-2">
-                                    <button id="move-right" class="btn btn-success fa fa-arrow-right fa-2x fullwidth"></button>
+                                    <button id="move-right" class="btn btn-success btn-block fa fa-arrow-right fa-2x"></button>
                                 </div>
 
                                 <div class="col-sm-2 col-md-2 col-lg-2">
-                                    <button id="move-left" class="btn btn-danger fa fa-arrow-left fa-2x fullwidth" disabled></button>
+                                    <button id="move-left" class="btn btn-danger btn-block fa fa-arrow-left fa-2x" disabled></button>
                                 </div>
 
                                 <div class="col-sm-2 col-md-2 col-lg-2">
-                                    <button id="save" class="btn btn-primary fa fa-check-square-o fa-2x fullwidth" disabled></button>
+                                    <button id="save" class="btn btn-primary btn-block fa fa-check-square-o fa-2x" disabled></button>
 								</div>
 				            </div>
 					</div>
@@ -94,8 +94,8 @@
 						</table>
 
                         <div style="height:80px;">
-                            <nav class="col-lg-6 col-md-offset-3">
-                              <ul id="pager1" class="pagination pager">
+                            <nav class="center-block">
+                              <ul id="pager1" class="pagination pager" >
                                 <li>
                                   <a href="#" aria-label="P">
                                     <span aria-hidden="true">&laquo;</span>
@@ -151,7 +151,7 @@
 						</table>
 
                         <div style="height:80px;">
-                            <nav class="col-lg-6 col-md-offset-3">
+                            <nav class="center-block">
                               <ul id="pager2" class="pagination pager">
                                 <li>
                                   <a href="#" aria-label="P">
@@ -203,6 +203,9 @@
                     index++
                     page++
                 }
+
+                $('nav.center-block:eq('+(nro-1)+')').width( $('#pager'+nro).width() )
+
             }
 
             $('#pager'+nro+' > li > a').click(function(){
@@ -369,7 +372,7 @@
 
                     if( valAll == 3 || valAll == 4 ){
                         hermano.children().detach()
-                        hermano.append('<input type="text" placeholder="Nro de Precursor" class="form-control" />')
+                        hermano.append('<input type="number" placeholder="Nro de Precursor" class="form-control" />')
                     } else {
                         if ( hermano.children().is('input') ){
                             hermano.children().detach()
@@ -429,7 +432,7 @@
 
                     if(value == 3 || value == 4){
                         hermano.children().detach()
-                        hermano.append('<input type="text" placeholder="Nro de Precursor" class="form-control" />')
+                        hermano.append('<input type="number" placeholder="Nro de Precursor" class="form-control" />')
                     } else if ( $(this).val() ){
                         if ( hermano.children().is('input') ){
                             hermano.children().detach()

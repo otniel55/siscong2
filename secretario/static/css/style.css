@@ -2283,10 +2283,6 @@ label {
     border: solid 2px #ffa31a;
 }
 
-.fullwidth {
-    width: 100%;
-}
-
 .mrgPdgNull {
     margin: 0px;
     padding: 0px;
@@ -2343,7 +2339,7 @@ label {
     margin-bottom: 30px;
 }
 
-#nombrar select, input[type="text"] {
+#nombrar select, input[type="number"] {
     font-size: 12px;
     height: 28px;
 }
@@ -2365,4 +2361,11 @@ label {
 .Nfilter {
     margin-top: 15px;
     margin-bottom: 20px;
+}
+
+#main {
+    position:fixed;
+    width:100%;
+    height:100%;
+    background-color:#664988;
 }
