@@ -62,14 +62,14 @@
               	  <h5 class="centered">Otniel Acevedo</h5>
               	  
                   <li class="mt">
-                      <a class="active" href="{% url 'secretario:index' %}">
+                      <a class="{% if url == 0 %} active {% endif %}" href="{% url 'secretario:index' %}">
                           <i class="fa fa-home"></i>
                           <span>Inicio</span>
                       </a>
                   </li>
 				  
                   <li class="sub-menu">
-                      <a href="" >
+                      <a href="" class="{% if url == 1 %} active {% endif %}">
                           <i class="fa fa-map-marker"></i>
                           <span>Grupos</span>
                       </a>
@@ -79,8 +79,8 @@
                       </ul>
                   </li>
 				  
-				  <li class="sub-menu">
-                      <a href="" >
+				          <li class="sub-menu">
+                      <a href="" class="{% if url == 2 %} active {% endif %}">
                           <i class="fa fa-male"></i>
                           <span>Publicador</span>
                       </a>
@@ -92,7 +92,7 @@
                   </li>
 
                   <li class="sub-menu">
-                      <a href="" >
+                      <a href="" class="{% if url == 3 %} active {% endif %}">
                           <i class="fa fa-clock-o"></i>
                           <span>Precursores</span>
                       </a>
@@ -104,7 +104,7 @@
                   </li>
 				  
                   <li class="sub-menu">
-                      <a href="javascript:;" >
+                      <a href="" >
                           <i class="fa fa-file-text-o"></i>
                           <span>Informes</span>
                       </a>
@@ -114,6 +114,16 @@
                       </ul>
                   </li>
 
+                  <li class="sub-menu">
+                      <a href="" >
+                          <i class="fa fa-users"></i>
+                          <span>Usuarios</span>
+                      </a>
+                      <ul class="sub">
+            				<li><a  href="{% url 'secretario:usuReg' %}">Registrar</a></li>
+                            <li><a  href="">Editar</a></li>
+                      </ul>
+                  </li>
               </ul>
               <!-- sidebar menu end-->
           </div>
@@ -159,6 +169,6 @@
 
     {% block scripts %}
     {% endblock %}
-  
+
   </body>
 </html>
