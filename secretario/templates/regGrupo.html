@@ -38,11 +38,11 @@
             obj = new Gestion()
 
             input = obj.getInputs('.form-group')
-
+			console.log(input)
             if(input.vacio == 0){
                 keys = new Array('encargado', 'auxiliar')
 
-                obj.setPost("{% url 'secretario:grupos_registrar' %}", '{{ csrf_token }}', keys)
+                obj.setPost("{% url 'secretario:grupos_registrar' %}", '{{ csrf_token }}', keys, 'Registro de Grupos!')
             }
 		})
 

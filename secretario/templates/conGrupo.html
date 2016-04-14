@@ -41,18 +41,9 @@
 		$("#btnCon").click(function(){
 			encargado = $("#id_Encargado").val()
 			datpub = $("#datpub")
-
-			if( datpub.css('display')=='none'){
-				datpub.load("../../"+encargado+"/datos_grupo/", function(){
-					datpub.show( 'blind', 1000 );
-				});
-			} else {
-				datpub.hide('blind', 1000, function(){
-					datpub.load("../../"+encargado+"/datos_grupo/", function(){
-						datpub.show( 'blind', 1000 );
-					});
-				})
-			}
+			url="../../"+encargado+"/datos_grupo/"
+			obj = new Gestion()
+			obj.ejecutarLoad(url, datpub)
 		});
 
 		{% if onPub == 1 %}

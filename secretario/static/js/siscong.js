@@ -10,13 +10,22 @@ function Gestion(){
         inputs = $(':text, :password, select, input[type="number"], input[type="email"]', ''+elemento)
 
         inputs.each(function(){
-
+            vacio=false
             $(this).css('border-color', '#ccc')
 
             if( !$(this).val() ){
+                vacio=true
+            } else {
+                if ($(this).attr("type")=="number"){
+                    if(!/^([0-9])*$/.test($(this).val())){
+                        vacio=true
+                    }
+                }
+            }
+            if (vacio){
                 $(this).css('border-color', 'red')
                 Clear++
-            } else {
+            }else{
                 Data.push({
                     'value' : $(this).val()
                 })
@@ -54,7 +63,7 @@ function Gestion(){
         return this._tables
     }
 
-    this.setPost = function(url, csrf, keys){
+    this.setPost = function(url, csrf, keys, titulo, f){
 
         json = {}
 
@@ -70,9 +79,11 @@ function Gestion(){
         $.post(url, json)
         .success(function(res){
             res = JSON.parse(res)
-
+            if (f){
+                f()
+            }
             $.gritter.add({
-                title: 'Registro de Grupos!',
+                title: titulo,
                 text: ''+res.msg,
                 image: '',
                 sticky: false,
@@ -80,5 +91,19 @@ function Gestion(){
                 class_name: ''
             });
         })
+    }
+
+    this.ejecutarLoad=function(url, div){
+        if( div.css('display')=='none'){
+            div.load(url, function(){
+                div.show( 'blind', 1000 );
+            });
+        } else {
+            div.hide('blind', 1000, function(){
+                div.load(url, function(){
+                    div.show( 'blind', 1000 );
+                });
+            })
+        }
     }
 }

@@ -61,10 +61,8 @@ def grupos_registrar(request):
 
 def msgVacio(vacios):
      msg={}
-     cont=0
-     for i in vacios:
-          msg[cont]={i:"campo invalido"}
-          cont+=1
+     if len(vacios)>0:
+          msg={'msg':"Por favor no intente hacer trampa"}
      return msg
 
 def conGrupo(request):
@@ -361,7 +359,7 @@ def modGrup(request):
                     g.encargado=_encargado
                     g.auxiliar=_auxiliar
                     g.save()
-                    msg={'msg':'Grupo modificado con exito', 'on':1}
+                    msg={'msg':'Grupo modificado con exito'}
      else:
           msg=msgVacio(validar[1])
      return HttpResponse(json.dumps(msg))
@@ -391,7 +389,7 @@ def regInf(request):
                     inf=Informe.objects.filter(mes=int(_fecha[0:2]), year=int(_fecha[3:]),FKpub=_pub)
                     if len(inf)==0:
                          p.informe_set.create(horas=_horas, publicaciones=_publicaciones, videos=_videos, revisitas=_revisitas, estudios=_estudios, mes=int(_fecha[0:2]), year=int(_fecha[3:]))
-                         msg={'msg':'Informe Registrado con exito'}
+                         msg={'msg':'Informe Registrado con exito', 'on':1}
                     else:
                          msg={'msg':'Error informe ya existe'}
           else:
