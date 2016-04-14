@@ -1,6 +1,7 @@
 function Gestion(){
     var _inputs
     var _tables
+    var _json
 
     this.getInputs = function(elemento){
 
@@ -63,25 +64,38 @@ function Gestion(){
         return this._tables
     }
 
-    this.generateJson = function(keys, csrf, adicional){} //programa esta funciona
-    //debe crear el json para enviarlo por post y quitar esos parametro de setPost
-    //si necesitas un valor adicional en el json q no se agrega por un input mandalo por aqui tbn
-    //puedes preguntar si no han usado el metodo getInputs lo usas dentro d una vez
+    this.generateJson = function(keys, csrf, adicional){
 
-    this.setPost = function(url, csrf, keys, titulo, func){
+        if(this._inputs){
+            json = {}
 
-        json = {}
+            if(adicional){
+                if ( !Array.isArray(adicional) ){
+                    this._inputs.Data.push({ 'value' : adicional })
+                } else {
+                    $.each(adicional, function(key, value){
+                        this._inputs.Data.push({ 'value' : value })
+                    })
+                }
+            }
 
-        this._inputs.Data.push({ 'value' : csrf })
-        keys.push('csrfmiddlewaretoken')
+            keys.push('csrfmiddlewaretoken')
+            this._inputs.Data.push({ 'value' : csrf })
 
-        $.each(this._inputs.Data, function(key, value){
-            json[keys[key]] = value.value
-        })
+            $.each(this._inputs.Data, function(key, value){
+                json[keys[key]] = value.value
+            })
 
-        console.log( json )
+            this._json = json
 
-        $.post(url, json)
+            return this._json
+        }
+
+    }
+
+    this.setPost = function(url, titulo, func){
+
+        $.post(url, this._json)
         .success(function(res){
             res = JSON.parse(res)
             if(func){

@@ -41,7 +41,11 @@
 
             if(input.vacio == 0){
                 keys = new Array('encargado', 'auxiliar')
-                obj.setPost("{% url 'secretario:grupos_registrar' %}", '{{ csrf_token }}', keys, 'Registro de Grupos!', '')
+
+                obj.generateJson(keys, '{{ csrf_token }}', '')
+
+                obj.setPost("{% url 'secretario:grupos_registrar' %}", 'Registro de Grupos!', '')
+
             }
 		})
 
