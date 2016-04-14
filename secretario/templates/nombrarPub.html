@@ -332,7 +332,7 @@
 		    })
 
             //asignacion de altura de las tablas
-            reajustarTables()
+                reajustarTables()
 
             //creacion del pager
                 createPager(publics, 1)
@@ -373,7 +373,7 @@
 
                     if( valAll == 3 || valAll == 4 ){
                         hermano.children().detach()
-                        hermano.append('<input type="number" placeholder="Nro de Precursor" class="form-control" />')
+                        hermano.append('<input type="number" min=0 placeholder="Nro de Precursor" class="form-control" />')
                     } else {
                         if ( hermano.children().is('input') ){
                             hermano.children().detach()
@@ -433,7 +433,7 @@
 
                     if(value == 3 || value == 4){
                         hermano.children().detach()
-                        hermano.append('<input type="number" placeholder="Nro de Precursor" class="form-control" />')
+                        hermano.append('<input type="number" min=0 placeholder="Nro de Precursor" class="form-control" />')
                     } else if ( $(this).val() ){
                         if ( hermano.children().is('input') ){
                             hermano.children().detach()

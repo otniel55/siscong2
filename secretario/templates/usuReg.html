@@ -49,13 +49,13 @@
 
 		$('#btnSave').click(function(){
 
-			val = $(':input', 'div.form-group')
+			val = $(':text, :password')
             inputClear = 0
 
             val.each(function(){
                 $(this).css('border-color', '#ccc')
 
-                if( !$(this).val() && !$(this).is(':button')){
+                if( !$(this).val() ){
                     $(this).css('border-color', 'red')
                     inputClear++
                 }
