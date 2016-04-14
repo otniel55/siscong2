@@ -17,7 +17,7 @@ function Gestion(){
                 vacio=true
             } else {
                 if ($(this).attr("type")=="number"){
-                    if(!/^([0-9])*$/.test($(this).val())){
+                    if( !/^([0-9])*$/.test( $(this).val() ) ){
                         vacio=true
                     }
                 }
@@ -63,7 +63,12 @@ function Gestion(){
         return this._tables
     }
 
-    this.setPost = function(url, csrf, keys, titulo, f){
+    this.generateJson = function(keys, csrf, adicional){} //programa esta funciona
+    //debe crear el json para enviarlo por post y quitar esos parametro de setPost
+    //si necesitas un valor adicional en el json q no se agrega por un input mandalo por aqui tbn
+    //puedes preguntar si no han usado el metodo getInputs lo usas dentro d una vez
+
+    this.setPost = function(url, csrf, keys, titulo, func){
 
         json = {}
 
@@ -79,8 +84,8 @@ function Gestion(){
         $.post(url, json)
         .success(function(res){
             res = JSON.parse(res)
-            if (f){
-                f()
+            if(func){
+                func()
             }
             $.gritter.add({
                 title: titulo,
@@ -93,8 +98,8 @@ function Gestion(){
         })
     }
 
-    this.ejecutarLoad=function(url, div){
-        if( div.css('display')=='none'){
+    this.ejecutarLoad = function(url, div){
+        if( div.is(':hidden') ){
             div.load(url, function(){
                 div.show( 'blind', 1000 );
             });
