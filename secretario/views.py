@@ -9,6 +9,7 @@ import json
 import datetime
 from django.utils import timezone
 from django.db.models import Q
+from django.contrib.auth.models import User
 
 def index(request):
      return render(request, 'layout.html', {'url':0})
@@ -359,7 +360,7 @@ def modGrup(request):
                     g.encargado=_encargado
                     g.auxiliar=_auxiliar
                     g.save()
-                    msg={'msg':'Grupo modificado con exito'}
+                    msg={'msg':'Grupo modificado con exito', 'on':1}
      else:
           msg=msgVacio(validar[1])
      return HttpResponse(json.dumps(msg))
@@ -934,4 +935,18 @@ def usuReg(request):
      return render(request, 'usuReg.html')
 
 def Regusu(request):
-     pass
+     validar=validarVacio(request.POST)
+     if validar[0]:
+          nombre=request.POST['nombre']
+          clave=request.POST['pass']
+          try:
+               newUser=User.objects.create_user(username=nombre, password=clave)
+          except:
+               msg={'msg':'Usuario ya existe'}
+          else:
+               newUser.is_staff=True
+               newUser.save()
+               msg={'msg':'Usuario registrado con exito'}
+     else:
+          msg={'msg':'Por favor no intente hacer trampa'}
+     return HttpResponse(json.dumps(msg))

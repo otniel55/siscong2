@@ -87,7 +87,6 @@ function Gestion(){
             })
 
             this._json = json
-
             return this._json
         }
 
@@ -97,18 +96,26 @@ function Gestion(){
 
         $.post(url, this._json)
         .success(function(res){
-            res = JSON.parse(res)
-            if(func){
-                func()
-            }
-            $.gritter.add({
-                title: titulo,
-                text: ''+res.msg,
-                image: '',
-                sticky: false,
-                time: 3000,
-                class_name: ''
-            });
+			if (titulo){
+				res = JSON.parse(res)
+				$.gritter.add({
+					title: titulo,
+					text: ''+res.msg,
+					image: '',
+					sticky: false,
+					time: 3000,
+					class_name: ''
+				});
+				if(func){
+					if (res.on==1){
+						func()
+					}
+				}
+			}else{
+				func()
+			}
+            
+			
         })
     }
 

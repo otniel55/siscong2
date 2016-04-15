@@ -20,12 +20,13 @@
 			<div class="col-lg-10 col-lg-offset-1">
                 <div class="row">
                     <div class="col-md-8 col-md-offset-2">
-                        <label for="user">Nombre de Usuario:</label>
-                        <input id="user" type="text" class="form-control mrg-bottom">
+						<div id="form" >
+							<label for="user">Nombre de Usuario:</label>
+							<input id="user" type="text" class="form-control mrg-bottom">
 
-                        <label for="pass">Contraseña:</label>
-                        <input id="pass" type="password" class="form-control mrg-bottom" >
-
+							<label for="pass">Contraseña:</label>
+							<input id="pass" type="password" class="form-control mrg-bottom" >
+						</div>
                         <label for="pass2">Confirme su Contraseña:</label>
                         <input id="pass2" type="password" class="form-control mrg-bottom" >
                     </div>
@@ -48,59 +49,20 @@
 	<script>
 
 		$('#btnSave').click(function(){
-
-			val = $(':text, :password')
-            inputClear = 0
-
-            val.each(function(){
-                $(this).css('border-color', '#ccc')
-
-                if( !$(this).val() ){
-                    $(this).css('border-color', 'red')
-                    inputClear++
-                }
-            })
-
-            if(inputClear == 0){
-                if (val[1].value == val[2].value){
-                    /*$.post("{% url 'secretario:Regusu' %}",
-                    {
-                        'nombre': val[0].value,
-                        'password': val[2].value,
-                        csrfmiddlewaretoken:'{{ csrf_token }}'
-                    })
-                    .success(function(res){
-                        res=JSON.parse(res)
-
-                        $.gritter.add({
-                            title: 'Registro de Usuarios!',
-                            text: ''+res.msg,
-                            image: "{% static 'img/error.png' %}",
-                            sticky: false,
-                            time: 3000,
-                            class_name: ''
-                        });
-                    })*/
-                } else {
-                    $.gritter.add({
-                        title: 'Registro de Usuarios!',
-                        text: 'Las Claves no Coinciden',
-                        image: "{% static 'img/error.png' %}",
-                        sticky: false,
-                        time: 3000,
-                        class_name: ''
-                    });
-                }
-            } else {
-                $.gritter.add({
-                    title: 'Registro de Usuarios!',
-                    text: 'Hay Algunos Campos Vacios',
-                    image: "{% static 'img/error.png' %}",
-                    sticky: false,
-                    time: 3000,
-                    class_name: ''
-                });
-            }
+			pass=$("#pass").val()
+			pass2=$("#pass2").val()
+			if(pass==pass2){
+				datUsu=new Gestion()
+				inputs=datUsu.getInputs("#form")
+				if (inputs.vacio==0){
+					keys=new Array('nombre', 'pass')
+					datUsu.generateJson(keys, "{{ csrf_token }}")
+					datUsu.setPost("{% url 'secretario:Regusu' %}", 'Registro de usuario!')
+				}
+			}else{
+				$("#pass").css('border-color', 'red')
+				$("#pass2").css('border-color', 'red')
+			}
 		})
 
 	</script>

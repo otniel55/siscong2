@@ -102,45 +102,24 @@
 		});
 
 		$('#btnSave').click(function(){
-
-			val = $(':input', 'div.form-group')
-
-			$.post("{% url 'secretario:publicReg' %}",
-					{
-					  'nombre': val[0].value,
-					  'apellido': val[1].value,
-					  'telefono': val[2].value,
-					  'direccion': val[3].value,
-					  'email': val[4].value,
-					  'fechaBau': val[5].value,
-					  'fechaNa': val[6].value,
-					  'Encargado': val[7].value,
-					  csrfmiddlewaretoken:'{{ csrf_token }}'
-					})
-					.success(function(res){
-						res=JSON.parse(res)
-						console.log(res)
-					})
+			datP=new Gestion()
+			inputs=datP.getInputs('.form-group')
+			if (inputs.vacio==0){
+				keys=new Array('nombre', 'apellido', 'telefono', 'direccion', 'email', 'fechaBau', 'fechaNa', 'Encargado')
+				datP.generateJson(keys, "{{ csrf_token }}")
+				datP.setPost("{% url 'secretario:publicReg' %}", 'Registro de Publicadores!')
+			}
 		})
 
 		$('#btnMod').click(function(){
-
-			val = $(':input', 'div.form-group')
-
-			$.post("{% url 'secretario:modPub' %}",
-					{
-					  'nombre': val[0].value,
-					  'apellido': val[1].value,
-					  'telefono': val[2].value,
-					  'direccion': val[3].value,
-					  'email': val[4].value,
-					  'fechaBau': val[5].value,
-					  'fechaNa': val[6].value,
-					  'Encargado': val[7].value,
-					  csrfmiddlewaretoken:'{{ csrf_token }}'
-					}).success(function(){
-                        location.href="../../consultar/Publicadores/"
-            })
+			redirect=function(){location.href="../../consultar/Publicadores/"}
+			datMod=new Gestion()
+			inputs=datMod.getInputs('.form-group')
+			if (inputs.vacio==0){
+				keys=new Array('nombre', 'apellido', 'telefono', 'direccion', 'email', 'fechaBau', 'fechaNa', 'Encargado')
+				datMod.generateJson(keys, "{{ csrf_token }}")
+				datMod.setPost("{% url 'secretario:modPub' %}", '', redirect)
+			}
 		})
 	</script>
 {% endblock %}

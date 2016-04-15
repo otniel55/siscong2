@@ -93,7 +93,9 @@
 
 				<div class="modal-body">
 					{{ modalPub }}
-					{{ modalGrupo }}
+					<div class="cmbGrupo">
+						{{ modalGrupo }}
+					</div>
 				</div>
 
 				<div class="modal-footer">
@@ -129,22 +131,17 @@
 		})
 
 		$("#changeP").click(function(){
-			idgrupo = $('.modal-body > #id_Encargado').val()
-			$.post("{% url 'secretario:cambiarPub' %}", {'id':id, 'grupo': idgrupo, csrfmiddlewaretoken:'{{ csrf_token }}'}, function(res){
-				res=JSON.parse(res)
-				$.gritter.add({
-					title: 'Cambio de grupo!',
-					text: ''+res.msg,
-					image: '',
-					sticky: false,
-					time: 3000,
-					class_name: ''
-				});
-				if (res.on==1){
-					row = $('#'+id).parents('tr')
-					row.fadeOut()
-				}
-			})
+			f=function(){
+				row = $('#'+id).parents('tr')
+				row.fadeOut()
+			}
+			cambioG=new Gestion()
+			cmb=cambioG.getInputs('.cmbGrupo')
+			if (cmb.vacio==0){
+				keys=new Array('grupo', 'id')
+				cambioG.generateJson(keys, '{{ csrf_token }}', id)
+				cambioG.setPost("{% url 'secretario:cambiarPub' %}", 'Cambio de grupo!', f)
+			}
 		})
 
 		$("#btnMod").click(function(){
@@ -153,38 +150,19 @@
             input = datG.getInputs('.formGrupo')
             if(input.vacio == 0){
                 keys = new Array('enc', 'aux')
-                datG.setPost("{% url 'secretario:modGrup' %}", '{{ csrf_token }}', keys, 'Modificar Grupos!', c)
+				datG.generateJson(keys, '{{ csrf_token }}')
+                datG.setPost("{% url 'secretario:modGrup' %}", 'Modificar Grupos!', c)
             }
 		})
 
 		$("#regInf").click(function(){
+			close=function(){$("#closeInf").click()}
 			datInf=new Gestion()
 			input=datInf.getInputs('#informe')
 			if(input.vacio==0){
-				$.post("{% url 'secretario:regInf' %}",
-					   {'horas': inputsInfo.eq(1).val(),
-						'publicaciones': inputsInfo.eq(2).val(),
-						'videos': inputsInfo.eq(3).val(),
-						'revisitas': inputsInfo.eq(4).val(),
-						'estudios': inputsInfo.eq(5).val(),
-						'fecha': inputsInfo.eq(6).val(),
-						'publicador': id,
-						 csrfmiddlewaretoken:'{{ csrf_token }}'},
-						function(res){
-							res=JSON.parse(res)
-							$.gritter.add({
-								title: 'Registro de informe!',
-								text: ''+res.msg,
-								image: '',
-								sticky: false,
-								time: 3000,
-								class_name: ''
-							});
-							if (res.on==1){
-								$("#closeInf").click()
-							}
-						}
-				)
+				keys=new Array('horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'fecha', 'publicador')
+				datInf.generateJson(keys, '{{ csrf_token }}', id)
+				datInf.setPost("{% url 'secretario:regInf' %}", 'Regitro de informe!', close)
 			}
 		})
 
