@@ -53,7 +53,7 @@ def grupos_registrar(request):
           except(KeyError, GruposPred.DoesNotExist):
                grupo=GruposPred(encargado=_encargado, auxiliar=_auxiliar)
                grupo.save()
-               msg={'msg':"Grupo Registrado con exito"}
+               msg={'msg':"Grupo Registrado con exito", 'on':1}
           else:
                msg = {'msg': "Este encargado se encuentra en otro grupo"}
      else:
@@ -242,7 +242,7 @@ def publicReg(request):
                          msg={'msg':"El grupo no existe"}
                     else:
                          g.publicador_set.create(nombre=_nombre, apellido=_apellido, telefono=_telefono, direccion=_direccion,email=_email, fechaBau=_fechaBau, fechaNa=_fechaNa)
-                         msg={'msg':"Publicador Registrado con exito"}
+                         msg={'msg':"Publicador Registrado con exito", 'on':1}
                else:
                     msg={ 'msg': "Error! Este publicador ya esta registrado."}
           else:
@@ -327,7 +327,7 @@ def modPub(request):
      else:
           msg="Error introdujo algun campo invalido"
      request.session['msgpub']=msg
-     return HttpResponse("")
+     return HttpResponse(json.dumps({'msg':msg}))
 
 def trimUpper(elements, no=[]):
      modElemets={}
@@ -496,14 +496,24 @@ def editPrecur(request):
      return render(request, 'editPrecur.html', {'precur': Precursor.objects.all(), 'url':3})
 
 def vistaNombrar(request):
+     hoy = datetime.date.today()
      bajaAuto()
      cont=0
      p={}
      pubs=Publicador.objects.exclude(fechaBau__startswith="No").exclude(pubprecursor__status=True)
      precur= precursorados()
      for x in pubs:
-          p[cont]={'pk':x.pk, 'nombre':x.nombre, 'apellido':x.apellido, 'tiempoB':obteneredad(x, 1), 'fechaBau':x.fechaBau}
-          cont=cont+1
+          pasar=True
+          precursor=PubPrecursor.objects.filter(FKpub=x.pk).order_by("-yearIni", "-mesIni")
+          if len(precursor)>0:
+               final=getFechaFin(precursor[0].mesIni, precursor[0].yearIni, precursor[0].duracion)
+               mesI=final[0]
+               yearI=final[1]
+               if mesI==hoy.month and yearI==hoy.year:
+                    pasar=False
+          if pasar:
+               p[cont]={'pk':x.pk, 'nombre':x.nombre, 'apellido':x.apellido, 'tiempoB':obteneredad(x, 1), 'fechaBau':x.fechaBau}
+               cont=cont+1
      p=p.values()
      return render(request, 'nombrarPub.html', {'pub':p, 'precur':precur, 'url':3})
 
@@ -565,20 +575,20 @@ def NombrarPrecur(request):
                                                             validaciones=False
                                                        else:
                                                             pub.nroprec_set.create(nroPrec=x['nroPrec'])
-                                                            msg[cont] = {'msg': 'el publicador' + x['id'] + 'fue nombrado con exito'}
+                                                            msg[cont] = {'id':x['id'], 'bien':1}
                                                   else:
-                                                       msg[cont] = {'msg': 'el publicador' + x['id'] + 'fue nombrado con exito'}
+                                                       msg[cont] = {'id':x['id'], 'bien':1}
                                              else:
-                                                  msg[cont] = {'msg': 'el publicador' + x['id'] + 'fue nombrado con exito'}
+                                                  msg[cont] = {'id':x['id'], 'bien':1}
                                         else:
-                                             msg[cont] = {'msg': 'el publicador ' + x['id'] + ' tenia un precursorado activo en la fecha que usted acaba de asignar'}
+                                             msg[cont] = {'id': x['id'], 'bien':0}
                                              validaciones=False
                                    else:
                                         msg[cont] = {'msg': 'el publicador' + x['id'] + 'no esta bautizado'}
                                         validaciones=False
                cont+= 1
      else:
-          msg={'msg':"Error! no puede hacer un nombramientos del futuro"}
+          msg={'msg':"Error! no intente hacer trampa"}
           validaciones=False
      if validaciones:
           msg={'msg':'Los publicadores han sido nombrados precursores.'}
@@ -915,7 +925,7 @@ def darBaja(request):
                     data={'msg':"Precursor no esta activo o nunca fue precursor"}
                else:
                     precur.status=False
-                    precur.duracion=getDiferenciaMes(precur.mesIni, precur.yearIni, hoy.month, hoy.year)+1
+                    precur.duracion=getDiferenciaMes(precur.mesIni, precur.yearIni, hoy.month, hoy.year)+2
                     precur.save()
                     data={'msg':"Precursor dado de baja"}
      return HttpResponse(json.dumps(data))
@@ -946,7 +956,7 @@ def Regusu(request):
           else:
                newUser.is_staff=True
                newUser.save()
-               msg={'msg':'Usuario registrado con exito'}
+               msg={'msg':'Usuario registrado con exito', 'on':1}
      else:
           msg={'msg':'Por favor no intente hacer trampa'}
      return HttpResponse(json.dumps(msg))

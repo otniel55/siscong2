@@ -10,7 +10,7 @@
 
 			{% csrf_token %}
 
-			<div class="col-lg-4 col-md-offset-4 formGrupo">
+			<div id="formGrupo" class="col-lg-4 col-md-offset-4">
 				{{ form }}
 			</div>
 
@@ -76,7 +76,7 @@
 				</div>
 
 				<div class="modal-footer">
-					<button id="snAct" type="button" class="btn btn-warning">Sin Actividad</button>
+					<button id="sinAct" type="button" class="btn btn-warning">Sin Actividad</button>
 					<button id="regInf" type="button" class="btn btn-primary">Registrar</button>
 				</div>
 			</div>
@@ -93,13 +93,11 @@
 
 				<div class="modal-body">
 					{{ modalPub }}
-					<div class="cmbGrupo">
-						{{ modalGrupo }}
-					</div>
+				    {{ modalGrupo }}
 				</div>
 
 				<div class="modal-footer">
-				  <button id="changeP" type="button" class="btn btn-default" data-dismiss="modal">Cambiar</button>
+				  <button id="changePub" type="button" class="btn btn-default" data-dismiss="modal">Cambiar</button>
 				</div>
 			</div>
 		</div>
@@ -109,69 +107,8 @@
 	<script>
 
 		var id
-		var inputsInfo = $(':input','#informe')
 
-		$("td > button:nth-child(1)").click(function(){
-			id=0
-			id = this.parentNode.id
-
-			$.post("{% url 'secretario:conPub' %}", {'id':id, csrfmiddlewaretoken:'{{ csrf_token }}'},
-			function(r){
-				resp = JSON.parse(r)
-				$('.modal-body > #id_Encargado').find('option[value="'+resp['pub'].grupo+'"]').attr('selected', true);
-				$('#id_nombre').val(resp['pub'].nombre.toUpperCase())
-				$('#id_apellido').val(resp['pub'].apellido.toUpperCase())
-			})
-		})
-
-		$("td > button:nth-child(2)").click(function(){
-			id=0
-			id = this.parentNode.id
-			inputsInfo.val("")
-		})
-
-		$("#changeP").click(function(){
-			f=function(){
-				row = $('#'+id).parents('tr')
-				row.fadeOut()
-			}
-			cambioG=new Gestion()
-			cmb=cambioG.getInputs('.cmbGrupo')
-			if (cmb.vacio==0){
-				keys=new Array('grupo', 'id')
-				cambioG.generateJson(keys, '{{ csrf_token }}', id)
-				cambioG.setPost("{% url 'secretario:cambiarPub' %}", 'Cambio de grupo!', f)
-			}
-		})
-
-		$("#btnMod").click(function(){
-			c=function(){$("#btnCon").click()}
-			datG = new Gestion()
-            input = datG.getInputs('.formGrupo')
-            if(input.vacio == 0){
-                keys = new Array('enc', 'aux')
-				datG.generateJson(keys, '{{ csrf_token }}')
-                datG.setPost("{% url 'secretario:modGrup' %}", 'Modificar Grupos!', c)
-            }
-		})
-
-		$("#regInf").click(function(){
-			close=function(){$("#closeInf").click()}
-			datInf=new Gestion()
-			input=datInf.getInputs('#informe')
-			if(input.vacio==0){
-				keys=new Array('horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'fecha', 'publicador')
-				datInf.generateJson(keys, '{{ csrf_token }}', id)
-				datInf.setPost("{% url 'secretario:regInf' %}", 'Regitro de informe!', close)
-			}
-		})
-
-		$('#snAct').click(function(){
-			inputsInfo.val(0)
-			inputsInfo.eq(6).val("")
-		})
-
-		$(document).ready(function() {
+        $(document).ready(function() {
 			$( ".datepicker" ).datetimepicker({
 				format: 'MM-YYYY',
 				widgetPositioning: {
@@ -181,5 +118,78 @@
 				maxDate: 'now'
 			})
 		});
+
+        $("#btnMod").click(function(){
+			c = function(res){ $("#btnCon").click() }
+			datG = new Gestion()
+            datG.getInputs('#formGrupo')
+            input=datG.getDataIn()
+            if(input.vacio == 0){
+                keys = new Array('enc', 'aux')
+				datG.generateJson(keys, '{{ csrf_token }}')
+                datG.setPost("{% url 'secretario:modGrup' %}", 'Modificar Grupos!', c)
+            }
+		})
+
+		$("td > button:nth-child(1)").click(function(){
+			id=0
+			id = this.parentNode.id
+
+			$.post("{% url 'secretario:conPub' %}", { 'id': id, csrfmiddlewaretoken: '{{ csrf_token }}' },
+			function(r){
+				res = JSON.parse(r)
+
+				$('.cmbGrupo > #id_Encargado')
+                    .find('option[value="'+res['pub'].grupo+'"]')
+                    .prop('selected', true)
+
+				$('#id_nombre').val( res['pub'].nombre.toUpperCase() )
+				$('#id_apellido').val( res['pub'].apellido.toUpperCase() )
+			})
+		})
+
+		$("td > button:nth-child(2)").click(function(){
+			id = 0
+			id = this.parentNode.id
+			informe = new Gestion()
+		})
+
+		$("#changePub").click(function(){
+			f = function(res){
+                row = $('#'+id).parents('tr')
+                row.fadeOut()
+			}
+			cambioG=new Gestion()
+			cambioG.getInputs('#pubGroup', 2)
+            cmb=cambioG.getDataIn()
+			if (cmb.vacio==0){
+				keys=new Array('grupo', 'id')
+				cambioG.generateJson(keys, '{{ csrf_token }}', id)
+				cambioG.setPost("{% url 'secretario:cambiarPub' %}", 'Cambio de grupo!', f)
+			}
+		})
+
+		$("#regInf").click(function(){
+            datInf=new Gestion()
+			close=function(res){
+                $("#closeInf").click()
+                datInf.Cargar()
+            }
+			datInf.getInputs('#informe')
+            input=datInf.getDataIn()
+			if(input.vacio==0){
+				keys=new Array('horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'fecha', 'publicador')
+				datInf.generateJson(keys, '{{ csrf_token }}', id)
+				datInf.setPost("{% url 'secretario:regInf' %}", 'Regitro de informe!', close)
+			}
+		})
+
+		$('#sinAct').click(function(){
+			ini=new Gestion()
+            ini.getInputs('#informe', [0,4])
+            ini.Cargar('0')
+		})
+
+
 	</script>
 {% endif %}

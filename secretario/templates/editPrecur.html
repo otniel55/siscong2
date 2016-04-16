@@ -60,45 +60,57 @@
 
 {% block scripts %}
 	<script>
-
+        focus=0
+        cambio=0
         var id = ''
         var val = ''
-
         $('#editPrecur tr td:nth-child(2), #editPrecur tr td:nth-child(3)').on('click',function(){
+            otroAction=false
             tr = $(this).parent('tr').index()
             td=$("#editPrecur tr:nth-child("+(tr+1)+") td:nth-child(2)")
             input = td.find('input').length
             if(input == 0){
-                if(!Number.isInteger(id)){
-                    btn=$("#editPrecur tr:nth-child("+(tr+1)+") td:nth-child(3) button")
-                    btn.removeClass("btn-success")
-                    btn.addClass("btn-primary")
+                btn=$("#editPrecur tr:nth-child("+(tr+1)+") td:nth-child(3) button")
+                console.log(btn.attr('class'))
+                if($(this)[0]==btn.parent('td')[0]){
+                    if(btn.attr('class')=="btn btn-primary"){
+                        alert("aqui toy")
+                        otroAction=true
+                    }
+                }
+                if (!otroAction){
+                    if (cambio==0){
+                        btn.html("Modificar")
+                        btn.removeClass("btn-success")
+                        btn.addClass("btn-primary")
+                    }else{
+                        focus=1
+                        cambio=0
+                    }
                     id = td.parent('tr').index()
                     val = td.html().trim()
                     td.html(
                         "<input type'text' class='inputtrans' value='"+val+"' style='background:transparent;border:none;' />"
                         )
-                    td.find('input')
-                            .focus()
-                            .focusout(function(){
-                                        $('tbody > tr:eq('+id+') > td:eq(1)').html(this.value)
-                                        btn.removeClass("btn-primary")
-                                        btn.add("btn-success")
-                                    })
-
-                } else {
-                    id = td.parent('tr').index()
-                    val = td.html().trim()
-
-                    td.html(
-                        "<input type'text' class='inputtrans'' value='"+val+"' style='background:transparent;border:none;' />"
-                        )
-                    td.find('input')
-                            .focus()
-                            .focusout(function(){
-                                $('tbody > tr:eq('+id+') > td:eq(1)').html(this.value)
-                            })
-
+                    if (focus==0){
+                        td.find('input').focus()
+                    }else{
+                        td.find('input').focus()
+                        btn.focusin()
+                    }
+                    td.find('input').focusout(function(event){
+                        td.html(this.value)
+                        if(this.value==val){
+                            btn.html("Cambiar")
+                            btn.removeClass("btn-primary")
+                            btn.addClass("btn-success")
+                            cambio=1
+                        }
+                    })
+                } else{
+                    alert("toy molando uwu")
+                    btn.removeClass("btn-primary")
+                    btn.addClass("btn-success")
                 }
             }
         })

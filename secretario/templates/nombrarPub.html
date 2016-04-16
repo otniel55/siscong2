@@ -1,5 +1,7 @@
 {% extends "layout.html" %}
 
+{% load staticfiles %}
+
 {% block contenido %}
 
 	<div class="col-md-12 col-lg-12">
@@ -95,7 +97,7 @@
 
                         <div style="height:80px;">
                             <nav class="center-block">
-                              <ul id="pager1" class="pagination pager" >
+                              <ul id="pager1" class="pagination pager hide" >
                                 <li>
                                   <a href="#" aria-label="P">
                                     <span aria-hidden="true">&laquo;</span>
@@ -152,7 +154,7 @@
 
                         <div style="height:80px;">
                             <nav class="center-block">
-                              <ul id="pager2" class="pagination pager">
+                              <ul id="pager2" class="pagination pager hide">
                                 <li>
                                   <a href="#" aria-label="P">
                                     <span aria-hidden="true">&laquo;</span>
@@ -178,7 +180,7 @@
 
 {% block scripts %}
 	<script>
-		var publics, nombrar
+		var publics, nombrar, altoT
 
         var cmb =   '<select class="form-control" disabled>\
                         <option value="1">1 mes</option>\
@@ -187,81 +189,9 @@
                         <option value="0">Indefinido</option>\
                     <select>'
 
-        function createPager(tabla, nro){
-            filas = tabla.data().length
-
-            if(filas > 10){
-                page = 1
-                index = 0
-                while(filas>0){
-                    filas = filas - 10
-
-                    $('#pager'+nro+' > li:eq('+index+')').after(
-                        '<li><a href="#" aria-label="'+index+'">'+page+'</a></li>'
-                    )
-
-                    index++
-                    page++
-                }
-
-                $('nav.center-block:eq('+(nro-1)+')').width( $('#pager'+nro).width() )
-
-            } else{
-                $('#pager'+nro).hide()
-            }
-
-            $('#pager'+nro+' > li > a').click(function(){
-                val = $(this).attr('aria-label')
-
-                if(val === 'N'){
-                    tabla.page( 'next' ).draw( 'page' );
-                } else if (val === 'P'){
-                    tabla.page( 'previous' ).draw( 'page' );
-                } else {
-                    val = parseInt(val)
-                    tabla.page( val ).draw( 'page' );
-                }
-
-                reajustarTables()
-            })
-        }
-
-        function showPager(pgS, pgH, tablaE, tablaA){
-            if($('#pager'+pgS).children().length == 2 && tablaE.data().length > 10){
-                $('#pager'+pgS).show().children().show()
-                createPager(tablaE, pgS)
-            }
-
-            if(tablaA.data().length > 10){
-                $('#pager'+pgH).children().each(function(){
-                    if( !$(this).is(':first-child') && !$(this).is(':last-child')){
-                        $(this).detach()
-                    }
-                })
-                createPager(tablaA, pgH)
-            } else {
-                $('#pager'+pgH).children().each(function(){
-                    if( !$(this).is(':first-child') && !$(this).is(':last-child')){
-                        $(this).detach()
-                    }
-                }).hide()
-            }
-        }
-
-        function reajustarTables(){
-            alto1 = $('#tabla1')[0].clientHeight
-            alto2 = $('#tabla2')[0].clientHeight
-
-            if(alto1 >= alto2){
-                $('div.content-panel').height(alto1+'px')
-            } else {
-                $('div.content-panel').height(alto2+'px')
-            }
-        }
-
 		$(document).ready(function(){
 
-		    publics =   $('#publics').DataTable({
+            tablaConfig = {
 					        columnDefs: [{
 					            orderable: false,
 					            className: 'select-checkbox',
@@ -276,12 +206,12 @@
 							"oLanguage": {
 									      "sInfoEmpty": "La Tabla esta Vacia",
 									      "sZeroRecords": "No se Encontraron Registros",
-                                          "oPaginate": {
-                                                          "sNext": "Siguiente",
-                                                          "sPrevious": "Anterior"
-                                                        }
 									     }
-					    });
+					    }
+
+            //instancia de las tablas
+                publics =   $('#publics').DataTable(tablaConfig);
+                nombrar	= 	$('#nombrar').DataTable(tablaConfig);
             
             //estilisando los filtros
                 $('#publics_length').hide()
@@ -290,106 +220,76 @@
                 $('#filtro1').on( 'keyup change', function () {
                                 $('#publics').dataTable().fnFilter(this.value);
                             });
-            //fin de estilos
-            
-			nombrar	= 	$('#nombrar').DataTable({
-							columnDefs: [{
-					            orderable: false,
-					            className: 'select-checkbox',
-					            targets:   0
-					        }],
-					        select: {
-					            style: 'multi',
-					            selector: 'td:first-child',
-					        },
-					        order: [[ 1, 'asc' ]],
-							"bInfo":false,
-							"oLanguage": {
-									      "sInfoEmpty": "La Tabla esta Vacia",
-									      "sZeroRecords": "No se Encontraron Registros",
-                                          "oPaginate": {
-                                                          "sNext": "Siguiente",
-                                                          "sPrevious": "Anterior"
-                                                        }
-									     }
-						})
 
-            //estilisando los filtros
                 $('#nombrar_length').hide()
                 $('#nombrar_filter').hide()
                 $('#nombrar_paginate').hide()
                 $('#filtro2').on( 'keyup change', function () {
                                 $('#nombrar').dataTable().fnFilter(this.value);
                             });
-            //fin de estilos
-
-		    $('.datepicker').datetimepicker({
-				format: 'MM-YYYY',
-	            widgetPositioning:  {
-				  horizontal: 'right',
-				  vertical: 'auto',
-				},
-				maxDate:'now'
-		    })
 
             //asignacion de altura de las tablas
                 reajustarTables()
 
             //creacion del pager
-                createPager(publics, 1)
-                $('#pager2').hide()
+                pg1 = createPager(publics, 1)
 
-		})//fin del inicio del documento
+                if(pg1 == 1 ){
+                    altoT = $('#tabla1')[0].clientHeight
+                }
 
-		$('#selectAll').click(function(){
+		});
 
-			if(this.checked){ 
-                publics.rows().select();
-            } else {
-                publics.rows().deselect();
-            }
+        //check para seleccionar todo los elementos de la tabla
+            $('#selectAll').click(function(){
 
-        })
-        
-        $('#selectAll2').click(function(){
+                if(this.checked){
+                    publics.rows().select();
+                } else {
+                    publics.rows().deselect();
+                }
 
-			if(this.checked){ 
-                nombrar.rows().select();
-            } else {
-                nombrar.rows().deselect();
-            }
+            })
 
-        })
+            $('#selectAll2').click(function(){
+
+                if(this.checked){
+                    nombrar.rows().select();
+                } else {
+                    nombrar.rows().deselect();
+                }
+
+            })
 		
-        $('.dropdown-menu > li > a').click(function(){
-            valAll = $(this).attr('val')
+        //lista para seleccionar el precursorado en todo los elementos de la tabla
+            $('.dropdown-menu > li > a').click(function(){
+                if( nombrar.data().length > 0 ){
 
-            if(nombrar.data().length > 0){
-                col3 = nombrar.column( 2 ).nodes().to$()
+                    valAll = $(this).attr('val')
 
-                col3.each(function(){
-                    $(this).children().val(valAll)
+                    //obtener todos los nodos de la columna 'Tipo Precursorado' tabla Nombrar
+                    col3 = nombrar.column( 2 ).nodes().to$()
 
-                    hermano = $(this).next()
+                    col3.each(function(){
 
-                    if( valAll == 3 || valAll == 4 ){
-                        hermano.children().detach()
-                        hermano.append('<input type="number" min=0 placeholder="Nro de Precursor" class="form-control" />')
-                    } else {
-                        if ( hermano.children().is('input') ){
-                            hermano.children().detach()
-                            hermano.append(cmb).children().removeAttr('disabled')
-                        } else {
-                            if(hermano.children().is(':disabled'))
-                                hermano.children().removeAttr('disabled')
-                        }
-                    }
-                })
-            }
-        })
+                        //obtener los select hijos de la columna
+                        $(this).children().val(valAll)
 
+                        //obtener la columna hermana derecha
+                        hermano = $(this).next()
 
-		//cambiar de tabla 
+                        changeStateInput(hermano, valAll, cmb)
+                    })
+                }
+            })
+
+            $('#nombrar th, #publics th').click(function(){
+                reajustarTables(altoT)
+            })
+
+		//btns para cambiar de tabla
+
+            //cambiar a la tabla Nombrar
 			$('#move-right').click(function(){
 				row = ""
 				col = ""
@@ -402,9 +302,11 @@
 								<option value="4">Especial</option>\
 							<select>'
 
+                //obtener la filas seleccionadas
 				row = publics.rows('.selected').data()
 				publics.rows('.selected').remove().draw()
 
+                //crear las filas en la tabla Nombrar
 				$.each(row, function(key, value){
 
 					nodo = nombrar.row.add([
@@ -413,7 +315,8 @@
 						            cmbPrecur,
 						            cmb,
 						        ]).draw().node()
- 
+
+                    //asignar atributos a la fila creada
 					$(nodo).attr({
                         id: row[key].DT_RowId,
                         fechaBau: value[2],
@@ -421,45 +324,49 @@
                     })   
 				})
                 
-                if( $('#selectAll').is(':checked') )
-                    $('#selectAll').removeProp('checked')
-
-                //obtener todos los nodos de la columna
+                //obtener todos los nodos de la columna 'Tipo Precursorado' tabla Nombrar
                 col3 = nombrar.column( 2 ).nodes().to$()
 
                 //asignar evento a los select de la columna
                 $( col3.children() ).change(function(){
                     hermano = $(this).parent().next()
                     value = $(this).val()
+                    changeStateInput(hermano, value, cmb)
+                });
 
-                    if(value == 3 || value == 4){
-                        hermano.children().detach()
-                        hermano.append('<input type="number" min=0 placeholder="Nro de Precursor" class="form-control" />')
-                    } else if ( $(this).val() ){
-                        if ( hermano.children().is('input') ){
-                            hermano.children().detach()
-                            hermano.append(cmb).children().removeAttr('disabled')
-                        } else {
-                            if(hermano.children().is(':disabled'))
-                                hermano.children().removeAttr('disabled')
-                        }
-                    } else {
-                        hermano.children().attr('disabled', true)
-                    }
-                })//fin del evento
-
-                if ($('#move-left').is(':disabled') && row.length > 0)
+                if ( $('#move-left').is(':disabled') && row.length > 0){
                     $('#move-left').removeAttr('disabled')
+                } else {
+                    if( row.length == 0 ){
+                        $.gritter.add({
+                            title: 'Nombrar Publicadores!',
+                            text: 'No Hay Ninguna Fila Seleccionada',
+                            image: "{% static 'img/error.png' %}",
+                            time: 3000,
+                        })
+                    }
+                }
                 
+                if( $('#selectAll').is(':checked') )
+                    $('#selectAll').removeProp('checked')
+
                 if (publics.data().length == 0)
-                    $(this).attr('disabled', true)
+                    $(this).prop('disabled', true)
                     
                 if ($('div.datepicker > input').val())
-                    $('#save').removeAttr('disabled')
+                    $('#save').removeProp('disabled')
 
                 reajustarTables()
+                pg1 = createPager(publics, 1)
+                pg2 = createPager(nombrar, 2)
 
-                showPager(2, 1, nombrar, publics)
+                if( pg2 == 1 ){
+                    altoT = $('#tabla2')[0].clientHeight
+                } else if ( pg1 == 1 ){
+                    altoT = $('#tabla1')[0].clientHeight
+                } else {
+                    altoT = null
+                }
 
 			})//fin del moveright
             
@@ -470,10 +377,10 @@
 
 				row = nombrar.rows('.selected').data()
                 rowNode = nombrar.rows('.selected').nodes()
-
 				nombrar.rows('.selected').remove().draw()
 
 				$.each(row, function(key, value){
+
 					nodo = publics.row.add([
 									col,
 						            value[1],
@@ -487,33 +394,49 @@
                 if( $('#selectAll2').is(':checked') )
                     $('#selectAll2').removeProp('checked')
 
-                if ($('#move-right').is(':disabled') && row.length > 0)
-                    $('#move-right').removeAttr('disabled')
+                if ($('#move-right').is(':disabled') && row.length > 0){
+                    $('#move-right').removeProp('disabled')
+                } else {
+                    if( row.length == 0 ){
+                        $.gritter.add({
+                            title: 'Nombrar Publicadores!',
+                            text: 'No Hay Ninguna Fila Seleccionada',
+                            image: "{% static 'img/error.png' %}",
+                            time: 3000,
+                        })
+                    }
+                }
                 
                 if (nombrar.data().length == 0){
-                    $(this).attr('disabled', true)
-                    $('#save').attr('disabled', true)
+                    $(this).prop('disabled', true)
+                    $('#save').prop('disabled', true)
                 }
 
                 reajustarTables()
+                pg2 = createPager(nombrar, 2)
+                pg1 = createPager(publics, 1)
 
-                showPager(1, 2, publics, nombrar)
+                if( pg1 == 1 ){
+                    altoT = $('#tabla1')[0].clientHeight
+                } else if ( pg2 == 1 ){
+                    altoT = $('#tabla2')[0].clientHeight
+                } else {
+                    altoT = null
+                }
 
 			})//fin del moveleft
 
             $('span.input-group-addon').click(function(){
                 if (nombrar.data().length > 0)
-                    $('#save').removeAttr('disabled')
+                    $('#save').removeProp('disabled')
             })
             
             $('div.datepicker > input').on( 'keyup change', function (){
-                
                 if($(this).val() && nombrar.data().length > 0){
-                    $('#save').removeAttr('disabled')
+                    $('#save').removeProp('disabled')
                 } else {
-                    $('#save').attr('disabled', true)
+                    $('#save').prop('disabled', true)
                 }
-                
             });
 
 		//fin de cambiar de tabla
@@ -544,7 +467,7 @@
                 }
 
                 if( precur == 3 || precur == 4){
-                    if(valPrecur == ""){
+                    if( $.trim(valPrecur) == "" || !/^([0-9])*$/.test( valPrecur )){
                         nroPreNull++
                         cmb2.css('border-color', 'red')
                     }else{
@@ -565,7 +488,12 @@
 			})
 
             if(cmbNull > 0 || nroPreNull > 0){
-                alert('Algunos Campos Se Encuentran Vacios')
+                $.gritter.add({
+					title: 'Nombrar Publicadores!',
+					text: 'Algunos Campos Se Encuentran Vacios o Con Caracteres Invalidos',
+					image: "{% static 'img/error.png' %}",
+                    time: 3000,
+				});
             } else {
                 $.post("{% url 'secretario:NombrarPrecur' %}",
                         {
@@ -574,18 +502,49 @@
                           csrfmiddlewaretoken:'{{ csrf_token }}'
                         })
                         .success(function(res){
-                            res=JSON.parse(res)
-                            console.log(res)
+                            res = JSON.parse(res)
+                            bien = 0
+                            mal = 0
+
+                            if( !res.msg ){
+                                $.each(res, function(key, value){
+                                    if( value.bien==1 ){
+                                        nombrar.row('#'+value.id).remove().draw()
+                                        bien++
+                                    } else {
+                                        mal++
+                                    }
+                                })
+                            } else {
+                                bien++
+                            }
+
+
+                            if(bien > 0){
+                                $.gritter.add({
+                                    title: 'Nombrar Publicadores!',
+                                    text: 'Precursores Nombrados Con Exito!',
+                                    image: "{% static 'img/success.png' %}",
+                                    time: 3000,
+                                });
+                            }
+
+                            if(mal > 0){
+                                $.gritter.add({
+                                    title: 'Nombrar Publicadores!',
+                                    text: 'Algunos Precursores No Pudieron Ser Nombrados\n Verifique Sus Datos en la Tabla',
+                                    image: "{% static 'img/error.png' %}",
+                                    time: 3000,
+                                });
+                            } else {
+                                setTimeout(
+                                    function(){ window.location = "{% url 'secretario:vistaNombrar' %}" },
+                                    3000
+                                )
+                            }
+
                         })
             }
-
-            x = {
-					  'fechaIni': fechaIni,
-					  'pub': JSON.stringify(pubs),
-					  csrfmiddlewaretoken:'{{ csrf_token }}'
-					}
-
-            console.log(x)
 		})
 		
 </script>

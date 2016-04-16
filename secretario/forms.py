@@ -17,7 +17,7 @@ class CrearGrupo(forms.ModelForm):
 
 class traerGrupo(forms.Form):
 	Encargado = forms.ModelChoiceField(queryset = GruposPred.objects.all(), 
-										empty_label=None, 
+										empty_label="--SELECCIONE UN ENCARGADO--",
 										widget=forms.Select(attrs={'class': 'form-control'})
 									)
 

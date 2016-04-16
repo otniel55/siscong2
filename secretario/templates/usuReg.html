@@ -53,11 +53,13 @@
 			pass2=$("#pass2").val()
 			if(pass==pass2){
 				datUsu=new Gestion()
-				inputs=datUsu.getInputs("#form")
+                limpiar=function(){datUsu.Cargar();$("#pass2").val("")}
+				datUsu.getInputs("#form")
+                inputs=datUsu.getDataIn()
 				if (inputs.vacio==0){
 					keys=new Array('nombre', 'pass')
 					datUsu.generateJson(keys, "{{ csrf_token }}")
-					datUsu.setPost("{% url 'secretario:Regusu' %}", 'Registro de usuario!')
+					datUsu.setPost("{% url 'secretario:Regusu' %}", 'Registro de usuario!', limpiar)
 				}
 			}else{
 				$("#pass").css('border-color', 'red')

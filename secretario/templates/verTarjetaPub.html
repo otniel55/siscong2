@@ -53,6 +53,7 @@
 		//obtener todos los selects
 		combos = $('select')
 		datpub = $('#datpub')
+        cont=0
 
 		//ordernar alfabeticamente los selects
 		combos.eq(0).each(function() {
@@ -61,100 +62,73 @@
 		    }));
 		})
 
-		//inyectar una new option en el primer indice del select
-		combos.eq(0).prepend(new Option("--SELECCIONE UN ENCARGADO--","",true,true))
-
-
 		combos.eq(0).change(function(){
-
-			g = $(this).val()
-
-			if(g == ""){
+            cmbG=new Gestion()
+            cmbG.getInputs(".form-group", '0')
+            g=cmbG.getDataIn()
+			if(!g.vacio==0){
 				combos.eq(1).attr('disabled', true).find('option:first').prop('selected', true)
 				combos.eq(2).attr('disabled', true).find('option:first').prop('selected', true)
 				datpub.hide('blind', 1000, function(){})
 			}else{
-				$.post("{% url 'secretario:conPubG' %}", {'g': g, csrfmiddlewaretoken:'{{ csrf_token }}'})
-				.success(function(res){
-					res=JSON.parse(res)
-
-					if (res.on==1){
-						alert(res.msg)
+                f=function(res){
+                    if (res.on==1){
+						$.gritter.add({
+                            title: "Consulta de publicadores",
+                            text: 'No hay publicadores en este grupo',
+                            image: '',
+                            sticky: false,
+                            time: 3000,
+                            class_name: ''
+                        });
 					} else{
-						//elimina los nodos hermanos
-						combos.eq(1).find('option:first').siblings().detach()
-
-						//habilita y llena el combo
-						combos.eq(1).attr('disabled', false)
-
-						$.each(res.p, function(key, values){
+                        combos.eq(1).find('option:first').siblings().detach()
+                        combos.eq(1).attr('disabled', false)
+                        $.each(res.p, function(key, values){
 							combos.eq(1).append("<option value="+values.id+">"+values.nombre+" "+values.apellido+"</option>")
 						})
-
-						combos.eq(1).each(function() {
+                        combos.eq(1).each(function() {
 						    $(this).html($("option", $(this)).sort(function(a, b) {
 						        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1
 						    }));
 						})
-					}
-				})
-			}
-		})
+                    }
+                }
+                keys=new Array('g')
+                cmbG.generateJson(keys, '{{ csrf_token }}')
+                cmbG.setPost("{% url 'secretario:conPubG' %}", '', f)
+
+            }
+        })
 		
 		combos.eq(1).change(function(){
-
-			y = combos.eq(2).val()
-			p = this.value
-
-			combos.eq(2).attr('disabled', false)
-
-			if(datpub.is(":hidden")){
-				if(p != "" && y != ""){
-					datpub.load("../2/"+p+"/Tarjeta/"+y, function(){
-						datpub.show( 'blind', 1000 );
-					});
-				} else {
-					if(p == ""){
-						combos.eq(2).attr('disabled', true).find('option:first').prop('selected', true)
-					}
-				}
-			} else {
-				if(p != "" && y != ""){
-					datpub.hide('blind', 1000, function(){
-						datpub.load("../2/"+p+"/Tarjeta/"+y, function(){
-							datpub.show( 'blind', 1000 );
-						});
-					})
-				} else {
-					datpub.hide('blind', 1000, function(){})
-					combos.eq(2).attr('disabled', true).find('option:first').prop('selected', true)
-				}
-			}
+            llamarload(1)
 		})
+
+        function llamarload(valid){
+            pub=combos.eq(1).val()
+            year=combos.eq(2).val()
+            combos.eq(2).attr('disabled', false)
+            if (validar=$.trim(pub)!="" && $.trim(year)!=""){
+                cargar=new Gestion()
+                cargar.ejecutarLoad("../2/"+pub+"/Tarjeta/"+year+"", datpub)
+            } else{
+                if(datpub.is(":visible")){
+                    datpub.hide('blind', 1000, function(){})
+                }
+                if (valid==1 && cont>0){
+                    combos.eq(2).attr('disabled', true).find('option:first').prop('selected', true)
+                }
+                if($.trim(pub)==""){
+                    cont=0
+                }
+            }
+        }
 
 		combos.eq(2).change(function(){
-
-			p = combos.eq(1).val()
-			y = this.value
-
-			if(datpub.is(":hidden")){
-				if(p != "" && y != ""){
-					datpub.load("../2/"+p+"/Tarjeta/"+y, function(){
-						datpub.show( 'blind', 1000 );
-					});
-				}
-			} else {
-				if(p != "" && y != ""){
-					datpub.hide('blind', 1000, function(){
-						datpub.load("../2/"+p+"/Tarjeta/"+y, function(){
-							datpub.show( 'blind', 1000 );
-						});
-					})
-				} else {
-					datpub.hide('blind', 1000, function(){})
-				}
-			}
-		})
+            llamarload(2)
+            cont=1
+        })
 
 	</script>
 {% endblock %}

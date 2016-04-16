@@ -19,7 +19,7 @@
 	        	{% for f in form %}
 	        		{% if f == form.fechaNa %}
 				        {{ f.label_tag }}
-			            <div class='input-group date datepicker mrg-bottom'>
+			            <div class='input-group date datepicker2 mrg-bottom'>
 			                {{ f }} 
 			                <span class="input-group-addon">
 			                    <span class="fa fa-calendar">
@@ -30,7 +30,7 @@
 	        			{{ f.label_tag }}
 			        	<div class="row">
 				        	<div class="col-lg-11" style="margin:0px;">
-					            <div class='input-group date datepicker mrg-bottom'>
+					            <div class='input-group date datepicker2 mrg-bottom'>
 					                {{ f }} 
 					                <span class="input-group-addon">
 					                    <span class="fa fa-calendar">
@@ -80,17 +80,6 @@
 	<script>
 		$(document).ready(function() {
 
-			$( ".datepicker" ).datetimepicker({
-				showTodayButton:true,
-                viewMode: 'days',
-                format: 'YYYY-MM-DD',
-	            widgetPositioning: {
-		            horizontal: 'right',
-		            vertical: 'auto'
-		        },
-		        maxDate: 'now'
-		    })
-
 			$('span.btn').click(function(){
 		  		$('#id_fechaBau').val('No Bautizado')
 		  	})
@@ -103,18 +92,23 @@
 
 		$('#btnSave').click(function(){
 			datP=new Gestion()
-			inputs=datP.getInputs('.form-group')
+            limpiar=function(){
+                datP.Cargar()
+            }
+			datP.getInputs('.form-group')
+            inputs=datP.getDataIn(res)
 			if (inputs.vacio==0){
 				keys=new Array('nombre', 'apellido', 'telefono', 'direccion', 'email', 'fechaBau', 'fechaNa', 'Encargado')
 				datP.generateJson(keys, "{{ csrf_token }}")
-				datP.setPost("{% url 'secretario:publicReg' %}", 'Registro de Publicadores!')
+				datP.setPost("{% url 'secretario:publicReg' %}", 'Registro de Publicadores!', limpiar)
 			}
 		})
 
 		$('#btnMod').click(function(){
-			redirect=function(){location.href="../../consultar/Publicadores/"}
+			redirect=function(res){location.href="../../consultar/Publicadores/"}
 			datMod=new Gestion()
-			inputs=datMod.getInputs('.form-group')
+			datMod.getInputs('.form-group')
+            inputs=datMod.getDataIn()
 			if (inputs.vacio==0){
 				keys=new Array('nombre', 'apellido', 'telefono', 'direccion', 'email', 'fechaBau', 'fechaNa', 'Encargado')
 				datMod.generateJson(keys, "{{ csrf_token }}")

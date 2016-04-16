@@ -234,7 +234,14 @@
 				$('#dialogo').dialog("destroy")
 			})
             {% if msg %}
-                alert("{{msg}}")
+                $.gritter.add({
+					title: 'Modificar publicador',
+					text: "{{ msg }}",
+					image: '',
+					sticky: false,
+					time: 3000,
+					class_name: ''
+				});
             {% endif %}
 		//fin del dialogo
 	</script>
