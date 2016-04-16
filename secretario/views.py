@@ -972,6 +972,65 @@ def Regusu(request):
 def estadisticas(request):
     return render(request, "estadisticas.html", {})
 
+def obtenerInf(mes, year, alreves=True):
+     cont=0
+     data={}
+     meses=[]
+     meses.append([year, mes])
+     for i in range(1, 3):
+          mes -= 1
+          if mes == 0:
+               mes = 12
+               year -= 1
+          meses.append([year, mes])
+     meses.sort(reverse=alreves)
+     for i in meses:
+          publicaciones = 0
+          revisitas = 0
+          estudios = 0
+          horas = 0
+          videos = 0
+          informes = Informe.objects.filter(mes=i[1], year=i[0])
+          for inf in informes:
+               publicaciones += inf.publicaciones
+               revisitas += inf.revisitas
+               estudios += inf.estudios
+               horas += inf.horas
+               videos += inf.videos
+          mes = i[1]
+          year = i[0]
+          mes -= 1
+          if mes == 0:
+               mes = 12
+               year -= 1
+          informesAnt = Informe.objects.filter(mes=mes, year=year)
+          p=0
+          r=0
+          e=0
+          h=0
+          v=0
+          for inf in informesAnt:
+               p += inf.publicaciones
+               r += inf.revisitas
+               e += inf.estudios
+               h += inf.horas
+               v += inf.videos
+          if len(informesAnt)>0:
+               resultP = ((publicaciones*100)//p)-100
+               resultR = ((revisitas*100)//r)-100
+               resultE = ((estudios*100)//e)-100
+               resultH = ((horas*100)//h)-100
+               resultV = ((videos*100)//v)-100
+               total = (resultP+resultR+resultE+resultH+resultV)//5
+          else:
+               total="No hubo informes en el mes pasado, no se puede comparar"
+          if len(informes) > 0:
+               data[cont] = {'publicaciones': publicaciones, 'revisitas': revisitas, 'estudios': estudios,
+                             'horas': horas, 'videos': videos, 'mes':i[1], 'result':total}
+               cont += 1
+     return data
+
+
 def infG(request):
      cont=0
      data={}
@@ -982,29 +1041,10 @@ def infG(request):
      except:
           data={'msg':"No intente hacer trampa"}
      else:
-          meses.append([year, mes])
-          for i in range(1,3):
-               mes-=1
-               if mes==0:
-                    mes=12
-                    year-=1
-               meses.append([year, mes])
-          meses.sort()
-          for i in meses:
-               publicaciones=0
-               revisitas=0
-               estudios=0
-               horas=0
-               videos=0
-               informes=Informe.objects.filter(mes=i[1], year=i[0])
-               for inf in informes:
-                    publicaciones+=inf.publicaciones
-                    revisitas+=inf.revisitas
-                    estudios+=inf.estudios
-                    horas+=inf.horas
-                    videos+=inf.videos
-               if len(informes)>0:
-                    data[cont]={'publicaciones':publicaciones, 'revisitas':revisitas, 'estudios':estudios, 'horas': horas, 'videos': videos}
-                    cont+=1
+          data=obtenerInf(mes,year)
      return HttpResponse(json.dumps(data))
+
+
+
+
 
