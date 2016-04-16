@@ -637,6 +637,7 @@ def conPrecs(request):
      return HttpResponse(json.dumps(data))
 
 def historiaPrec(request, year):
+     hoy=datetime.date.today()
      bajaAuto()
      cont=0
      precurTrue=[]
@@ -756,7 +757,10 @@ def historiaPrec(request, year):
                               for f in mesPrecur:
                                    if cont==0:
                                         if f[3]==0:
-                                             horasT=(12-(f[1]-iniM))*f[2]
+                                            m=f[1]
+                                            if f[1]<9:
+                                                m=f[1]+12
+                                            horasT=(12-(m-iniM))*f[2]
                                         else:
                                              horasT=len(mesPrecur)*f[2]
                                    try:
@@ -765,7 +769,7 @@ def historiaPrec(request, year):
                                         if request.session['precur'] in (1, 2):
                                              data[cont]={'fecha':datetime.date(f[0],f[1],15), 'horasR':f[2], 'horasI':0, 'obj':0}
                                         else:
-                                             data[cont] = {'fecha': datetime.date(f[0], f[1], 15), 'horasI':0, 'horasA':acum, 'horasRes':horasT-acum, 'obj':0}
+                                             data[cont] = {'fecha': datetime.date(f[0], f[1], 15), 'horasI':0, 'horasA':acum, 'horasRes':horasT-acum, 'obj':0, 'horastot':horasT}
                                    else:
                                         if request.session['precur'] in (1,2):
                                              if inf.horas>=f[2]:
@@ -779,15 +783,19 @@ def historiaPrec(request, year):
                                                   obj=1
                                              else:
                                                   obj=0
-                                             data[cont]={'fecha':datetime.date(f[0],f[1],15), 'horasI':inf.horas, 'horasA':acum, 'horasRes':horasT-acum, 'obj':obj}
+                                             data[cont]={'fecha':datetime.date(f[0],f[1],15), 'horasI':inf.horas, 'horasA':acum, 'horasRes':horasT-acum, 'obj':obj, 'horasto':horasT}
                                    cont=cont+1
                          else:
                               precursor=Precursor.objects.get(pk=request.session['precur'])
+                              m = hoy.month
+                              if m < 9:
+                                  m = m + 12
                               horasR=precursor.horas
+                              horasT = (12 - (m - iniM)) * horasR
                               if request.session['precur'] in (1, 2):
                                    data[cont] = {'fecha': datetime.date(hoy.year, hoy.month, 15), 'horasR': horasR, 'horasI': "En curso",'obj': 2}
                               else:
-                                   data[cont] = {'fecha': datetime.date(hoy.year, hoy.month, 15), 'horasI': "En curso", 'horasA': 0,'horasRes': horasR*12, 'obj': 2}
+                                   data[cont] = {'fecha': datetime.date(hoy.year, hoy.month, 15), 'horasI': "En curso", 'horasA': 0,'horasRes': horasT, 'obj': 2}
                          data=data.values()
                     else:
                          data={'msg':"Esta persona no fue precursor en el periodo "+year}
@@ -960,3 +968,43 @@ def Regusu(request):
      else:
           msg={'msg':'Por favor no intente hacer trampa'}
      return HttpResponse(json.dumps(msg))
+
+def estadisticas(request):
+    return render(request, "estadisticas.html", {})
+
+def infG(request):
+     cont=0
+     data={}
+     meses=[]
+     try:
+          mes=int(request.POST['fecha'][0:2])
+          year=int(request.POST['fecha'][3:])
+     except:
+          data={'msg':"No intente hacer trampa"}
+     else:
+          meses.append([year, mes])
+          for i in range(1,3):
+               mes-=1
+               if mes==0:
+                    mes=12
+                    year-=1
+               meses.append([year, mes])
+          meses.sort()
+          for i in meses:
+               publicaciones=0
+               revisitas=0
+               estudios=0
+               horas=0
+               videos=0
+               informes=Informe.objects.filter(mes=i[1], year=i[0])
+               for inf in informes:
+                    publicaciones+=inf.publicaciones
+                    revisitas+=inf.revisitas
+                    estudios+=inf.estudios
+                    horas+=inf.horas
+                    videos+=inf.videos
+               if len(informes)>0:
+                    data[cont]={'publicaciones':publicaciones, 'revisitas':revisitas, 'estudios':estudios, 'horas': horas, 'videos': videos}
+                    cont+=1
+     return HttpResponse(json.dumps(data))
+

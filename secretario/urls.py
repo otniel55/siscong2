@@ -33,4 +33,6 @@ urlpatterns = [
     url(r'^darBaja/$', views.darBaja, name='darBaja'),
     url(r'^registrar/usuario/$', views.usuReg, name='usuReg'),
     url(r'^regusu/$', views.Regusu, name='Regusu'),
+    url(r'^estadisticas/$', views.estadisticas, name='estadisticas'),
+    url(r'^estadisticas/informeGeneral', views.infG, name='infG')
 ]

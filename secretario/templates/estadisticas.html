@@ -1,0 +1,120 @@
+{% extends "layout.html" %}
+
+{% block contenido %}
+
+<div class="col-md-12 col-lg-12">
+	<div class="row">
+		<div class="form-panel">
+		    <div class="visible-md visible-lg">
+				<h1 class="text-center titlecolor"><i class="fa fa-angle-right"></i>Tarjeta de Actividad del Publicador</h1>
+			</div>
+			<div class="visible-xs visible-sm">
+				<h3 class="text-center"><i class="fa fa-angle-right"></i>Tarjeta de Actividad del Publicador</h3>
+			</div>
+
+			<div style="margin-top: 30px;">
+				{% csrf_token %}
+				<div class="form-group" style="margin-bottom:60px;">
+                    <ul class="nav nav-tabs nav-justified">
+                        <li role="presentation" class="active"><a href="#">Informe</a></li>
+                        <li role="presentation"><a href="#">Precursores</a></li>
+                        <li role="presentation"><a href="#">Publicadores</a></li>
+                    </ul>
+			    </div>
+
+                <div class="col-lg-4">
+                    <div class="row">
+
+                       <div class="col-lg-10 col-lg-offset-1">
+                            <div class="form-group">
+                                <label for="fechaIni">Fecha a Consultar:</label>
+                                <div class='input-group date datepicker'>
+                                    <input type="text" class="form-control" style="font-size:16px;">
+                                    <span class="input-group-addon">
+                                        <span class="fa fa-calendar">
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-lg-offset-3">
+                            <button id="send" class="btn btn-primary btn-block">Concultar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-8">
+                    <canvas id="linear"></canvas>
+                </div>
+            </div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+	<script>
+        var data = {
+            labels: ["Horas", "Publicaciones", "Revistas", "Revisitas", "Video"],
+            datasets: [
+                {
+                label: "Informe de Actividad Teocratica de la Congregacion",
+                fillColor: "rgba(220,220,220,0.2)",
+                strokeColor: "rgba(220,220,220,1)",
+                pointColor: "rgba(220,220,220,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(220,220,220,1)",
+                data: [65, 59, 80, 81, 56, 55, 40]
+                },
+                {
+                label: "Informe de Actividad Teocratica de la Congregacion",
+                fillColor: "rgba(220,220,220,0.2)",
+                strokeColor: "rgba(220,220,220,1)",
+                pointColor: "rgba(220,220,220,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(220,220,220,1)",
+                data: [55, 525, 55, 35, 20, 55, 15]
+                },
+                {
+                label: "Informe de Actividad Teocratica de la Congregacion",
+                fillColor: "rgba(220,220,220,0.2)",
+                strokeColor: "rgba(220,220,220,1)",
+                pointColor: "rgba(220,220,220,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(220,220,220,1)",
+                data: [65, 5, 90, 65, 55, 75, 55]
+                }
+            ]
+        }
+
+        $(document).ready(function () {
+            chart = $("#linear").get(0).getContext("2d")
+
+            new Chart(chart).Line(data, {
+                responsive: true,
+                tooltipFillColor: "rgba(51, 51, 51, 0.55)"
+            })
+
+            alto = $('.form-panel').height() + $('#linear')[0].clientHeight + 50
+
+            $('.form-panel').height(alto)
+
+        });
+
+        $('#send').click(function(){
+
+            fecha = $('div.datepicker > input').val()
+
+            $.post("{% url 'secretario:infG' %}",{ 'fecha': fecha, csrfmiddlewaretoken: '{{ csrf_token }}' })
+                .success(function(res){
+                    res = JSON.parse(res)
+                    console.log(res)
+                })
+        })
+
+	</script>
+{% endblock %}

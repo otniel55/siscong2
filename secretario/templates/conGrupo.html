@@ -41,6 +41,7 @@
 		$("#btnCon").click(function(){
 			encargado = $("#id_Encargado").val()
 			datpub = $("#datpub")
+			console.log(encargado)
 			url="../../"+encargado+"/datos_grupo/"
 			obj = new Gestion()
 			obj.ejecutarLoad(url, datpub)
