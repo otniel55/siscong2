@@ -68,7 +68,7 @@
         var lineChart
 
         var data = {
-            labels: ["Horas", "Publicaciones", "videos", "Revisitas", "Estudios"],
+            labels: ["Horas", "Publicaciones", "videos", "Revisitas", "Estudios", "total Publicadores", "Bautizados", "Irregulares", "Inactivos", "Prec. Reg.", "Prec. Aux."],
             datasets: [
                 {
                 label: '',
@@ -126,6 +126,8 @@
                 .success(function(res){
 
                     res = JSON.parse(res)
+
+                    console.log(res)
 
                     $('#result').children().detach()
 
