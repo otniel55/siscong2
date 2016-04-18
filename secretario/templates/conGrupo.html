@@ -1,5 +1,7 @@
 {% extends "layout.html" %}
 
+{% load staticfiles %}
+
 {% block contenido %}
 <div class="col-md-12 col-lg-12">
 	<div class="row">
@@ -41,10 +43,19 @@
 		$("#btnCon").click(function(){
 			encargado = $("#id_Encargado").val()
 			datpub = $("#datpub")
-			console.log(encargado)
-			url="../../"+encargado+"/datos_grupo/"
-			obj = new Gestion()
-			obj.ejecutarLoad(url, datpub)
+
+            if( encargado != "" ){
+                url="../../"+encargado+"/datos_grupo/"
+                obj = new Gestion()
+                obj.ejecutarLoad(url, datpub)
+            } else {
+                $.gritter.add({
+                    title: 'Consultar Grupos!',
+                    text: 'Por favor Seleccione un Grupo',
+                    image: "{% static 'img/error.png' %}",
+                    time: 3000,
+                });
+            }
 		});
 
 		{% if onPub == 1 %}

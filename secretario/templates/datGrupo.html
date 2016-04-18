@@ -97,7 +97,7 @@
 				</div>
 
 				<div class="modal-footer">
-				  <button id="changePub" type="button" class="btn btn-default" data-dismiss="modal">Cambiar</button>
+				  <button id="changePub" type="button" class="btn btn-default">Cambiar</button>
 				</div>
 			</div>
 		</div>
@@ -139,7 +139,7 @@
 			function(r){
 				res = JSON.parse(r)
 
-				$('.cmbGrupo > #id_Encargado')
+				$('.modal-body > #id_Encargado')
                     .find('option[value="'+res['pub'].grupo+'"]')
                     .prop('selected', true)
 
@@ -159,13 +159,15 @@
                 row = $('#'+id).parents('tr')
                 row.fadeOut()
 			}
-			cambioG=new Gestion()
+			cambioG = new Gestion()
 			cambioG.getInputs('#pubGroup', 2)
-            cmb=cambioG.getDataIn()
+            cmb = cambioG.getDataIn()
+
 			if (cmb.vacio==0){
 				keys=new Array('grupo', 'id')
 				cambioG.generateJson(keys, '{{ csrf_token }}', id)
 				cambioG.setPost("{% url 'secretario:cambiarPub' %}", 'Cambio de grupo!', f)
+                $('#pubGroup').modal('hide')
 			}
 		})
 
