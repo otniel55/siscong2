@@ -19,6 +19,11 @@ class Precursor(models.Model):
 	def __unicode__(self):
 		return self.nombre
 
+class privilegio(models.Model):
+	nombre=models.CharField("Nombre", max_length=200)
+	edadMin=models.IntegerField("Edad minima")
+	tiempoBauMin=models.IntegerField("Tiempo minimo de bautizado")
+
 class Publicador(models.Model):
 	IDpub = models.AutoField(primary_key=True)
 	nombre = models.CharField(max_length=50)
@@ -29,6 +34,7 @@ class Publicador(models.Model):
 	fechaBau = models.CharField('Fecha de Bautismo',max_length=20)
 	fechaNa = models.DateField('Fecha de Nacimiento')
 	precursorado=models.ManyToManyField(Precursor, through='PubPrecursor')
+	privilegio=models.ManyToManyField(privilegio, through='privilegioPub')
 	FKgrupo = models.ForeignKey(
         'GruposPred',
         on_delete = models.CASCADE,
@@ -50,7 +56,7 @@ class Informe(models.Model):
         'Publicador',
         on_delete = models.CASCADE,
     )
-	
+	observacion=models.CharField(max_length=250)
 	def __int__(self):
 		return self.IDinf
 
@@ -74,3 +80,24 @@ class nroPrec(models.Model):
         on_delete = models.CASCADE,
     )
 	nroPrec=models.IntegerField()
+
+class privilegioPub(models.Model):
+	mes=models.IntegerField("mes de nombramiento")
+	year=models.IntegerField("anio de nombramiento")
+	FKpub = models.ForeignKey(
+        'Publicador',
+        on_delete = models.CASCADE,
+    )
+	FKpriv=models.ForeignKey(
+		'privilegio',
+		on_delete=models.CASCADE,
+	)
+
+class horasCon(models.Model):
+	mes=models.IntegerField()
+	year=models.IntegerField()
+	FKpub=models.ForeignKey(
+		'Publicador',
+		on_delete=models.CASCADE,
+	)
+	horas=models.IntegerField()
