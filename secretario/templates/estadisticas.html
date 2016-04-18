@@ -43,6 +43,10 @@
                         </div>
 
                         <div id="AT" class="col-lg-10 col-lg-offset-1">
+
+                            <h3 class="text-center">Actividad de la Congregacion de los Ultimos 3 meses</h3>
+
+                            <ul id="result"></ul>
                         </div>
 
                     </div>
@@ -70,8 +74,8 @@
                 label: '',
                 fillColor: "rgba(43, 168, 26, 0.73)",
                 strokeColor: "#034503",
-                pointColor: "#000000",
-                pointStrokeColor: "#000000",
+                pointColor: "rgb(43, 168, 26)",
+                pointStrokeColor: "#0000000",
                 pointHighlightFill: "#ffffff",
                 pointHighlightStroke: "#33a733",
                 data: [0,0,0,0,0]
@@ -80,20 +84,20 @@
                 label: '',
                 fillColor: "rgba(52, 97, 170, 0.72)",
                 strokeColor: "#3461aa",
-                pointColor: "#000000",
+                pointColor: "rgb(52, 97, 170)",
                 pointStrokeColor: "#000000",
                 pointHighlightFill: "#ffffff",
-                pointHighlightStroke: "#33a733",
+                pointHighlightStroke: "#3461aa",
                 data: [0,0,0,0,0]
                 },
                 {
                 label: '',
                 fillColor: "rgba(170, 52, 156, 0.7)",
                 strokeColor: "#aa349c",
-                pointColor: "#000000",
+                pointColor: "rgb(170, 52, 156)",
                 pointStrokeColor: "#000000",
                 pointHighlightFill: "#ffffff",
-                pointHighlightStroke: "#33a733",
+                pointHighlightStroke: "#aa349c",
                 data: [0,0,0,0,0]
                 }
             ]
@@ -123,17 +127,24 @@
 
                     res = JSON.parse(res)
 
-                    console.log(res)
+                    $('#result').children().detach()
 
                     $.each(res, function(key, value){
                         mes = moment(value.mes, "MM").format('MMMM')
 
                         $.each(lineChart.datasets[key].points, function(key, value){
-                            value.datasetLabel = "Informadas en el mes de "+mes
+                            value.datasetLabel = "Informe de "+mes
                         })
 
+                        if(value.result > 0){
+                            status = "Incremento del"
+                        } else if(typeof value.result === 'string' ){
+                            status = ""
+                        } else {
+                            status = "Decremento del "
+                        }
 
-                        $('#AT').append("<span>La Congrecacion Tuvo un Aumento del: "+value.result+"% en "+mes+"</span><br>")
+                        $('#result').append("<li>Resultados de "+mes+": "+status+" "+value.result+"%</li>")
 
                         lineChart.datasets[key].points[0].value = value.horas
                         lineChart.datasets[key].points[1].value = value.publicaciones

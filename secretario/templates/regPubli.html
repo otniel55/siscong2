@@ -96,7 +96,7 @@
                 datP.Cargar()
             }
 			datP.getInputs('.form-group')
-            inputs=datP.getDataIn(res)
+            inputs=datP.getDataIn()
 			if (inputs.vacio==0){
 				keys=new Array('nombre', 'apellido', 'telefono', 'direccion', 'email', 'fechaBau', 'fechaNa', 'Encargado')
 				datP.generateJson(keys, "{{ csrf_token }}")
