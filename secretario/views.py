@@ -100,7 +100,7 @@ def datGrupo(request,idGrupo):
           modalGrupo = traerGrupo()
           modalInfo = regInforme()
           mes = mesInfor()
-          y=datetime.date.today().year
+          y=str(datetime.date.today().year-1)+""+str(datetime.date.today().year)
           datos = {'form': formDatGrupo, 'publicadores': p, 'num': g.pk, 'modalPub': formPub,
                  'modalGrupo': modalGrupo, 'modalInfo': modalInfo, 'mes': mes,'y':y,
                    'url':1,
@@ -400,6 +400,8 @@ def regInf(request):
      return HttpResponse(json.dumps(msg))
 
 def tarjeta(request, vista, idPub, y):
+     yIni=int(y[:4])
+     yFin=int(y[4:])
      datos={}
      cont=0
      inf={}
@@ -408,8 +410,8 @@ def tarjeta(request, vista, idPub, y):
      except(KeyError, Publicador.DoesNotExist):
           pagina="page404.html"
      else:
-          infs=Informe.objects.filter(year=y, FKpub=idPub).order_by('mes')
-          if len(infs)>0:
+          infs=Informe.objects.filter(Q(year=yIni, mes__in=range(9, 13)) | Q(year=yFin, mes__in=range(1,9)), FKpub=idPub)
+          if len(infs)>0 and yIni<yFin:
                request.session['tarjetaPub']=idPub
                request.session['tarjetaY']=y
                for i in infs:
@@ -486,7 +488,7 @@ def verTarjetaPub(request):
      cont=0
      yearHoy=datetime.date.today().year
      while cont<5:
-          years.append(yearHoy)
+          years.append([yearHoy-1, yearHoy])
           yearHoy=yearHoy-1
           cont+=1
      cGrupo = traerGrupo()
@@ -651,21 +653,17 @@ def historiaPrec(request, year):
      if prec==2 or prec==1:
           pg="tarjetaPrecAux.html"
           entrar=True
-          iniM=1
-          iniY=int(year)
-          finM=12
-          finY=int(year)
      elif prec==3 or prec==4:
           pg="tarjetaPrecReg.html"
           entrar=True
-          iniM=9
-          iniY=int(year[0:4])
-          finM=8
-          finY=int(year[4:])
      else:
           pg="tarjetaPrecAux.html"
           data={'msg':"Tipo de precursorado no existe"}
      if entrar:
+          iniM=9
+          iniY=int(year[0:4])
+          finM=8
+          finY=int(year[4:])
           try:
                Publicador.objects.get(pk=pub)
           except(KeyError, Publicador.DoesNotExist):
@@ -830,12 +828,13 @@ def getTiempo(precurs):
           tiempo+=str(mes)+" mes"
           if mes>1:
                tiempo+="es"
+     if len(precurs)==1 and precurs[0].mesIni==hoy.month and precurs[0].yearIni==hoy.year:
+          tiempo="En curso"
      return tiempo
 
 
 def yearServicio(request):
      bajaAuto()
-     normalY=0
      y=[]
      data={}
      pub=int(request.POST['pub'])
@@ -852,7 +851,6 @@ def yearServicio(request):
                data={'msg':"Publicador no existe"}
           else:
                if prec==2:
-                    normalY=1
                     precur=PubPrecursor.objects.filter(Q(FKprecursor=prec) | Q(FKprecursor=1), FKpub=pub).order_by("-yearIni", "-mesIni")
                else:
                     precur=PubPrecursor.objects.filter(FKpub=pub, FKprecursor=prec).order_by("-yearIni", "-mesIni")
@@ -865,7 +863,7 @@ def yearServicio(request):
                               fFin=getFechaFin(p.mesIni, p.yearIni, p.duracion)
                               mesFin=fFin[0]
                               yearFin=fFin[1]
-                         for x in (arrayYear(p.mesIni, p.yearIni, mesFin, yearFin, normalY)):
+                         for x in (arrayYear(p.mesIni, p.yearIni, mesFin, yearFin)):
                               y.append(x)
                     data={'years':quitarRep(y)}
                else:
@@ -885,19 +883,15 @@ def arrayYear(mesI,yearI,mesF,yearF, normalY=0):
      years=[]
      intervaloY=yearF-yearI
      for i in range(0, intervaloY+1):
-          if normalY==1:
-               years.append(yearI)
-          else:
-               if mesI<9:
-                    years.append([yearI-1,yearI])
-               else:
-                    years.append([yearI, yearI+1])
-          yearI+=1
-     if normalY==0:
-          if mesI<9 and mesF>8:
+          if mesI<9:
                years.append([yearI-1,yearI])
-          elif mesI>8 and mesF<9:
-               years.pop()
+          else:
+               years.append([yearI, yearI+1])
+          yearI+=1
+     if mesI<9 and mesF>8:
+          years.append([yearI-1,yearI])
+     elif mesI>8 and mesF<9:
+          years.pop()
      return years
 
 def quitarRep(arreglo):
@@ -933,7 +927,10 @@ def darBaja(request):
                     data={'msg':"Precursor no esta activo o nunca fue precursor"}
                else:
                     precur.status=False
-                    precur.duracion=getDiferenciaMes(precur.mesIni, precur.yearIni, hoy.month, hoy.year)+2
+                    if precur.mesIni==hoy.month and precur.yearIni==hoy.year:
+                         precur.duracion=getDiferenciaMes(precur.mesIni, precur.yearIni, hoy.month, hoy.year)+2
+                    else:
+                         precur.duracion=getDiferenciaMes(precur.mesIni, precur.yearIni, hoy.month, hoy.year)+1
                     precur.save()
                     data={'msg':"Precursor dado de baja"}
      return HttpResponse(json.dumps(data))
