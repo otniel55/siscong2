@@ -974,7 +974,7 @@ def obtenerInf(mes, year, alreves=True):
      data={}
      meses=[]
      meses.append([year, mes])
-     for i in range(1, 3):
+     for i in range(1, 6):
           mes -= 1
           if mes == 0:
                mes = 12
