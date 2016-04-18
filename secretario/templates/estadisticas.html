@@ -6,10 +6,10 @@
 	<div class="row">
 		<div class="form-panel">
 		    <div class="visible-md visible-lg">
-				<h1 class="text-center titlecolor"><i class="fa fa-angle-right"></i>Tarjeta de Actividad del Publicador</h1>
+				<h1 class="text-center titlecolor"><i class="fa fa-angle-right"></i>Estadisticas</h1>
 			</div>
 			<div class="visible-xs visible-sm">
-				<h3 class="text-center"><i class="fa fa-angle-right"></i>Tarjeta de Actividad del Publicador</h3>
+				<h3 class="text-center"><i class="fa fa-angle-right"></i>Estadisticas</h3>
 			</div>
 
 			<div style="margin-top: 30px;">
@@ -25,7 +25,7 @@
                 <div class="col-lg-4">
                     <div class="row">
 
-                       <div class="col-lg-10 col-lg-offset-1">
+                       <div class="col-lg-9 col-lg-offset-1">
                             <div class="form-group">
                                 <label for="fechaIni">Fecha a Consultar:</label>
                                 <div class='input-group date datepicker'>
@@ -38,23 +38,52 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-6 col-lg-offset-3">
-                            <button id="send" class="btn btn-primary btn-block">Concultar</button>
+                        <div class="col-lg-2">
+                            <button id="send" class="btn btn-primary btn-block fa fa-search"></button>
                         </div>
 
                         <div id="AT" class="col-lg-10 col-lg-offset-1">
 
-                            <h3 class="text-center">Actividad de la Congregacion de los Ultimos 3 meses</h3>
+                            <h3 class="text-center titlecolor">Resultados de los Ultimos 6 meses</h3>
 
-                            <ul id="result"></ul>
+                            <dl id="resultAT" class="dl-horizontal"></dl>
                         </div>
 
                     </div>
                 </div>
 
-                <div class="col-lg-8">
+                <div class="col-lg-8" id="grafica">
+                    <span style="float:left;margin-left:30px;" class="grafNext glyphicon glyphicon-chevron-left"></span>
+                    <span style="float:right;" class="grafNext glyphicon glyphicon-chevron-right"></span>
                     <canvas id="line"></canvas>
                 </div>
+
+                <div class="clearfix"></div>
+
+                <div class="col-lg-12" id="grafica2">
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <canvas id="pie6"></canvas>
+                        </div>
+                        <div class="col-lg-2">
+                            <canvas id="pie5"></canvas>
+                        </div>
+                        <div class="col-lg-2">
+                            <canvas id="pie4"></canvas>
+                        </div>
+                        <div class="col-lg-2">
+                            <canvas id="pie3"></canvas>
+                        </div>
+                        <div class="col-lg-2">
+                            <canvas id="pie2"></canvas>
+                        </div>
+                        <div class="col-lg-2">
+                            <canvas id="pie1"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
             </div>
 		</div>
 	</div>
@@ -66,55 +95,105 @@
 	<script>
 
         var lineChart
+        var pie1, pie2, pie3, pie4, pie5, pie6
+
+        var inicial = [0,0,0,0,0,0,0,0,0,0,0]
 
         var data = {
             labels: ["Horas", "Publicaciones", "videos", "Revisitas", "Estudios", "total Publicadores", "Bautizados", "Irregulares", "Inactivos", "Prec. Reg.", "Prec. Aux."],
             datasets: [
                 {
                 label: '',
-                fillColor: "rgba(43, 168, 26, 0.73)",
+                fillColor: "rgba(43, 168, 26, 0.3)",
                 strokeColor: "#034503",
                 pointColor: "rgb(43, 168, 26)",
                 pointStrokeColor: "#0000000",
                 pointHighlightFill: "#ffffff",
                 pointHighlightStroke: "#33a733",
-                data: [0,0,0,0,0]
+                data: inicial
                 },
                 {
                 label: '',
-                fillColor: "rgba(52, 97, 170, 0.72)",
+                fillColor: "rgba(52, 97, 170, 0.3)",
                 strokeColor: "#3461aa",
                 pointColor: "rgb(52, 97, 170)",
                 pointStrokeColor: "#000000",
                 pointHighlightFill: "#ffffff",
                 pointHighlightStroke: "#3461aa",
-                data: [0,0,0,0,0]
+                data: inicial
                 },
                 {
                 label: '',
-                fillColor: "rgba(170, 52, 156, 0.7)",
+                fillColor: "rgba(170, 52, 156, 0.3)",
                 strokeColor: "#aa349c",
                 pointColor: "rgb(170, 52, 156)",
                 pointStrokeColor: "#000000",
                 pointHighlightFill: "#ffffff",
                 pointHighlightStroke: "#aa349c",
-                data: [0,0,0,0,0]
+                data: inicial
                 }
             ]
         }
 
+        var data2 = [
+                {
+                    value: 300,
+                    color:"#F7464A",
+                    highlight: "#FF5A5E",
+                    label: "Red"
+                },
+                {
+                    value: 50,
+                    color: "#46BFBD",
+                    highlight: "#5AD3D1",
+                    label: "Green"
+                },
+                {
+                    value: 100,
+                    color: "#FDB45C",
+                    highlight: "#FFC870",
+                    label: "Yellow"
+                }
+            ]
+
         $(document).ready(function () {
 
             chart = $("#line").get(0).getContext("2d")
+            pie6 = $("#pie6").get(0).getContext("2d")
+            pie5 = $("#pie5").get(0).getContext("2d")
+            pie4 = $("#pie4").get(0).getContext("2d")
+            pie3 = $("#pie3").get(0).getContext("2d")
+            pie2 = $("#pie2").get(0).getContext("2d")
+            pie1 = $("#pie1").get(0).getContext("2d")
 
             lineChart =   new Chart(chart).Line(data, {
                             responsive: true,
-                            tooltipFillColor: "rgba(232, 26, 26, 0.55)"
+                            tooltipFillColor: "rgba(232, 26, 26, 0.55)",
+                            scaleFontSize: 14,
                         })
 
-            alto = $('.form-panel').height() + $('#line')[0].clientHeight + 50
+            pie6 = new Chart(pie6).Pie(data2, {
+                            responsive: true
+                        })
+            pie5 = new Chart(pie5).Pie(data2, {
+                            responsive: true
+                        })
+            pie4 = new Chart(pie4).Pie(data2, {
+                            responsive: true
+                        })
+            pie3 = new Chart(pie3).Pie(data2, {
+                            responsive: true
+                        })
+            pie2 = new Chart(pie2).Pie(data2, {
+                            responsive: true
+                        })
+            pie1 = new Chart(pie1).Pie(data2, {
+                            responsive: true
+                        })
 
-            $('.form-panel').height(alto)
+            //alto = $('.form-panel').height() + $('#line')[0].clientHeight + 50
+
+            //$('.form-panel').height(alto)
 
         });
 
@@ -129,14 +208,10 @@
 
                     console.log(res)
 
-                    $('#result').children().detach()
+                    $('#resultAT').children().detach()
 
                     $.each(res, function(key, value){
                         mes = moment(value.mes, "MM").format('MMMM')
-
-                        $.each(lineChart.datasets[key].points, function(key, value){
-                            value.datasetLabel = "Informe de "+mes
-                        })
 
                         if(value.result > 0){
                             status = "Incremento del"
@@ -146,18 +221,81 @@
                             status = "Decremento del "
                         }
 
-                        $('#result').append("<li>Resultados de "+mes+": "+status+" "+value.result+"%</li>")
+                        $('#resultAT').append("<dt>"+mes+":</dt><dd>"+status+" "+value.result+"%</dd>")
 
-                        lineChart.datasets[key].points[0].value = value.horas
-                        lineChart.datasets[key].points[1].value = value.publicaciones
-                        lineChart.datasets[key].points[2].value = value.videos
-                        lineChart.datasets[key].points[3].value = value.revisitas
-                        lineChart.datasets[key].points[4].value = value.estudios
+                        if(key < 3){
 
-                        lineChart.update();
+                            $.each(lineChart.datasets[key].points, function(key, value){
+                                value.datasetLabel = "Informe de "+mes
+                            })
+
+                            lineChart.datasets[key].points[0].value = value.horas
+                            lineChart.datasets[key].points[1].value = value.publicaciones
+                            lineChart.datasets[key].points[2].value = value.videos
+                            lineChart.datasets[key].points[3].value = value.revisitas
+                            lineChart.datasets[key].points[4].value = value.estudios
+                            lineChart.update();
+                        }
 
                     })
 
+                    $('#grafica > span:eq(0)').click(function(){
+
+                        $("#line").toggle( 'slide', { direction: 'left' }, 500, function(){
+                            dec = 3
+                            $.each(res, function(key, value){
+
+                                if(key > 2){
+                                    mes = moment(value.mes, "MM").format('MMMM')
+
+                                    $.each(lineChart.datasets[key-dec].points, function(key, value){
+                                        value.datasetLabel = "Informe de "+mes
+                                    })
+
+                                    lineChart.datasets[key-dec].points[0].value = value.horas
+                                    lineChart.datasets[key-dec].points[1].value = value.publicaci
+                                    lineChart.datasets[key-dec].points[2].value = value.videos
+                                    lineChart.datasets[key-dec].points[3].value = value.revisitas
+                                    lineChart.datasets[key-dec].points[4].value = value.estudios
+                                    lineChart.update()
+                                }
+                            })
+                        })
+
+                        $("#line").toggle( 'slide', { direction: 'right' })
+
+                        $(this).css("pointer-events", "none");
+                        $(this).siblings().css("pointer-events", "auto")
+
+                    })
+
+                    $('#grafica > span:eq(1)').click(function(){
+
+                        $("#line").toggle( 'slide', { direction: 'right' }, 500, function(){
+                            $.each(res, function(key, value){
+                                if(key < 3){
+                                    mes = moment(value.mes, "MM").format('MMMM')
+
+                                    $.each(lineChart.datasets[key].points, function(key, value){
+                                        value.datasetLabel = "Informe de "+mes
+                                    })
+
+                                    lineChart.datasets[key].points[0].value = value.horas
+                                    lineChart.datasets[key].points[1].value = value.publicaci
+                                    lineChart.datasets[key].points[2].value = value.videos
+                                    lineChart.datasets[key].points[3].value = value.revisitas
+                                    lineChart.datasets[key].points[4].value = value.estudios
+                                    lineChart.update()
+                                }
+                            })
+                        })
+
+                        $("#line").toggle( 'slide', { direction: 'left' }, 500)
+
+                        $(this).css("pointer-events", "none");
+                        $(this).siblings().css("pointer-events", "auto")
+
+                    })
                 })
         })
 

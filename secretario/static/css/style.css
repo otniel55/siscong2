@@ -2359,7 +2359,6 @@ label {
     margin-left: 2%;
 }
 
-
 .FichaHe {
     font-weight: 600;
     padding-top: 10px;
@@ -2406,4 +2405,33 @@ label {
     background-color:#664988;
 }
 
+.grafNext {
+    font-size:16px;
+}
 
+.grafNext:hover {
+    color:#f2b14e;
+}
+
+#grafica2 {
+    margin-top:50px;
+    margin-bottom:50px;
+}
+
+#resultAT {
+    margin: 0px;
+    padding: 0px;
+    font-size: 20px;
+}
+
+#resultAT dt {
+	color: darkcyan;
+}
+#AT {
+    margin-top: 10px;
+}
+
+#send {
+    margin-top: 28px;
+    height: 34px;
+}
