@@ -148,16 +148,9 @@
                     if( ficha.is(":visible") ){
                         ficha.hide('blind', 1000, function(){})
                     }
-
-					if ( $("#id_precur").val() == "2" ){
-						$.each(res.years, function(key, value){
-							$('#periodo').append(new Option(value, value))
-						})
-					}else{
-						$.each(res.years, function(key, value){
-							$('#periodo').append(new Option(value[0]+'-'+value[1], value[0]+''+value[1]))
-						})
-					}
+                    $.each(res.years, function(key, value){
+                        $('#periodo').append(new Option(value[0]+'-'+value[1], value[0]+''+value[1]))
+                    })
                 })
             } else {
                 $('#periodo').attr('disabled', true)
