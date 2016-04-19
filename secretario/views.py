@@ -970,6 +970,10 @@ def estadisticas(request):
     return render(request, "estadisticas.html", {})
 
 def obtenerInf(mes, year, alreves=True):
+     mesesReg=[]
+     mesesAux=[]
+     ultimoInf=[]
+     primerInf=[]
      cont=0
      data={}
      meses=[]
@@ -981,12 +985,40 @@ def obtenerInf(mes, year, alreves=True):
                year -= 1
           meses.append([year, mes])
      meses.sort(reverse=alreves)
+     pu=Publicador.objects.all()
+     for i in pu:
+          infP=Informe.objects.filter(FKpub=i.pk).order_by("year", "mes")
+          if len(infP)>0:
+               primerInf.append(infP[0])
+          infU=Informe.objects.filter(FKpub=i.pk).order_by("-year", "-mes")
+          if len(infU)>0:
+              ultimoInf.append(infU[0])
      for i in meses:
+          precReg=0
+          precAux=0
+          precEsp=0
+          irregulares=0
+          inactivos=0
+          pubs=0
           publicaciones = 0
           revisitas = 0
           estudios = 0
           horas = 0
           videos = 0
+          strMes=str(i[1])
+          if i[1]<10:
+               strMes="0"+str(i[1])
+          b=Publicador.objects.filter(fechaBau__startswith=str(i[0])+"-"+strMes)
+          bau=len(b)
+          for j in primerInf:
+               if j.year==i[0] and j.mes==i[1]:
+                    pubs+=1
+          for j in ultimoInf:
+               meses=getDiferenciaMes(j.mes,j.year,i[1],i[0])
+               if meses>0 and meses<7:
+                    irregulares+=1
+               elif meses>6:
+                    inactivos+=1
           informes = Informe.objects.filter(mes=i[1], year=i[0])
           for inf in informes:
                publicaciones += inf.publicaciones
@@ -994,6 +1026,24 @@ def obtenerInf(mes, year, alreves=True):
                estudios += inf.estudios
                horas += inf.horas
                videos += inf.videos
+          for k in pu:
+               aux=False
+               reg=False
+               esp=False
+               precurs=PubPrecursor.objects.filter(FKpub=k.pk, FKprecursor__in=[1,2]).order_by("-yearIni", "-mesIni")
+               for l in precurs:
+                    if getDiferenciaMes(l.mesIni, l.yearIni, i[1], i[0])>-2:
+                         if l.duracion==0:
+                              mesF=i[1]
+                              yearF=i[0]
+                         else:
+                              fechaF=getFechaFin(l.mesIni, l.yearIni, l.duracion)
+                              mesF=fechaF[0]
+                              mesY=fechaF[1]
+                         if getDiferenciaMes(i[1], i[0], mesF, mesY)>-2:
+                              precAux+=1
+                              aux=True
+                              break
           mes = i[1]
           year = i[0]
           mes -= 1
@@ -1006,6 +1056,15 @@ def obtenerInf(mes, year, alreves=True):
           e=0
           h=0
           v=0
+          auxAnt=0
+          pubsAnt=0
+          strMes=str(mes)
+          if mes<10:
+               strMes="0"+str(mes)
+          b=Publicador.objects.filter(fechaBau__startswith=str(year)+"-"+strMes)
+          bauAnt=len(b)
+          irregularesAnt=0
+          inactivosAnt=0
           for inf in informesAnt:
                p += inf.publicaciones
                r += inf.revisitas
@@ -1013,17 +1072,82 @@ def obtenerInf(mes, year, alreves=True):
                h += inf.horas
                v += inf.videos
           if len(informesAnt)>0:
-               resultP = ((publicaciones*100)//p)-100
-               resultR = ((revisitas*100)//r)-100
-               resultE = ((estudios*100)//e)-100
-               resultH = ((horas*100)//h)-100
-               resultV = ((videos*100)//v)-100
-               total = (resultP+resultR+resultE+resultH+resultV)//5
+               for k in pu:
+                    aux=False
+                    reg=False
+                    esp=False
+                    precurs=PubPrecursor.objects.filter(FKpub=k.pk, FKprecursor__in=[1,2]).order_by("-yearIni", "-mesIni")
+                    for l in precurs:
+                         if getDiferenciaMes(l.mesIni, l.yearIni, mes, year)>-2:
+                              if l.duracion==0:
+                                   mesF=i[1]
+                                   yearF=i[0]
+                              else:
+                                   fechaF=getFechaFin(l.mesIni, l.yearIni, l.duracion)
+                                   mesF=fechaF[0]
+                                   mesY=fechaF[1]
+                              if getDiferenciaMes(mes, year, mesF, mesY)>-2:
+                                   auxAnt+=1
+                                   aux=True
+                                   break
+               for j in primerInf:
+                    if j.mes==mes and j.year==year:
+                         pubsAnt+=1
+               for j in ultimoInf:
+                    meses=getDiferenciaMes(j.mes,j.year,mes,year)
+                    if meses>0 and meses<7:
+                         irregularesAnt+=1
+                    elif meses>6:
+                         inactivosAnt+=1
+               if publicaciones==0:
+                    resultP=p*-1
+               else:
+                    try:
+                         resultP = ((publicaciones*100)//p)-100
+                    except ZeroDivisionError:
+                         resultP = (((publicaciones+1)*100)//(p+1))-100
+               try:
+                    resultR = ((revisitas*100)//r)-100
+               except ZeroDivisionError:
+                    resultR = (((revisitas+1)*100)//(r+1))-100
+               try:
+                    resultE = ((estudios*100)//e)-100
+               except ZeroDivisionError:
+                    resultE = (((estudios+1)*100)//(e+1))-100
+               try:
+                    resultH = ((horas*100)//h)-100
+               except ZeroDivisionError:
+                    resultH = (((horas+1)*100)//(h+1))-100
+               try:
+                    resultV = ((videos*100)//v)-100
+               except ZeroDivisionError:
+                     resultV = (((videos+1)*100)//(v+1))-100
+               try:
+                    resultPubs=((pubs*100)//pubsAnt)-100
+               except ZeroDivisionError:
+                    resultPubs=(((pubs+1)*100)//(pubsAnt+1))-100
+               try:
+                    resultBau=((bau*100)//bauAnt)-100
+               except ZeroDivisionError:
+                    resultBau=(((bau+1)*100)//(bauAnt+1))-100
+               try:
+                    resultI=((irregulares*100)//irregularesAnt)-100
+               except ZeroDivisionError:
+                    resultI=(((irregulares+1)*100)//(irregularesAnt+1))-100
+               try:
+                    resultInac=((inactivos*100)//inactivosAnt)-100
+               except ZeroDivisionError:
+                    resultInac=(((inactivos+1)*100)//(inactivosAnt+1))-100
+               try:
+                    resultAux=((aux*100)//auxAnt)-100
+               except ZeroDivisionError:
+                    resultAux=(((aux+1)*100)//(auxAnt+1))-100
+               total = (resultP+resultR+resultE+resultH+resultV+resultPubs+resultBau+resultI+resultInac+resultAux)//10
           else:
                total="No hubo informes en el mes pasado, no se puede comparar"
           if len(informes) > 0:
                data[cont] = {'publicaciones': publicaciones, 'revisitas': revisitas, 'estudios': estudios,
-                             'horas': horas, 'videos': videos, 'mes':i[1], 'result':total}
+                             'horas': horas, 'videos': videos, 'mes':i[1], 'result':total, 'pubs':pubs, 'bau':bau, 'irreg':irregulares, 'inactivos':inactivos, 'aux':precAux}
                cont += 1
      return data
 
