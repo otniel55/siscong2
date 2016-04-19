@@ -970,6 +970,7 @@ def estadisticas(request):
     return render(request, "estadisticas.html", {})
 
 def obtenerInf(mes, year, alreves=True):
+     esp=False
      mesesReg=[]
      mesesAux=[]
      ultimoInf=[]
@@ -1029,7 +1030,6 @@ def obtenerInf(mes, year, alreves=True):
           for k in pu:
                aux=False
                reg=False
-               esp=False
                precurs=PubPrecursor.objects.filter(FKpub=k.pk, FKprecursor__in=[1,2]).order_by("-yearIni", "-mesIni")
                for l in precurs:
                     if getDiferenciaMes(l.mesIni, l.yearIni, i[1], i[0])>-2:
@@ -1039,11 +1039,42 @@ def obtenerInf(mes, year, alreves=True):
                          else:
                               fechaF=getFechaFin(l.mesIni, l.yearIni, l.duracion)
                               mesF=fechaF[0]
-                              mesY=fechaF[1]
-                         if getDiferenciaMes(i[1], i[0], mesF, mesY)>-2:
+                              yearF=fechaF[1]
+                         if getDiferenciaMes(i[1], i[0], mesF, yearF)>-2:
                               precAux+=1
                               aux=True
                               break
+               if not aux:
+                    precurs=PubPrecursor.objects.filter(FKpub=k.pk, FKprecursor=3).order_by("-yearIni", "-mesIni")
+                    for l in precurs:
+                         if getDiferenciaMes(l.mesIni, l.yearIni, i[1], i[0])>-2:
+                              if l.duracion==0:
+                                   mesF=i[1]
+                                   yearF=i[0]
+                              else:
+                                   fechaF=getFechaFin(l.mesIni, l.yearIni, l.duracion)
+                                   mesF=fechaF[0]
+                                   yearF=fechaF[1]
+                              if getDiferenciaMes(i[1], i[0], mesF, yearF)>-2:
+                                   precReg+=1
+                                   reg=True
+                                   break
+               elif not reg:
+                    precurs=PubPrecursor.objects.filter(FKpub=k.pk, FKprecursor=4).order_by("-yearIni", "-mesIni")
+                    for l in precurs:
+                         if getDiferenciaMes(l.mesIni, l.yearIni, i[1], i[0])>-2:
+                              if l.duracion==0:
+                                   mesF=i[1]
+                                   yearF=i[0]
+                              else:
+                                   fechaF=getFechaFin(l.mesIni, l.yearIni, l.duracion)
+                                   mesF=fechaF[0]
+                                   yearF=fechaF[1]
+                              if getDiferenciaMes(i[1], i[0], mesF, yearF)>-2:
+                                   precEsp+=1
+                                   esp=True
+                                   break
+
           mes = i[1]
           year = i[0]
           mes -= 1
@@ -1058,6 +1089,8 @@ def obtenerInf(mes, year, alreves=True):
           v=0
           auxAnt=0
           pubsAnt=0
+          regAnt=0
+          espAnt=0
           strMes=str(mes)
           if mes<10:
                strMes="0"+str(mes)
@@ -1075,21 +1108,50 @@ def obtenerInf(mes, year, alreves=True):
                for k in pu:
                     aux=False
                     reg=False
-                    esp=False
                     precurs=PubPrecursor.objects.filter(FKpub=k.pk, FKprecursor__in=[1,2]).order_by("-yearIni", "-mesIni")
                     for l in precurs:
                          if getDiferenciaMes(l.mesIni, l.yearIni, mes, year)>-2:
                               if l.duracion==0:
-                                   mesF=i[1]
-                                   yearF=i[0]
+                                   mesF=mes
+                                   yearF=year
                               else:
                                    fechaF=getFechaFin(l.mesIni, l.yearIni, l.duracion)
                                    mesF=fechaF[0]
-                                   mesY=fechaF[1]
-                              if getDiferenciaMes(mes, year, mesF, mesY)>-2:
+                                   yearF=fechaF[1]
+                              if getDiferenciaMes(mes, year, mesF, yearF)>-2:
                                    auxAnt+=1
                                    aux=True
                                    break
+                    if not aux:
+                         precurs=PubPrecursor.objects.filter(FKpub=k.pk, FKprecursor=3).order_by("-yearIni", "-mesIni")
+                         for l in precurs:
+                              if getDiferenciaMes(l.mesIni, l.yearIni, mes, year)>-2:
+                                   if l.duracion==0:
+                                        mesF=i[1]
+                                        yearF=i[0]
+                                   else:
+                                        fechaF=getFechaFin(l.mesIni, l.yearIni, l.duracion)
+                                        mesF=mes
+                                        yearF=year
+                                   if getDiferenciaMes(mes, year, mesF, yearF)>-2:
+                                        regAnt+=1
+                                        reg=True
+                                        break
+                    elif not reg:
+                         precurs=PubPrecursor.objects.filter(FKpub=k.pk, FKprecursor=4).order_by("-yearIni", "-mesIni")
+                         for l in precurs:
+                              if getDiferenciaMes(l.mesIni, l.yearIni, mes, year)>-2:
+                                   if l.duracion==0:
+                                        mesF=mes
+                                        yearF=year
+                                   else:
+                                        fechaF=getFechaFin(l.mesIni, l.yearIni, l.duracion)
+                                        mesF=fechaF[0]
+                                        yearF=fechaF[1]
+                                   if getDiferenciaMes(mes, year, mesF, yearF)>-2:
+                                        espAnt+=1
+                                        esp=True
+                                        break
                for j in primerInf:
                     if j.mes==mes and j.year==year:
                          pubsAnt+=1
@@ -1139,15 +1201,19 @@ def obtenerInf(mes, year, alreves=True):
                except ZeroDivisionError:
                     resultInac=(((inactivos+1)*100)//(inactivosAnt+1))-100
                try:
-                    resultAux=((aux*100)//auxAnt)-100
+                    resultAux=((precAux*100)//auxAnt)-100
                except ZeroDivisionError:
-                    resultAux=(((aux+1)*100)//(auxAnt+1))-100
-               total = (resultP+resultR+resultE+resultH+resultV+resultPubs+resultBau+resultI+resultInac+resultAux)//10
+                    resultAux=(((precAux+1)*100)//(auxAnt+1))-100
+               try:
+                    resultReg=((precReg*100)//regAnt)-100
+               except ZeroDivisionError:
+                    resultReg=(((precReg+1)*100)//(regAnt+1))-100
+               total = (resultP+resultR+resultE+resultH+resultV+resultPubs+resultBau+resultI+resultInac+resultAux+resultReg)//11
           else:
                total="No hubo informes en el mes pasado, no se puede comparar"
           if len(informes) > 0:
                data[cont] = {'publicaciones': publicaciones, 'revisitas': revisitas, 'estudios': estudios,
-                             'horas': horas, 'videos': videos, 'mes':i[1], 'result':total, 'pubs':pubs, 'bau':bau, 'irreg':irregulares, 'inactivos':inactivos, 'aux':precAux}
+                             'horas': horas, 'videos': videos, 'mes':i[1], 'result':total, 'pubs':pubs, 'bau':bau, 'irreg':irregulares, 'inactivos':inactivos, 'aux':precAux, 'reg':precReg}
                cont += 1
      return data
 
