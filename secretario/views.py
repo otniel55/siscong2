@@ -1162,58 +1162,90 @@ def obtenerInf(mes, year, alreves=True):
                     elif meses>6:
                          inactivosAnt+=1
                if publicaciones==0:
-                    resultP=p*-1
+                    resultP=p*-100
                else:
                     try:
                          resultP = ((publicaciones*100)//p)-100
                     except ZeroDivisionError:
                          resultP = (((publicaciones+1)*100)//(p+1))-100
-               try:
-                    resultR = ((revisitas*100)//r)-100
-               except ZeroDivisionError:
-                    resultR = (((revisitas+1)*100)//(r+1))-100
-               try:
-                    resultE = ((estudios*100)//e)-100
-               except ZeroDivisionError:
-                    resultE = (((estudios+1)*100)//(e+1))-100
-               try:
-                    resultH = ((horas*100)//h)-100
-               except ZeroDivisionError:
-                    resultH = (((horas+1)*100)//(h+1))-100
-               try:
-                    resultV = ((videos*100)//v)-100
-               except ZeroDivisionError:
-                     resultV = (((videos+1)*100)//(v+1))-100
-               try:
-                    resultPubs=((pubs*100)//pubsAnt)-100
-               except ZeroDivisionError:
-                    resultPubs=(((pubs+1)*100)//(pubsAnt+1))-100
-               try:
-                    resultBau=((bau*100)//bauAnt)-100
-               except ZeroDivisionError:
-                    resultBau=(((bau+1)*100)//(bauAnt+1))-100
-               try:
-                    resultI=((irregulares*100)//irregularesAnt)-100
-               except ZeroDivisionError:
-                    resultI=(((irregulares+1)*100)//(irregularesAnt+1))-100
-               try:
-                    resultInac=((inactivos*100)//inactivosAnt)-100
-               except ZeroDivisionError:
-                    resultInac=(((inactivos+1)*100)//(inactivosAnt+1))-100
-               try:
-                    resultAux=((precAux*100)//auxAnt)-100
-               except ZeroDivisionError:
-                    resultAux=(((precAux+1)*100)//(auxAnt+1))-100
-               try:
-                    resultReg=((precReg*100)//regAnt)-100
-               except ZeroDivisionError:
-                    resultReg=(((precReg+1)*100)//(regAnt+1))-100
+               if revisitas==0:
+                    resultR=r*-100
+               else:
+                    try:
+                         resultR = ((revisitas*100)//r)-100
+                    except ZeroDivisionError:
+                         resultR = (((revisitas+1)*100)//(r+1))-100
+               if estudios==0:
+                    resultE=e*-100
+               else:
+                    try:
+                         resultE = ((estudios*100)//e)-100
+                    except ZeroDivisionError:
+                         resultE = (((estudios+1)*100)//(e+1))-100
+               if horas==0:
+                    resultH=h*-100
+               else:
+                    try:
+                         resultH = ((horas*100)//h)-100
+                    except ZeroDivisionError:
+                         resultH = (((horas+1)*100)//(h+1))-100
+               if videos==0:
+                    resultV=v*-100
+               else:
+                    try:
+                         resultV = ((videos*100)//v)-100
+                    except ZeroDivisionError:
+                          resultV = (((videos+1)*100)//(v+1))-100
+               if pubs==0:
+                    resultPubs=pubsAnt*-100
+               else:
+                    try:
+                         resultPubs=((pubs*100)//pubsAnt)-100
+                    except ZeroDivisionError:
+                         resultPubs=(((pubs+1)*100)//(pubsAnt+1))-100
+               if bau==0:
+                    resultBau=bauAnt*-100
+               else:
+                    try:
+                         resultBau=((bau*100)//bauAnt)-100
+                    except ZeroDivisionError:
+                         resultBau=(((bau+1)*100)//(bauAnt+1))-100
+               if irregulares==0:
+                    resultI=irregularesAnt*100
+               else:
+                    try:
+                         resultI=(((irregulares*100)//irregularesAnt)-100)*-1
+                    except ZeroDivisionError:
+                         resultI=((((irregulares+1)*100)//(irregularesAnt+1))-100)*-1
+               if inactivos==0:
+                    resultInac=inactivosAnt*100
+               else:
+                    try:
+                         resultInac=(((inactivos*100)//inactivosAnt)-100)*-1
+                    except ZeroDivisionError:
+                         resultInac=((((inactivos+1)*100)//(inactivosAnt+1))-100)*-1
+               if precAux==0:
+                    resultAux=auxAnt*-100
+               else:
+                    try:
+                         resultAux=((precAux*100)//auxAnt)-100
+                    except ZeroDivisionError:
+                         resultAux=(((precAux+1)*100)//(auxAnt+1))-100
+               if precReg==0:
+                    resultReg=regAnt*-1
+               else:
+                    try:
+                         resultReg=((precReg*100)//regAnt)-100
+                    except ZeroDivisionError:
+                         resultReg=(((precReg+1)*100)//(regAnt+1))-100
                total = (resultP+resultR+resultE+resultH+resultV+resultPubs+resultBau+resultI+resultInac+resultAux+resultReg)//11
           else:
                total="No hubo informes en el mes pasado, no se puede comparar"
           if len(informes) > 0:
                data[cont] = {'publicaciones': publicaciones, 'revisitas': revisitas, 'estudios': estudios,
                              'horas': horas, 'videos': videos, 'mes':i[1], 'result':total, 'pubs':pubs, 'bau':bau, 'irreg':irregulares, 'inactivos':inactivos, 'aux':precAux, 'reg':precReg}
+               if esp:
+                    data[cont]['esp']=precEsp
                cont += 1
      return data
 
