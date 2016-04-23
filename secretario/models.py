@@ -8,7 +8,7 @@ class GruposPred(models.Model):
 	IDgrupo = models.AutoField(primary_key=True)
 	encargado = models.CharField(max_length=50)
 	auxiliar = models.CharField(max_length=50)
-	def __unicode__(self):
+	def __str__(self):
 		return self.encargado
 
 class Precursor(models.Model):
@@ -16,7 +16,7 @@ class Precursor(models.Model):
 	horas = models.IntegerField()
 	nombre = models.CharField(max_length=50)
 
-	def __unicode__(self):
+	def __str__(self):
 		return self.nombre
 
 class privilegio(models.Model):
@@ -30,7 +30,7 @@ class Publicador(models.Model):
 	apellido = models.CharField(max_length=50)
 	telefono = models.CharField(max_length=15)
 	direccion = models.CharField(max_length=150)
-	email = models.EmailField()
+	email = models.CharField(max_length=200)
 	fechaBau = models.CharField('Fecha de Bautismo',max_length=20)
 	fechaNa = models.DateField('Fecha de Nacimiento')
 	precursorado=models.ManyToManyField(Precursor, through='PubPrecursor')
@@ -40,7 +40,7 @@ class Publicador(models.Model):
         on_delete = models.CASCADE,
     )
 	
-	def __unicode__(self):
+	def __str__(self):
 		return self.nombre
 	
 class Informe(models.Model):

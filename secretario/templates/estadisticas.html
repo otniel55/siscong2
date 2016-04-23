@@ -53,10 +53,10 @@
                 </div>
 
                 <div class="col-lg-8" id="grafica">
-                    <span style="float:left;margin-left:30px;" class="grafNext glyphicon glyphicon-chevron-left"></span>
-                    <span style="float:right;pointer-events:none" class="grafNext glyphicon glyphicon-chevron-right"></span>
+                    <span style="float:left;margin-left:30px;pointer-events:none" class="grafNext glyphicon glyphicon-chevron-left"></span>
+                    <span style="float:right;" class="grafNext glyphicon glyphicon-chevron-right"></span>
 
-                    <label style="width:30%;margin-left:30%;" for = "line">Actividad de La Congregacion</label>
+                    <label for="line">Actividad de la Congregacion</label>
                     <canvas id="line"></canvas>
                 </div>
 
@@ -65,6 +65,7 @@
                 <div class="col-lg-12" id="grafica2">
                     <div class="row">
                         <div class="col-lg-2">
+                            <label for="pie6"></label>
                             <canvas id="pie6"></canvas>
                         </div>
                         <div class="col-lg-2">
@@ -140,22 +141,70 @@
 
         var data2 = [
                 {
-                    value: 300,
-                    color:"#F7464A",
-                    highlight: "#FF5A5E",
-                    label: "Red"
+                    value: 0,
+                    color:"#42fd66",
+                    highlight: "#42fd66",
+                    label: "Horas"
                 },
                 {
-                    value: 50,
+                    value: 0,
                     color: "#46BFBD",
-                    highlight: "#5AD3D1",
-                    label: "Green"
+                    highlight: "#46BFBD",
+                    label: "Publicaciones"
                 },
                 {
-                    value: 100,
+                    value: 0,
                     color: "#FDB45C",
-                    highlight: "#FFC870",
-                    label: "Yellow"
+                    highlight: "#FDB45C",
+                    label: "Videos"
+                },
+                {
+                    value: 0,
+                    color: "#5c75fd",
+                    highlight: "#5c75fd",
+                    label: "Revisitas"
+                },
+                {
+                    value: 0,
+                    color: "#ede867",
+                    highlight: "#ede867",
+                    label: "Estudios"
+                },
+                {
+                    value: 0,
+                    color: "#bc6a3e",
+                    highlight: "#bc6a3e",
+                    label: "Nro Publicadores"
+                },
+                {
+                    value: 0,
+                    color: "#bf4646",
+                    highlight: "#bf4646",
+                    label: "Bautizados"
+                },
+                {
+                    value: 0,
+                    color: "#b428bf",
+                    highlight: "#b428bf",
+                    label: "Irregulares"
+                },
+                {
+                    value: 0,
+                    color: "#46bf87",
+                    highlight: "#46bf87",
+                    label: "Inactivos"
+                },
+                {
+                    value: 0,
+                    color: "#e2d25a",
+                    highlight: "#e2d25a",
+                    label: "Prec. Reg."
+                },
+                {
+                    value: 0,
+                    color: "#bf4667",
+                    highlight: "#bf4667",
+                    label: "Prec. Aux."
                 }
             ]
 
@@ -171,30 +220,57 @@
 
             lineChart =   new Chart(chart).Line(data, {
                             responsive: true,
-                            tooltipFillColor: "rgba(232, 26, 26, 0.55)",
+                            tooltipFillColor: "rgba(44, 39, 39, 0.55)",
                             scaleFontSize: 14,
                         })
 
-            pie6 = new Chart(pie6).Pie(data2, {
+            pie6 = new Chart(pie6).Doughnut(data2, {
+                            responsive: true,
+                            tooltipTemplate : "<%=label%>: <%= value %>%",
+                        })
+
+            //mychart legend
+            helpers = Chart.helpers;
+            legendHolder = document.createElement('div');
+            legendHolder.innerHTML = pie6.generateLegend();
+
+            helpers.each(legendHolder.firstChild.childNodes, function(legendNode, index){
+                helpers.addEvent(legendNode.firstChild , 'mouseover', function(){
+                    var activeSegment = pie6.segments[index];
+                    activeSegment.save();
+                    activeSegment.fillColor = activeSegment.highlightColor;
+                    pie6.showTooltip([activeSegment]);
+                    activeSegment.restore();
+                });
+            });
+            helpers.addEvent(legendHolder.firstChild, 'mouseout', function(){
+                pie6.draw();
+            });
+
+
+
+            pie5 = new Chart(pie5).Doughnut(data2, {
                             responsive: true
                         })
-            pie5 = new Chart(pie5).Pie(data2, {
+            pie4 = new Chart(pie4).Doughnut(data2, {
                             responsive: true
                         })
-            pie4 = new Chart(pie4).Pie(data2, {
+            pie3 = new Chart(pie3).Doughnut(data2, {
                             responsive: true
                         })
-            pie3 = new Chart(pie3).Pie(data2, {
+            pie2 = new Chart(pie2).Doughnut(data2, {
                             responsive: true
                         })
-            pie2 = new Chart(pie2).Pie(data2, {
-                            responsive: true
-                        })
-            pie1 = new Chart(pie1).Pie(data2, {
+            pie1 = new Chart(pie1).Doughnut(data2, {
                             responsive: true
                         })
 
         });
+
+        function toUpperFirst(mes){
+            mes = mes.substr(0, 1).toUpperCase() + mes.substr(1, mes.length).toLowerCase();
+            return mes
+        }
 
         $('#send').click(function(){
 
@@ -212,6 +288,7 @@
 
                     $.each(res, function(key, value){
                         mes = moment(value.mes, "MM").format('MMMM')
+                        mes = toUpperFirst(mes)
 
                         if(value.result > 0){
                             status = "Incremento del"
@@ -224,9 +301,9 @@
                         $('#resultAT').append("<dt>"+mes+":</dt><dd>"+status+" "+value.result+"%</dd>")
 
                         if(key < 3){
-
+                            mes2 = mes
                             $.each(lineChart.datasets[key].points, function(key, value){
-                                value.datasetLabel = "Informe de "+mes
+                                value.datasetLabel = mes
                             })
 
                             lineChart.datasets[key].points[0].value = value.horas
@@ -241,23 +318,83 @@
                             lineChart.datasets[key].points[9].value = value.reg
                             lineChart.datasets[key].points[10].value = value.aux
                             lineChart.update();
-                        }
 
+                            if(key == 0){
+                                pie6.segments[0].value = value.torta.tHoras
+                                pie6.segments[1].value = value.torta.tPublicaciones
+                                pie6.segments[2].value = value.torta.tVideos
+                                pie6.segments[3].value = value.torta.tRevisitas
+                                pie6.segments[4].value = value.torta.tEstudios
+                                pie6.segments[5].value = value.torta.tPubs
+                                pie6.segments[6].value = value.torta.tBau
+                                pie6.segments[7].value = value.torta.tIrreg
+                                pie6.segments[8].value = value.torta.tInactivos
+                                pie6.segments[9].value = value.torta.tReg
+                                pie6.segments[10].value = value.torta.tAux
+                                pie6.update();
+                                $('#pie6').parent().append(legendHolder.firstChild)
+                                $('label[for="pie6"]').html('Distribucion del 23% de '+mes)
+                            }
+                        }
                     })
+
+                    mes1 = moment(fecha, "MM").format('MMMM')
+                    mes1 = toUpperFirst(mes1)
+                    $('#grafica > label').html('Actividad de la Congregacion de '+mes1+' a '+mes2)
+
                 })
         })
 
         $('#grafica > span:eq(0)').click(function(){
             if(results){
                 $("#line").toggle( 'slide', { direction: 'left' }, 500, function(){
+                    $.each(results, function(key, value){
+                        if(key < 3){
+                            mes = moment(value.mes, "MM").format('MMMM')
+                            mes = toUpperFirst(mes)
+
+                            $.each(lineChart.datasets[key].points, function(key, value){
+                                value.datasetLabel = mes
+                            })
+
+                            lineChart.datasets[key].points[0].value = value.horas
+                            lineChart.datasets[key].points[1].value = value.publicaciones
+                            lineChart.datasets[key].points[2].value = value.videos
+                            lineChart.datasets[key].points[3].value = value.revisitas
+                            lineChart.datasets[key].points[4].value = value.estudios
+                            lineChart.datasets[key].points[5].value = value.pubs
+                            lineChart.datasets[key].points[6].value = value.bau
+                            lineChart.datasets[key].points[7].value = value.irreg
+                            lineChart.datasets[key].points[8].value = value.inactivos
+                            lineChart.datasets[key].points[9].value = value.reg
+                            lineChart.datasets[key].points[10].value = value.aux
+                            lineChart.update()
+                        }
+                    })
+                })
+
+                mes1 = toUpperFirst(moment(results[0].mes, "MM").format('MMMM'))
+                mes2 = toUpperFirst(moment(results[2].mes, "MM").format('MMMM'))
+                $('#grafica > label').html('Actividad de la Congregacion de '+mes1+' a '+mes2)
+
+                $("#line").toggle( 'slide', { direction: 'right' })
+
+                $(this).css("pointer-events", "none");
+                $(this).siblings().css("pointer-events", "auto")
+            }
+        })
+
+        $('#grafica > span:eq(1)').click(function(){
+            if(results){
+                $("#line").toggle( 'slide', { direction: 'right' }, 500, function(){
                     dec = 3
                     $.each(results, function(key, value){
-
                         if(key > 2){
                             mes = moment(value.mes, "MM").format('MMMM')
+                            mes = toUpperFirst(mes)
 
                             $.each(lineChart.datasets[key-dec].points, function(key, value){
-                                value.datasetLabel = "Informe de "+mes
+                                value.datasetLabel = mes
                             })
 
                             lineChart.datasets[key-dec].points[0].value = value.horas
@@ -276,47 +413,17 @@
                     })
                 })
 
-                $("#line").toggle( 'slide', { direction: 'right' })
+                key = Object.keys(results).length - 1
+
+                mes1 = toUpperFirst(moment(results[3].mes, "MM").format('MMMM'))
+                mes2 = toUpperFirst(moment(results[key].mes, "MM").format('MMMM'))
+                $('#grafica > label').html('Actividad de la Congregacion de '+mes1+' a '+mes2)
+
+                $("#line").toggle( 'slide', { direction: 'left' }, 500)
 
                 $(this).css("pointer-events", "none");
                 $(this).siblings().css("pointer-events", "auto")
             }
-        })
-
-        $('#grafica > span:eq(1)').click(function(){
-
-            $("#line").toggle( 'slide', { direction: 'right' }, 500, function(){
-                if(results){
-                    $.each(results, function(key, value){
-                        if(key < 3){
-                            mes = moment(value.mes, "MM").format('MMMM')
-
-                            $.each(lineChart.datasets[key].points, function(key, value){
-                                value.datasetLabel = "Informe de "+mes
-                            })
-
-                            lineChart.datasets[key].points[0].value = value.horas
-                            lineChart.datasets[key].points[1].value = value.publicaciones
-                            lineChart.datasets[key].points[2].value = value.videos
-                            lineChart.datasets[key].points[3].value = value.revisitas
-                            lineChart.datasets[key].points[4].value = value.estudios
-                            lineChart.datasets[key].points[5].value = value.pubs
-                            lineChart.datasets[key].points[6].value = value.bau
-                            lineChart.datasets[key].points[7].value = value.irreg
-                            lineChart.datasets[key].points[8].value = value.inactivos
-                            lineChart.datasets[key].points[9].value = value.reg
-                            lineChart.datasets[key].points[10].value = value.aux
-                            lineChart.update()
-                        }
-                    })
-                }
-            })
-
-            $("#line").toggle( 'slide', { direction: 'left' }, 500)
-
-            $(this).css("pointer-events", "none");
-            $(this).siblings().css("pointer-events", "auto")
-
         })
 
 	</script>
