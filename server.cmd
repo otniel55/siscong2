@@ -1,3 +1,3 @@
 @echo off
-CD C:\Django\siscong2
+CD C:\siscong2
 CMD /K python manage.py runserver

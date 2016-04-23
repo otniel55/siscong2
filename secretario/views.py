@@ -1238,7 +1238,9 @@ def obtenerInf(mes, year, alreves=True):
                          resultReg=((precReg*100)//regAnt)-100
                     except ZeroDivisionError:
                          resultReg=(((precReg+1)*100)//(regAnt+1))-100
-               total = (resultP+resultR+resultE+resultH+resultV+resultPubs+resultBau+resultI+resultInac+resultAux+resultReg)//11
+               suma = resultP+resultR+resultE+resultH+resultV+resultPubs+resultBau+resultI+resultInac+resultAux+resultReg
+               total=suma//11
+               sumaAbs = abs(resultP) + abs(resultR) + abs(resultE) + abs(resultH) + abs(resultV) + abs(resultPubs) + abs(resultBau) + abs(resultI) + abs(resultInac) + abs(resultAux) + abs(resultReg)
           else:
                total="No hubo informes en el mes pasado, no se puede comparar"
           if len(informes) > 0:
@@ -1246,8 +1248,22 @@ def obtenerInf(mes, year, alreves=True):
                              'horas': horas, 'videos': videos, 'mes':i[1], 'result':total, 'pubs':pubs, 'bau':bau, 'irreg':irregulares, 'inactivos':inactivos, 'aux':precAux, 'reg':precReg}
                if esp:
                     data[cont]['esp']=precEsp
+               if len(informesAnt)>0:
+                    data[cont]['torta']={
+                              'publicaciones':resultP, 'revisitas':resultR, 'estudios':resultE, 'horas':resultH, 'videos':resultV, 'pubs':resultPubs, 'bau':resultBau, 'irreg':resultI, 'inactivos':resultInac, 'aux':resultAux, 'reg':resultReg,
+                              'tPublicaciones':calculo(abs(resultP),sumaAbs), 'tRevisitas':calculo(abs(resultR), sumaAbs), 'tEstudios':calculo(abs(resultE),sumaAbs),
+                              'tHoras':calculo(abs(resultH), sumaAbs), 'tVideos':calculo(abs(resultV), sumaAbs), 'tPubs':calculo(abs(resultPubs),sumaAbs),
+                              'tBau':calculo(abs(resultBau), sumaAbs), 'tIrreg':calculo(abs(resultI), sumaAbs), 'tInactivos':calculo(abs(resultInac), sumaAbs), 'tAux': calculo(abs(resultAux), sumaAbs), 'tReg': calculo(abs(resultReg), sumaAbs), 'suma':sumaAbs
+                         }
                cont += 1
      return data
+
+def calculo(nro, base):
+     try:
+          resultado=(nro*100)//base
+     except ZeroDivisionError:
+          resultado=((nro+1)*100)//(base+1)
+     return resultado
 
 
 def infG(request):
