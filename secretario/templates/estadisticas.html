@@ -64,23 +64,13 @@
 
                 <div class="col-lg-12" id="grafica2">
                     <div class="row">
-                        <div class="col-lg-2">
-                            <label for="pie6"></label>
-                            <canvas id="pie6"></canvas>
-                        </div>
-                        <div class="col-lg-2">
-                            <canvas id="pie5"></canvas>
-                        </div>
-                        <div class="col-lg-2">
-                            <canvas id="pie4"></canvas>
-                        </div>
-                        <div class="col-lg-2">
+                        <div class="col-lg-4">
                             <canvas id="pie3"></canvas>
                         </div>
-                        <div class="col-lg-2">
+                        <div class="col-lg-4">
                             <canvas id="pie2"></canvas>
                         </div>
-                        <div class="col-lg-2">
+                        <div class="col-lg-4">
                             <canvas id="pie1"></canvas>
                         </div>
                     </div>
@@ -98,7 +88,7 @@
 	<script>
 
         var lineChart
-        var pie1, pie2, pie3, pie4, pie5, pie6
+        var pie1, pie2, pie3
         var results
 
         var inicial = [0,0,0,0,0,0,0,0,0,0,0]
@@ -211,9 +201,6 @@
         $(document).ready(function () {
 
             chart = $("#line").get(0).getContext("2d")
-            pie6 = $("#pie6").get(0).getContext("2d")
-            pie5 = $("#pie5").get(0).getContext("2d")
-            pie4 = $("#pie4").get(0).getContext("2d")
             pie3 = $("#pie3").get(0).getContext("2d")
             pie2 = $("#pie2").get(0).getContext("2d")
             pie1 = $("#pie1").get(0).getContext("2d")
@@ -224,40 +211,30 @@
                             scaleFontSize: 14,
                         })
 
-            pie6 = new Chart(pie6).Doughnut(data2, {
+            pie3 = new Chart(pie3).Doughnut(data2, {
                             responsive: true,
                             tooltipTemplate : "<%=label%>: <%= value %>%",
                         })
 
             //mychart legend
             helpers = Chart.helpers;
-            legendHolder = document.createElement('div');
-            legendHolder.innerHTML = pie6.generateLegend();
+            legend = document.createElement('div')
+            legend.innerHTML = pie3.generateLegend()
 
-            helpers.each(legendHolder.firstChild.childNodes, function(legendNode, index){
+            helpers.each(legend.firstChild.childNodes, function(legendNode, index){
                 helpers.addEvent(legendNode.firstChild , 'mouseover', function(){
-                    var activeSegment = pie6.segments[index];
-                    activeSegment.save();
+                    activeSegment = pie3.segments[index]
                     activeSegment.fillColor = activeSegment.highlightColor;
-                    pie6.showTooltip([activeSegment]);
-                    activeSegment.restore();
-                });
-            });
-            helpers.addEvent(legendHolder.firstChild, 'mouseout', function(){
-                pie6.draw();
-            });
+                    pie3.showTooltip([activeSegment])
+                    legendNode.style.backgroundColor = 'rgba(209, 215, 217, 0.69)'
+                })
 
+                helpers.addEvent(legendNode.firstChild, 'mouseout', function(){
+                    pie3.draw();
+                    legendNode.removeAttribute('style')
+                })
+            })
 
-
-            pie5 = new Chart(pie5).Doughnut(data2, {
-                            responsive: true
-                        })
-            pie4 = new Chart(pie4).Doughnut(data2, {
-                            responsive: true
-                        })
-            pie3 = new Chart(pie3).Doughnut(data2, {
-                            responsive: true
-                        })
             pie2 = new Chart(pie2).Doughnut(data2, {
                             responsive: true
                         })
@@ -265,7 +242,7 @@
                             responsive: true
                         })
 
-        });
+        })
 
         function toUpperFirst(mes){
             mes = mes.substr(0, 1).toUpperCase() + mes.substr(1, mes.length).toLowerCase();
@@ -320,20 +297,25 @@
                             lineChart.update();
 
                             if(key == 0){
-                                pie6.segments[0].value = value.torta.tHoras
-                                pie6.segments[1].value = value.torta.tPublicaciones
-                                pie6.segments[2].value = value.torta.tVideos
-                                pie6.segments[3].value = value.torta.tRevisitas
-                                pie6.segments[4].value = value.torta.tEstudios
-                                pie6.segments[5].value = value.torta.tPubs
-                                pie6.segments[6].value = value.torta.tBau
-                                pie6.segments[7].value = value.torta.tIrreg
-                                pie6.segments[8].value = value.torta.tInactivos
-                                pie6.segments[9].value = value.torta.tReg
-                                pie6.segments[10].value = value.torta.tAux
-                                pie6.update();
-                                $('#pie6').parent().append(legendHolder.firstChild)
-                                $('label[for="pie6"]').html('Distribucion del 23% de '+mes)
+                                pie3.segments[0].value = value.torta.tHoras
+                                pie3.segments[1].value = value.torta.tPublicaciones
+                                pie3.segments[2].value = value.torta.tVideos
+                                pie3.segments[3].value = value.torta.tRevisitas
+                                pie3.segments[4].value = value.torta.tEstudios
+                                pie3.segments[5].value = value.torta.tPubs
+                                pie3.segments[6].value = value.torta.tBau
+                                pie3.segments[7].value = value.torta.tIrreg
+                                pie3.segments[8].value = value.torta.tInactivos
+                                pie3.segments[9].value = value.torta.tReg
+                                pie3.segments[10].value = value.torta.tAux
+                                pie3.update();
+                                $('#pie3').parent().append(legend.firstChild)
+                                $('#pie3').parent().append(
+                                    '<div class="col-md-6 col-md-offset-3">\
+                                        <button class="btn btn-default btn-block">Ver Detalles</button>\
+                                    </div>'
+                                )
+                                $('label[for="pie3"]').html('Distribucion del 23% de '+mes)
                             }
                         }
                     })
