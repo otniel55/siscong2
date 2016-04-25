@@ -35,4 +35,6 @@ urlpatterns = [
     url(r'^regusu/$', views.Regusu, name='Regusu'),
     url(r'^estadisticas/$', views.estadisticas, name='estadisticas'),
     url(r'^estadisticas/informeGeneral', views.infG, name='infG'),
+    url(r'^estadisticas/Precurs', views.infPrec, name='infPrec'),
+    url(r'^PrecursInf', views.conInfPrec, name='conInfPrec'),
 ]

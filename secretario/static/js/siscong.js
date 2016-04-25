@@ -279,6 +279,26 @@ function Gestion(){
         }
     }
 
+	function createLegend(id, dona){
+		helpers = Chart.helpers;
+            legend = $('#'+id).parent().siblings()
+            legend.html( dona.generateLegend() )
+
+            helpers.each(legend.children().children(), function(legendNode, index){
+                helpers.addEvent(legendNode.firstChild , 'mouseover', function(){
+                    activeSegment = dona.segments[index]
+                    activeSegment.fillColor = activeSegment.highlightColor;
+                    dona.showTooltip([activeSegment])
+                    legendNode.style.backgroundColor = 'rgba(209, 215, 217, 0.69)'
+                })
+
+                helpers.addEvent(legendNode.firstChild, 'mouseout', function(){
+                    dona.draw();
+                    legendNode.removeAttribute('style')
+                })
+            })
+	}
+
     $(document).ready(function(){
 
         $('.datepicker').datetimepicker({

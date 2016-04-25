@@ -12,16 +12,18 @@
 				<h3 class="text-center"><i class="fa fa-angle-right"></i>Estadisticas</h3>
 			</div>
 
-			<div style="margin-top: 30px;">
+			<div id="taps" style="margin-top: 30px;">
 				{% csrf_token %}
 				<div class="form-group" style="margin-bottom:60px;">
-                    <ul class="nav nav-tabs nav-justified">
+                    <ul id="tabNav" class="nav nav-tabs nav-justified">
                         <li role="presentation" class="active"><a href="#">Informe</a></li>
                         <li role="presentation"><a href="#">Precursores</a></li>
                         <li role="presentation"><a href="#">Publicadores</a></li>
                     </ul>
 			    </div>
+			</div>
 
+            <div id="contMain">
                 <div class="col-lg-4">
                     <div class="row">
 
@@ -65,7 +67,17 @@
                 <div class="col-lg-12" id="grafica2">
                     <div class="row">
                         <div class="col-lg-4">
-                            <canvas id="pie3"></canvas>
+                            <label for="pie3"></label>
+                            <div class="row">
+								<div class="col-md-4">
+								</div>
+								<div class="col-md-8">
+									<canvas id="pie3"></canvas>
+									<div class="col-md-6 col-md-offset-3" style="margin-top:66px;">
+										<button class="btn btn-default btn-block">Ver Detalles</button>
+									</div>
+								</div>
+                            </div>
                         </div>
                         <div class="col-lg-4">
                             <canvas id="pie2"></canvas>
@@ -74,6 +86,21 @@
                             <canvas id="pie1"></canvas>
                         </div>
                     </div>
+                </div>
+
+                <div id="details" style="display:none;">
+                	<table id="tDetail" class="table table-bordered table-striped table-condensed">
+						<thead>
+							<tr>
+								<th class="text-center">Entidades</th>
+								<th class="text-center">Result. Mes Anterior</th>
+								<th class="text-center">Result. Mes Actual</th>
+								<th class="text-center">% obtenido</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
                 </div>
 
                 <div class="clearfix"></div>
@@ -92,7 +119,6 @@
         var results
 
         var inicial = [0,0,0,0,0,0,0,0,0,0,0]
-
         var data = {
             labels: ["Horas", "Publicaciones", "videos", "Revisitas", "Estudios", "total Publicadores", "Bautizados", "Irregulares", "Inactivos", "Prec. Reg.", "Prec. Aux."],
             datasets: [
@@ -129,69 +155,70 @@
             ]
         }
 
-        var data2 = [
+		var init = 2
+		var data2 = [
                 {
-                    value: 0,
+                    value: init,
                     color:"#42fd66",
                     highlight: "#42fd66",
                     label: "Horas"
                 },
                 {
-                    value: 0,
+                    value: init,
                     color: "#46BFBD",
                     highlight: "#46BFBD",
                     label: "Publicaciones"
                 },
                 {
-                    value: 0,
+                    value: init,
                     color: "#FDB45C",
                     highlight: "#FDB45C",
                     label: "Videos"
                 },
                 {
-                    value: 0,
+                    value: init,
                     color: "#5c75fd",
                     highlight: "#5c75fd",
                     label: "Revisitas"
                 },
                 {
-                    value: 0,
+                    value: init,
                     color: "#ede867",
                     highlight: "#ede867",
                     label: "Estudios"
                 },
                 {
-                    value: 0,
+                    value: init,
                     color: "#bc6a3e",
                     highlight: "#bc6a3e",
                     label: "Nro Publicadores"
                 },
                 {
-                    value: 0,
+                    value: init,
                     color: "#bf4646",
                     highlight: "#bf4646",
                     label: "Bautizados"
                 },
                 {
-                    value: 0,
+                    value: init,
                     color: "#b428bf",
                     highlight: "#b428bf",
                     label: "Irregulares"
                 },
                 {
-                    value: 0,
+                    value: init,
                     color: "#46bf87",
                     highlight: "#46bf87",
                     label: "Inactivos"
                 },
                 {
-                    value: 0,
+                    value: init,
                     color: "#e2d25a",
                     highlight: "#e2d25a",
                     label: "Prec. Reg."
                 },
                 {
-                    value: 0,
+                    value: init,
                     color: "#bf4667",
                     highlight: "#bf4667",
                     label: "Prec. Aux."
@@ -199,6 +226,17 @@
             ]
 
         $(document).ready(function () {
+
+			$('#tabNav li a:eq(0)').click(function(){
+				$(this).parent().addClass('active').siblings().removeClass('active')
+			})
+			$('#tabNav li a:eq(1)').click(function(){
+				$(this).parent().addClass('active').siblings().removeClass('active')
+				$('#contMain').load("{% url 'secretario:infPrec' %}")
+			})
+			$('#tabNav li a:eq(2)').click(function(){
+				$(this).parent().addClass('active').siblings().removeClass('active')
+			})
 
             chart = $("#line").get(0).getContext("2d")
             pie3 = $("#pie3").get(0).getContext("2d")
@@ -216,25 +254,6 @@
                             tooltipTemplate : "<%=label%>: <%= value %>%",
                         })
 
-            //mychart legend
-            helpers = Chart.helpers;
-            legend = document.createElement('div')
-            legend.innerHTML = pie3.generateLegend()
-
-            helpers.each(legend.firstChild.childNodes, function(legendNode, index){
-                helpers.addEvent(legendNode.firstChild , 'mouseover', function(){
-                    activeSegment = pie3.segments[index]
-                    activeSegment.fillColor = activeSegment.highlightColor;
-                    pie3.showTooltip([activeSegment])
-                    legendNode.style.backgroundColor = 'rgba(209, 215, 217, 0.69)'
-                })
-
-                helpers.addEvent(legendNode.firstChild, 'mouseout', function(){
-                    pie3.draw();
-                    legendNode.removeAttribute('style')
-                })
-            })
-
             pie2 = new Chart(pie2).Doughnut(data2, {
                             responsive: true
                         })
@@ -242,6 +261,18 @@
                             responsive: true
                         })
 
+			//provicional
+			$('#pie3').siblings().children().click(function(){
+				$('#details').dialog({
+						title: "Calculo del Porcentanje de Incremento del Mes",
+						draggable: false,
+						resizable: false,
+						position: { my: "center", at: "center", of: window },
+						width: 800,
+						modal: true,
+						show: { effect: "scale", duration: 400 }
+					})
+			})
         })
 
         function toUpperFirst(mes){
@@ -255,7 +286,6 @@
 
             $.post("{% url 'secretario:infG' %}",{ 'fecha': fecha, csrfmiddlewaretoken: '{{ csrf_token }}' })
                 .success(function(res){
-
                     res = JSON.parse(res)
                     results = res
 
@@ -297,25 +327,118 @@
                             lineChart.update();
 
                             if(key == 0){
-                                pie3.segments[0].value = value.torta.tHoras
-                                pie3.segments[1].value = value.torta.tPublicaciones
-                                pie3.segments[2].value = value.torta.tVideos
-                                pie3.segments[3].value = value.torta.tRevisitas
-                                pie3.segments[4].value = value.torta.tEstudios
-                                pie3.segments[5].value = value.torta.tPubs
-                                pie3.segments[6].value = value.torta.tBau
-                                pie3.segments[7].value = value.torta.tIrreg
-                                pie3.segments[8].value = value.torta.tInactivos
-                                pie3.segments[9].value = value.torta.tReg
-                                pie3.segments[10].value = value.torta.tAux
-                                pie3.update();
-                                $('#pie3').parent().append(legend.firstChild)
-                                $('#pie3').parent().append(
-                                    '<div class="col-md-6 col-md-offset-3">\
-                                        <button class="btn btn-default btn-block">Ver Detalles</button>\
-                                    </div>'
-                                )
+								exclude = ['torta', 'mes', 'result', 't']
+								labels = ['tPubs', 'tBau', 'tIrreg', 'tAux', 'tReg']
+								labels2 = ['pubs', 'bau', 'irreg', 'aux', 'reg']
+
+								$('#tDetail tbody').html("")
+
+								//creando las filas y las 2 primeras columnas
+								$.each(res[0], function(key, value){
+									if(exclude.indexOf(key) == -1){
+
+										if(labels2.indexOf(key) == -1){
+											key = key.substr(0,1).toUpperCase() + key.substr(1)
+										} else {
+											key = labels2.indexOf(key)
+											switch(key){
+												case 0:
+													key = 'Publicadores'
+												break
+												case 1:
+													key = 'Bautizados'
+												break
+												case 2:
+													key = 'Irregulares'
+												break
+												case 3:
+													key = 'Prec. Aux.'
+												break
+												case 4:
+													key = 'Prec. Reg.'
+												break
+											}
+										}
+
+										$('#tDetail tbody').append(
+											'<tr>\
+												<td>'+key+'</td>\
+												<td>'+value+'</td>\
+											</tr>'
+										)
+									}
+								})
+
+								//agregando la columna con datos del mes anterior
+								i=0
+								$.each(res[1], function(key, value){
+									if(exclude.indexOf(key) == -1){
+										$('#tDetail tbody tr:eq('+i+') td:nth-child(1)').after('<td>'+value+'</td>')
+										i++
+									}
+								})
+
+								//agregando la columna con los % obtenidos
+								i=0
+								torta={}
+								nroT= 0
+								$.each(res[0].torta, function(key, value){
+									if(exclude.indexOf(key[0]) == -1){
+										$('#tDetail tbody tr:eq('+i+') td:nth-child(3)').after('<td>'+value+'</td>')
+										i++
+									} else {
+										torta[key] = value
+										nroT++
+									}
+								})
+
+								//llenando la dona con los valores t obtenidos
+								i=0
+								$.each(torta, function(key, value){
+									pie3.segments[i].value = value
+
+									if(labels.indexOf(key) == -1){
+										label = key.substr(1)
+									} else {
+										label = labels.indexOf(key)
+										switch(label){
+											case 0:
+												label = 'Publicadores'
+											break
+											case 1:
+												label = 'Bautizados'
+											break
+											case 2:
+												label = 'Irregulares'
+											break
+											case 3:
+												label = 'Prec. Aux.'
+											break
+											case 4:
+												label = 'Prec. Reg.'
+											break
+										}
+									}
+
+									pie3.segments[i].label = label
+									i++
+								})
+								pie3.update();
+
+								//eliminando segmentos de la dona
+								nroS = pie3.segments.length
+								if(nroT < nroS){
+									for(i=nroT;i<nroS;i++){
+										pie3.removeData()
+									}
+									pie3.update();
+								}
+
+								//creando la leyenda
+								createLegend('pie3', pie3)
+
                                 $('label[for="pie3"]').html('Distribucion del 23% de '+mes)
+
                             }
                         }
                     })

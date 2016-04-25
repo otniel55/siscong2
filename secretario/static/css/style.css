@@ -2122,8 +2122,7 @@ label {
     .panel-footer.revenue-foot {
         margin-bottom: -4px;
     };
-    }
-
+}
 
 .panel-footer.revenue-foot ul  {
     margin: 0;
@@ -2421,6 +2420,10 @@ label[for="line"] {
     text-align:center;
 }
 
+.doughnut-legend {
+	padding: 0px;
+}
+
 .doughnut-legend li{
     list-style: none;
     height: 20px;
@@ -2441,4 +2444,8 @@ label[for="line"] {
     position: absolute;
     top: 3px;
     left: 35px;
+}
+
+#tDetail td{
+	text-align: center;
 }

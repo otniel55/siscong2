@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <div class="col-lg-4">
+        <div class="row">
+
+           <div class="col-lg-9 col-lg-offset-1">
+                <div class="form-group">
+                    <label for="fechaIni">Fecha a Consultar:</label>
+                    <div class='input-group date datepicker'>
+                        <input type="text" class="form-control" style="font-size:16px;">
+                        <span class="input-group-addon">
+                            <span class="fa fa-calendar">
+                            </span>
+                        </span>
+                    </div>
+                </div>
+           </div>
+
+            <div class="col-lg-2">
+                <button id="send2" class="btn btn-primary btn-block fa fa-search"></button>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8" id="resultados">
+    </div>
+    <div class="clearfix"></div>
+</body>
+<script>
+    var resp
+    $(document).ready(function(){
+        $('.datepicker').datetimepicker({
+            format: 'MM-YYYY',
+            widgetPositioning:  {
+              horizontal: 'right',
+              vertical: 'auto',
+            },
+            maxDate:'now'
+        })
+    })
+    precurs=['','Auxiliar(Campaña)', 'Auxiliar', 'Regular', 'Especial']
+    $("#send2").click(function () {
+        fecha = $('div.datepicker > input').val()
+
+        $.post("{% url 'secretario:conInfPrec' %}",{ 'fecha': fecha, csrfmiddlewaretoken: '{{ csrf_token }}' })
+        .success(function(res){
+            $("#resultados").html("")
+            res=JSON.parse(res)
+            console.log(res)
+            $.each(res, function(key, value){
+                if (value['0']){
+                    $("#resultados").append("<ul id=u"+value['mes']+"> mes: "+value['mes']+"</ul>")
+                    $("#u"+value['mes']).append("<li>Promdedio de Horas:"+value['promH']+"</li><li>Promedio de Estudios:"+value['promE']+"</li><li>Promedio de revisitas:"+value['promR']+"</li>")
+                    $("#u"+value['mes']).append("<li><ul id=p"+value['mes']+">Personas:</ul></li>")
+                    exclude=['mes', 'promH', 'promE', 'promR']
+                    $.each(value, function (k, val) {
+                        if (exclude.indexOf(k)==-1){
+                            $("#p"+value['mes']).append("<li>nombre:"+val['nombre']+" - Tipo: "+precurs[val['tipo']]+"</li>")
+                        }
+                    })
+                }
+            })
+        })
+    })
+</script>
+</html>
