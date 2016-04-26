@@ -1,13 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
     <div class="col-lg-4">
         <div class="row">
-
            <div class="col-lg-9 col-lg-offset-1">
                 <div class="form-group">
                     <label for="fechaIni">Fecha a Consultar:</label>
@@ -26,11 +18,18 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-8" id="resultados">
-    </div>
     <div class="clearfix"></div>
-</body>
+	<div class="col-xs-12 col-sm-12 col-md-12">
+		<div class="row" id="resultados">
+		</div>
+	</div>
+	<div class="clearfix"></div>
+	<div class="col-xs-12 col-sm-12 col-md-12">
+		<div class="row" id="resultados2"></div>
+	</div>
+	<div class="clearfix"></div>
 <script>
+	var fiha
     var resp
     $(document).ready(function(){
         $('.datepicker').datetimepicker({
@@ -44,27 +43,106 @@
     })
     precurs=['','Auxiliar(Campaña)', 'Auxiliar', 'Regular', 'Especial']
     $("#send2").click(function () {
+		div="#resultados"
         fecha = $('div.datepicker > input').val()
 
         $.post("{% url 'secretario:conInfPrec' %}",{ 'fecha': fecha, csrfmiddlewaretoken: '{{ csrf_token }}' })
         .success(function(res){
+			cont=0
+			c=0
             $("#resultados").html("")
+			$("#resultados2").html("")
             res=JSON.parse(res)
             console.log(res)
             $.each(res, function(key, value){
                 if (value['0']){
-                    $("#resultados").append("<ul id=u"+value['mes']+"> mes: "+value['mes']+"</ul>")
-                    $("#u"+value['mes']).append("<li>Promdedio de Horas:"+value['promH']+"</li><li>Promedio de Estudios:"+value['promE']+"</li><li>Promedio de revisitas:"+value['promR']+"</li>")
-                    $("#u"+value['mes']).append("<li><ul id=p"+value['mes']+">Personas:</ul></li>")
+					cont++
+					c++
+					if (cont==1){
+						ficha="<div class='col-xs-12 col-sm-4 col-md-4 col-xs-offset-0 col-sm-offset-4 col-md-offset-4' id=f"+c+" >\
+							<div id='fichaPre' class='content-panel' style='padding:0px;'>\
+								<div class='FichaHe'>\
+									<p class='text-center' style='margin:0px;padding:0px;font-size:30px;'>\
+										<span  style='color:white;'>Mes :"+value['mes']+"</span>\
+									</p>\
+								</div>\
+								<dl class='ficha'>\
+									<dt>Promedio de Horas:</dt>\
+									<dd>"+value['promH']+"</dd>\
+									<dt>Promedio de Estudios</dt>\
+									<dd>"+value['promE']+"</dd>\
+									<dt>Promdedio de revisitas</dt>\
+									<dd>"+value['promR']+"</dd>\
+								</dl>\
+							</div>\
+						</div>"
+						$(div).append(ficha)
+					}
+					else{
+						if (cont==2){
+							d=c-1
+							$("#f"+d).removeClass("col-sm-offset-4")
+							$("#f"+d).removeClass("col-md-offset-4")
+							$("#f"+d).addClass("col-md-offset-2")
+							$("#f"+d).addClass("col-sm-offset-2")
+							ficha="<div class='col-xs-12 col-sm-4 col-md-4' id=f"+c+" >\
+							<div id='fichaPre' class='content-panel' style='padding:0px;'>\
+								<div class='FichaHe'>\
+									<p class='text-center' style='margin:0px;padding:0px;font-size:30px;'>\
+										<span  style='color:white;'>Mes :"+value['mes']+"</span>\
+									</p>\
+								</div>\
+								<dl class='ficha'>\
+									<dt>Promedio de Horas:</dt>\
+									<dd>"+value['promH']+"</dd>\
+									<dt>Promedio de Estudios</dt>\
+									<dd>"+value['promE']+"</dd>\
+									<dt>Promdedio de revisitas</dt>\
+									<dd>"+value['promR']+"</dd>\
+								</dl>\
+							</div>\
+						</div>"
+						$(div).append(ficha)
+						}
+						else{
+							d=c-2
+							$("#f"+d).removeClass("col-sm-offset-2")
+							$("#f"+d).removeClass("col-md-offset-2")
+							$("#f"+d).addClass("col-md-offset-0")
+							$("#f"+d).addClass("col-sm-offset-0")
+							ficha="<div class='col-xs-12 col-sm-4 col-md-4' id=f"+c+" >\
+							<div id='fichaPre' class='content-panel' style='padding:0px;'>\
+								<div class='FichaHe'>\
+									<p class='text-center' style='margin:0px;padding:0px;font-size:30px;'>\
+										<span  style='color:white;'>Mes :"+value['mes']+"</span>\
+									</p>\
+								</div>\
+								<dl class='ficha'>\
+									<dt>Promedio de Horas:</dt>\
+									<dd>"+value['promH']+"</dd>\
+									<dt>Promedio de Estudios</dt>\
+									<dd>"+value['promE']+"</dd>\
+									<dt>Promdedio de revisitas</dt>\
+									<dd>"+value['promR']+"</dd>\
+								</dl>\
+							</div>\
+						</div>"
+							$(div).append(ficha)
+							div="#resultados2"
+							cont=0
+						}
+					}
+                }
+            })
+        })
+    })
+</script>
+<!--
+$("#u"+value['mes']).append("<li><ul id=p"+value['mes']+">Personas:</ul></li>")
                     exclude=['mes', 'promH', 'promE', 'promR']
                     $.each(value, function (k, val) {
                         if (exclude.indexOf(k)==-1){
                             $("#p"+value['mes']).append("<li>nombre:"+val['nombre']+" - Tipo: "+precurs[val['tipo']]+"</li>")
                         }
                     })
-                }
-            })
-        })
-    })
-</script>
-</html>
+-->
