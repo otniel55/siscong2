@@ -391,7 +391,16 @@
 										nroT++
 									}
 								})
-
+								
+								//eliminando segmentos de la dona
+								nroS = pie3.segments.length
+								if(nroT < nroS){
+									for(i=nroT;i<nroS;i++){
+										pie3.removeData()
+									}
+									pie3.update();
+								}
+								
 								//llenando la dona con los valores t obtenidos
 								i=0
 								$.each(torta, function(key, value){
@@ -424,15 +433,6 @@
 									i++
 								})
 								pie3.update();
-
-								//eliminando segmentos de la dona
-								nroS = pie3.segments.length
-								if(nroT < nroS){
-									for(i=nroT;i<nroS;i++){
-										pie3.removeData()
-									}
-									pie3.update();
-								}
 
 								//creando la leyenda
 								createLegend('pie3', pie3)
