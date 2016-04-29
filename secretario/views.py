@@ -1332,7 +1332,7 @@ def conInfPrec(request):
                               yearF = fechaF[1]
                          if getDiferenciaMes(i[1], i[0], mesF, yearF) > -2:
                               data[cont][contP] = {'nombre': p.FKpub.nombre + " " + p.FKpub.apellido,
-                                                   'tipo': p.FKprecursor.pk}
+                                                   'tipo': p.FKprecursor.nombre}
                               try:
                                    inf = Informe.objects.get(FKpub=p.FKpub.pk, mes=i[1], year=i[0])
                               except:
