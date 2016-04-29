@@ -281,22 +281,80 @@ function Gestion(){
 
 	function createLegend(id, dona){
 		helpers = Chart.helpers;
-            legend = $('#'+id).parent().siblings()
-            legend.html( dona.generateLegend() )
+		legend = $('#'+id).parent().siblings()
+		legend.html( dona.generateLegend() )
 
-            helpers.each(legend.children().children(), function(legendNode, index){
-                helpers.addEvent(legendNode.firstChild , 'mouseover', function(){
-                    activeSegment = dona.segments[index]
-                    activeSegment.fillColor = activeSegment.highlightColor;
-                    dona.showTooltip([activeSegment])
-                    legendNode.style.backgroundColor = 'rgba(209, 215, 217, 0.69)'
-                })
+		helpers.each(legend.children().children(), function(legendNode, index){
+			helpers.addEvent(legendNode.firstChild , 'mouseover', function(){
+				activeSegment = dona.segments[index]
+				activeSegment.fillColor = activeSegment.highlightColor;
+				dona.showTooltip([activeSegment])
+				legendNode.style.backgroundColor = 'rgba(209, 215, 217, 0.69)'
+			})
 
-                helpers.addEvent(legendNode.firstChild, 'mouseout', function(){
-                    dona.draw();
-                    legendNode.removeAttribute('style')
-                })
-            })
+			helpers.addEvent(legendNode.firstChild, 'mouseout', function(){
+				dona.draw();
+				legendNode.removeAttribute('style')
+			})
+		})
+	}
+
+	function toUpperFirst(string){
+		string = string.substr(0, 1).toUpperCase() + string.substr(1).toLowerCase();
+		return string
+	}
+
+	function randomColor() {
+		return 'rgb(' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ')'
+	};
+
+	function addValPie(pie, data){
+		pie.segments[data.index].value = data.value
+		pie.segments[data.index].label = data.label
+	}
+
+	function removeSegmentsPie(pie, sgValT, sgTotal){
+		if(sgValT < sgTotal){
+			for(i=sgValT;i<sgTotal;i++){
+				pie.removeData()
+			}
+		} else {
+			for(i=sgTotal;i<sgValT;i++){
+				color = randomColor()
+				pie.addData({
+					value: 0,
+					color: color,
+					highlight: color,
+					label: ""
+				})
+			}
+		}
+	}
+
+	function orderByKey(array){
+
+		keys = Object.keys(array.torta)
+		keys.sort();
+
+		jsonOrder = {}
+
+		for(j=0;j<keys.length;j++){
+			x = keys[j]
+			jsonOrder[x] = array.torta[x]
+		}
+		array.torta = jsonOrder
+
+		keys = Object.keys(array)
+		keys.sort();
+
+		jsonOrder = {}
+
+		for(j=0;j<keys.length;j++){
+			x = keys[j]
+			jsonOrder[keys[j]] = array[x]
+		}
+
+		return jsonOrder
 	}
 
     $(document).ready(function(){

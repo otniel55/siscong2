@@ -118,7 +118,7 @@ def conPub(request):
           datos={'pub':p}
           return HttpResponse(json.dumps(datos))
 
-def conPubs(request):
+def conPubs():
      bajaAuto()
      promInf=[]
      try:
@@ -170,7 +170,8 @@ def conPubs(request):
           pubs[cont]={'nombre':i.nombre, 'apellido':i.apellido, 'fechaBau':i.fechaBau, 'edad':obteneredad(i), 'FKgrupo':i.FKgrupo, 'id':i.pk, 'g':i.FKgrupo.pk, 'status': status, 'intervalo': intervalo, 'fecha':fecha}
           cont=cont+1
      pubs=pubs.values()
-     return render(request, 'conPubs.html',{'pub':pubs,'msg':msg, 'url':2})
+     return pubs
+     #return render(request, 'conPubs.html',{'pub':pubs,'msg':msg, 'url':2})
 
 def prom(nums):
      acum=0
@@ -1320,7 +1321,7 @@ def conInfPrec(request):
                promE = []
                promR = []
                contP = 0
-               data[cont]={'mes':i[1]}
+               data[cont]={'mes':i[1], 'year':i[0]}
                for p in precurs:
                     if getDiferenciaMes(p.mesIni, p.yearIni, i[1], i[0]) > -2:
                          if p.duracion == 0:
@@ -1350,3 +1351,61 @@ def conInfPrec(request):
                     data[cont]['promR'] = prom(promR)
                cont += 1
      return HttpResponse(json.dumps(data))
+
+def conEstPub(request):
+     data={}
+     try:
+          mes = int(request.POST['fecha'][0:2])
+          year = int(request.POST['fecha'][3:])
+     except:
+          data = {'msg': "No intente hacer trampa"}
+     else:
+          cont=0
+          meses = []
+          meses.append([year, mes])
+          for i in range(1, 6):
+               mes -= 1
+               if mes == 0:
+                    mes = 12
+                    year -= 1
+               meses.append([year, mes])
+          meses.sort(reverse=True)
+          for i in meses:
+               pubH=[]
+               horas=[]
+               revisitas=[]
+               estudios=[]
+               infs=Informe.objects.filter(mes=i[1], year=i[0])
+               if len(infs)>0:
+                    for inf in infs:
+                         add=True
+                         prec=PubPrecursor.objects.filter(FKpub=inf.FKpub.pk).order_by("-yearIni", "-mesIni")
+                         for p in prec:
+                              if getDiferenciaMes(p.mesIni, p.yearIni, i[1], i[0]) > -2:
+                                   if p.duracion == 0:
+                                        mesF = i[1]
+                                        yearF = i[0]
+                                   else:
+                                        fechaF = getFechaFin(p.mesIni, p.yearIni, p.duracion)
+                                        mesF = fechaF[0]
+                                        yearF = fechaF[1]
+                                   if getDiferenciaMes(i[1], i[0], mesF, yearF) > -2:
+                                        add=False
+                         horas.append(inf.horas)
+                         revisitas.append(inf.revisitas)
+                         estudios.append(inf.estudios)
+                         if add:
+                              pubH.append(inf.horas)
+                    data[cont]={'year':i[0],'mes':i[1], 'promE':prom(estudios), 'promH':prom(horas), 'promR':prom(revisitas)}
+                    if len(pubH)>0:
+                         data[cont]['promP']=prom(pubH)
+                    else:
+                         data[cont]['promP']=0
+                    cont+=1
+     return HttpResponse(json.dumps(data))
+
+def estPub(request):
+     return render(request, "estPub.html", {})
+
+def estGlobal(request):
+     return render(request, "estCong.html", {})

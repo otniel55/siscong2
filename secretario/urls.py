@@ -37,4 +37,7 @@ urlpatterns = [
     url(r'^estadisticas/informeGeneral', views.infG, name='infG'),
     url(r'^estadisticas/Precurs', views.infPrec, name='infPrec'),
     url(r'^PrecursInf', views.conInfPrec, name='conInfPrec'),
+    url(r'^estadisticas/Publicador', views.estPub, name='estPub'),
+    url(r'^pubEst', views.conEstPub, name='conEstPub'),
+    url(r'^estadisticas/global', views.estGlobal, name='estGlobal'),
 ]

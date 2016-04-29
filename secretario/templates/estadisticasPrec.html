@@ -43,7 +43,6 @@
             maxDate:'now'
         })
     })
-    precurs=['','Auxiliar(Campaña)', 'Auxiliar', 'Regular', 'Especial']
     $("#send2").click(function () {
 		div="#resultados"
         fecha = $('div.datepicker > input').val()
@@ -56,9 +55,11 @@
 			$("#resultados2").html("")
 			$("#dialogos").html("")
             res=JSON.parse(res)
-            console.log(res)
+			console.log(res)
             $.each(res, function(key, value){
                 if (value['0']){
+					mes = moment(value['mes'], "MM").format('MMMM')
+					mes = toUpperFirst(mes)
 					cont++
 					c++
 					if (cont==1){
@@ -66,7 +67,7 @@
 							<div id='fichaPre' class='content-panel' style='padding-top:0px;padding-bottom:5px;margin-top:20px;'>\
 								<div class='FichaHe'>\
 									<p class='text-center' style='margin:0px;padding:0px;font-size:30px;'>\
-										<span  style='color:white;'>Mes :"+value['mes']+"</span>\
+										<span  style='color:white;'>" + mes + "-"+value['year']+"</span>\
 									</p>\
 								</div>\
 								<dl class='ficha'>\
@@ -93,7 +94,7 @@
 							<div id='fichaPre' class='content-panel' style='padding-top:0px;padding-bottom:5px;margin-top:20px;'>\
 								<div class='FichaHe'>\
 									<p class='text-center' style='margin:0px;padding:0px;font-size:30px;'>\
-										<span  style='color:white;'>Mes :"+value['mes']+"</span>\
+										<span  style='color:white;'>" + mes + "-"+value['year']+"</span>\
 									</p>\
 								</div>\
 								<dl class='ficha'>\
@@ -119,7 +120,7 @@
 							<div id='fichaPre' class='content-panel'  style='padding-top:0px;padding-bottom:5px;margin-top:20px;'>\
 								<div class='FichaHe'>\
 									<p class='text-center' style='margin:0px;padding:0px;font-size:30px;'>\
-										<span  style='color:white;'>Mes :"+value['mes']+"</span>\
+										<span  style='color:white;'>" + mes + "-"+value['year']+"</span>\
 									</p>\
 								</div>\
 								<dl class='ficha'>\
@@ -151,7 +152,7 @@
 						</table>\
 					</div>'
 				$("#dialogos").append(detalle)
-				exclude=['mes', 'promH', 'promE', 'promR']
+				exclude=['mes', 'promH', 'promE', 'promR', 'year']
 				$.each(value, function (k, val) {
 					if (exclude.indexOf(k)==-1){
 						$("#details"+c+" tbody").append("<tr><td>"+val['nombre']+"</td><td>"+val['tipo']+"</td></tr>")
@@ -173,12 +174,3 @@
         })
     })
 </script>
-<!--
-$("#u"+value['mes']).append("<li><ul id=p"+value['mes']+">Personas:</ul></li>")
-                    exclude=['mes', 'promH', 'promE', 'promR']
-                    $.each(value, function (k, val) {
-                        if (exclude.indexOf(k)==-1){
-                            $("#p"+value['mes']).append("<li>nombre:"+val['nombre']+" - Tipo: "+precurs[val['tipo']]+"</li>")
-                        }
-                    })
--->
