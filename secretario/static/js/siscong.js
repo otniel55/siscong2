@@ -357,6 +357,17 @@ function Gestion(){
 		return jsonOrder
 	}
 
+	function initialDoughnut(id, dona){
+		$('#'+id).parent().siblings(':eq(0)').children().detach()
+		$('#'+id).siblings().children().addClass('hide')
+		$('label[for="'+id+'"]').html("")
+
+		$.each(dona.segments, function(key, value){
+			value.value = 0
+		})
+		dona.update()
+	}
+
     $(document).ready(function(){
 
         $('.datepicker').datetimepicker({

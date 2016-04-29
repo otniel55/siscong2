@@ -253,9 +253,8 @@
 			.success(function(res){
 				res = JSON.parse(res)
 				results = res
-
 				console.log(res)
-				$('.hide').removeClass('hide')
+
 				$('#resultAT').children().detach()
 
 				labelPie = 3
@@ -296,6 +295,7 @@
 							lineChart.update();
 
 						//DOUGHNUT CHART
+						if(value.torta){
 							exclude = ['torta', 'mes', 'result', 't']
 							labels = ['tPubs', 'tBau', 'tIrreg', 'tAux', 'tReg']
 							labels2 = ['pubs', 'bau', 'irreg', 'aux', 'reg']
@@ -311,7 +311,7 @@
 								}
 							})
 
-							//eliminando segmentos de la dona
+							//Eliminando o Agregando segmentos a la dona
 							switch(key){
 								case '0':
 									removeSegmentsPie(pie3, nroT, pie3.segments.length)
@@ -381,22 +381,40 @@
 								case '0':
 									pie3.update();
 									createLegend('pie3', pie3)
+									$('#pie3').siblings().children().removeClass('hide')
 								break
 
 								case '1':
 									pie2.update();
 									createLegend('pie2', pie2)
+									$('#pie2').siblings().children().removeClass('hide')
 								break
 
 								case '2':
 									pie1.update();
 									createLegend('pie1', pie1)
+									$('#pie1').siblings().children().removeClass('hide')
 								break
 							}
 
 							$('label[for="pie'+labelPie+'"]').html('Distribucion del '+value.result+'% de '+mes)
 
 							labelPie--
+						} else {
+							switch(key){
+								case '0':
+									initialDoughnut('pie3', pie3)
+								break
+
+								case '1':
+									initialDoughnut('pie2', pie2)
+								break
+
+								case '2':
+									initialDoughnut('pie1', pie1)
+								break
+							}
+						}
 					}
 				})
 
@@ -534,7 +552,7 @@
 
 		//agregando la columna con datos del mes anterior
 		i=0
-		if(index < Object.keys(results).length ){
+		if(index < Object.keys(results).length-1 &&  results[index+1].torta){
 			json2 = orderByKey(results[index+1])
 			$.each(json2, function(key, value){
 				if(exclude.indexOf(key) == -1){
