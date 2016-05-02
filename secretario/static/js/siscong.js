@@ -1,4 +1,28 @@
-function Gestion(){
+    $(document).ready(function(){
+
+        $('.datepicker').datetimepicker({
+            format: 'MM-YYYY',
+            widgetPositioning:  {
+              horizontal: 'right',
+              vertical: 'auto',
+            },
+            maxDate:'now'
+        })
+
+        $( ".datepicker2" ).datetimepicker({
+            showTodayButton:true,
+            viewMode: 'days',
+            format: 'YYYY-MM-DD',
+            widgetPositioning: {
+                horizontal: 'right',
+                vertical: 'auto'
+            },
+            maxDate: 'now'
+        })
+    })
+
+	//objeto
+	function Gestion(){
     var _datosIn
     var _inputs
     var _tables
@@ -189,6 +213,7 @@ function Gestion(){
     }
 }
 
+	//funciones del sistema
     function createPager(tabla, nro){
 
         filas = tabla.data().length
@@ -368,25 +393,229 @@ function Gestion(){
 		dona.update()
 	}
 
-    $(document).ready(function(){
+	function crearTablePie(results, index){
+		exclude = ['torta', 'mes', 'result', 't']
+		labels = ['tPubs', 'tBau', 'tIrreg', 'tAux', 'tReg']
+		labels2 = ['pubs', 'bau', 'irreg', 'aux', 'reg']
 
-        $('.datepicker').datetimepicker({
-            format: 'MM-YYYY',
-            widgetPositioning:  {
-              horizontal: 'right',
-              vertical: 'auto',
-            },
-            maxDate:'now'
-        })
+		$('#tDetail tbody').html("")
 
-        $( ".datepicker2" ).datetimepicker({
-            showTodayButton:true,
-            viewMode: 'days',
-            format: 'YYYY-MM-DD',
-            widgetPositioning: {
-                horizontal: 'right',
-                vertical: 'auto'
-            },
-            maxDate: 'now'
-        })
-    })
+		json = orderByKey(results[index])
+
+		//creando las filas y las 2 primeras columnas
+		$.each(json, function(key, value){
+			if(exclude.indexOf(key) == -1){
+				if(labels2.indexOf(key) == -1){
+					key = toUpperFirst(key)
+				} else {
+					key = labels2.indexOf(key)
+					switch(key){
+						case 0:
+							key = 'Publicadores'
+						break
+						case 1:
+							key = 'Bautizados'
+						break
+						case 2:
+							key = 'Irregulares'
+						break
+						case 3:
+							key = 'Prec. Aux.'
+						break
+						case 4:
+							key = 'Prec. Reg.'
+						break
+					}
+				}
+
+				$('#tDetail tbody').append(
+					'<tr>\
+						<td>'+key+'</td>\
+						<td>'+value+'</td>\
+					</tr>'
+				)
+			}
+		})
+
+		//agregando la columna con datos del mes anterior
+		i=0
+		if(index < Object.keys(results).length-1 &&  results[index+1].torta){
+			json2 = orderByKey(results[index+1])
+			$.each(json2, function(key, value){
+				if(exclude.indexOf(key) == -1){
+					$('#tDetail tbody tr:eq('+i+') td:nth-child(1)').after('<td>'+value+'</td>')
+					i++
+				}
+			})
+		} else {
+			$.each(json, function(key, value){
+				if(exclude.indexOf(key) == -1){
+					$('#tDetail tbody tr:eq('+i+') td:nth-child(1)').after('<td>-</td>')
+					i++
+				}
+			})
+		}
+
+		//agregando la columna con los % obtenidos
+		i=0
+		$.each(json.torta, function(key, value){
+			if(exclude.indexOf(key[0]) == -1){
+				$('#tDetail tbody tr:eq('+i+') td:nth-child(3)').after('<td>'+value+'</td>')
+				i++
+			}
+		})
+	}
+
+	function createDoughnut(array, init){
+		function __init__(key, array){
+			if(array.torta){
+				exclude = ['torta', 'mes', 'result', 't']
+				labels = ['tPubs', 'tBau', 'tIrreg', 'tAux', 'tReg']
+				labels2 = ['pubs', 'bau', 'irreg', 'aux', 'reg']
+
+				//obteniendo el nro de segmentos a mostrar
+				i=0
+				torta={}
+				nroT= 0
+				$.each(array.torta, function(key, value){
+					if(exclude.indexOf(key[0]) == 3){
+						torta[key] = value
+						nroT++
+					}
+				})
+
+				//Eliminando o Agregando segmentos a la dona
+				switch(key){
+					case '0':
+					case '3':
+						removeSegmentsPie(pie3, nroT, pie3.segments.length)
+					break
+
+					case '1':
+					case '4':
+						removeSegmentsPie(pie2, nroT, pie2.segments.length)
+					break
+
+					case '2':
+					case '5':
+						removeSegmentsPie(pie1, nroT, pie1.segments.length)
+					break
+				}
+
+				//llenando la dona con los valores t obtenidos
+				i=0
+				firstEachKey = key
+				$.each(torta, function(key, value){
+
+					if(labels.indexOf(key) == -1){
+						label = key.substr(1)
+					} else {
+						label = labels.indexOf(key)
+						switch(label){
+							case 0:
+								label = 'Publicadores'
+							break
+							case 1:
+								label = 'Bautizados'
+							break
+							case 2:
+								label = 'Irregulares'
+							break
+							case 3:
+								label = 'Prec. Aux.'
+							break
+							case 4:
+								label = 'Prec. Reg.'
+							break
+						}
+					}
+
+					data = {
+						index: i,
+						label: label,
+						value: value
+					}
+
+					switch(firstEachKey){
+						case '0':
+						case '3':
+							addValPie(pie3, data)
+						break
+
+						case '1':
+						case '4':
+							addValPie(pie2, data)
+						break
+
+						case '2':
+						case '5':
+							addValPie(pie1, data)
+						break
+					}
+					i++
+				})
+
+				//creando la leyenda
+				switch(key){
+					case '0':
+					case '3':
+						pie3.update();
+						createLegend('pie3', pie3)
+						$('#pie3').siblings().children().removeClass('hide')
+					break
+
+					case '1':
+					case '4':
+						pie2.update();
+						createLegend('pie2', pie2)
+						$('#pie2').siblings().children().removeClass('hide')
+					break
+
+					case '2':
+					case '5':
+						pie1.update();
+						createLegend('pie1', pie1)
+						$('#pie1').siblings().children().removeClass('hide')
+					break
+				}
+
+				$('label[for="pie'+labelPie+'"]').html('Distribucion del '+array.result+'% de '+mes)
+
+				labelPie--
+			} else {
+				switch(key){
+					case '0':
+					case '3':
+						initialDoughnut('pie3', pie3)
+					break
+
+					case '1':
+					case '4':
+						initialDoughnut('pie2', pie2)
+					break
+
+					case '2':
+					case '5':
+						initialDoughnut('pie1', pie1)
+					break
+				}
+			}
+		}
+
+		labelPie = 3
+
+		if(init){
+			while(init < Object.keys(array).length ){
+				$.each(array[init], function(key, value){
+					__init__(key, value)
+				})
+				init++
+			}
+		} else {
+			$.each(array, function(key, value){
+				if(key < 3){
+					__init__(key, value)
+				}
+			})
+		}
+	}
