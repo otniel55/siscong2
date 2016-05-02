@@ -487,17 +487,17 @@
 				//Eliminando o Agregando segmentos a la dona
 				switch(key){
 					case '0':
-					case '3':
+					case 3:
 						removeSegmentsPie(pie3, nroT, pie3.segments.length)
 					break
 
 					case '1':
-					case '4':
+					case 4:
 						removeSegmentsPie(pie2, nroT, pie2.segments.length)
 					break
 
 					case '2':
-					case '5':
+					case 5:
 						removeSegmentsPie(pie1, nroT, pie1.segments.length)
 					break
 				}
@@ -538,17 +538,17 @@
 
 					switch(firstEachKey){
 						case '0':
-						case '3':
+						case 3:
 							addValPie(pie3, data)
 						break
 
 						case '1':
-						case '4':
+						case 4:
 							addValPie(pie2, data)
 						break
 
 						case '2':
-						case '5':
+						case 5:
 							addValPie(pie1, data)
 						break
 					}
@@ -558,21 +558,21 @@
 				//creando la leyenda
 				switch(key){
 					case '0':
-					case '3':
+					case 3:
 						pie3.update();
 						createLegend('pie3', pie3)
 						$('#pie3').siblings().children().removeClass('hide')
 					break
 
 					case '1':
-					case '4':
+					case 4:
 						pie2.update();
 						createLegend('pie2', pie2)
 						$('#pie2').siblings().children().removeClass('hide')
 					break
 
 					case '2':
-					case '5':
+					case 5:
 						pie1.update();
 						createLegend('pie1', pie1)
 						$('#pie1').siblings().children().removeClass('hide')
@@ -585,17 +585,17 @@
 			} else {
 				switch(key){
 					case '0':
-					case '3':
+					case 3:
 						initialDoughnut('pie3', pie3)
 					break
 
 					case '1':
-					case '4':
+					case 4:
 						initialDoughnut('pie2', pie2)
 					break
 
 					case '2':
-					case '5':
+					case 5:
 						initialDoughnut('pie1', pie1)
 					break
 				}
@@ -606,9 +606,7 @@
 
 		if(init){
 			while(init < Object.keys(array).length ){
-				$.each(array[init], function(key, value){
-					__init__(key, value)
-				})
+				__init__(init, array[init])
 				init++
 			}
 		} else {

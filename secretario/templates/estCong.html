@@ -257,6 +257,10 @@
 		lineChart.options.onAnimationComplete = function(){
 			lineImg[0] = lineChart.toBase64Image()
 		}
+		if($('#grafica > span:eq(0)').css("pointer-events") == "auto"){
+			$('#grafica > span:eq(0)').css("pointer-events", "none");
+			$('#grafica > span:eq(0)').siblings().css("pointer-events", "auto")
+		}
 
 		fecha = $('div.datepicker > input').val()
 
@@ -341,6 +345,9 @@
 						lineChart.update()
 					}
 				})
+
+				//DOUGHNUT CHART
+				createDoughnut(results)
 			})
 
 			mes1 = toUpperFirst(moment(results[0].mes, "MM").format('MMMM'))
@@ -385,6 +392,9 @@
 						lineChart.update()
 					}
 				})
+
+				//DOUGHNUT CHART
+				createDoughnut(results, 3)
 			})
 
 			key = Object.keys(results).length - 1
