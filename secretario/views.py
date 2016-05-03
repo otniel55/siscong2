@@ -118,7 +118,7 @@ def conPub(request):
           datos={'pub':p}
           return HttpResponse(json.dumps(datos))
 
-def conPubs():
+def conPubs(request):
      bajaAuto()
      promInf=[]
      try:
@@ -170,8 +170,7 @@ def conPubs():
           pubs[cont]={'nombre':i.nombre, 'apellido':i.apellido, 'fechaBau':i.fechaBau, 'edad':obteneredad(i), 'FKgrupo':i.FKgrupo, 'id':i.pk, 'g':i.FKgrupo.pk, 'status': status, 'intervalo': intervalo, 'fecha':fecha}
           cont=cont+1
      pubs=pubs.values()
-     return pubs
-     #return render(request, 'conPubs.html',{'pub':pubs,'msg':msg, 'url':2})
+     return render(request, 'conPubs.html',{'pub':pubs,'msg':msg, 'url':2})
 
 def prom(nums):
      acum=0
