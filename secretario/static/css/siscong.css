@@ -1,0 +1,213 @@
+/* Media Queris*/
+
+@media (min-width: 1440px) {
+
+}
+
+@media (min-width: 1200px) and (max-width: 1439px) {
+
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+
+}
+
+@media (max-width: 767px){
+
+}
+
+/* End */
+
+.inputtrans:focus{
+	outline: 0px;
+	text-align: center;
+}
+
+#btnSave {
+	width: 100%;
+	margin-top: 20px;
+}
+
+#grupos {
+	margin-bottom: 10px;
+}
+
+.mrg-bottom {
+	margin-bottom: 10px;
+}
+
+#pubs {
+	margin-top: 40px;
+}
+
+.sinmrg {
+	padding: 0px;
+	margin: 0px;
+}
+
+.titlecolor {
+	color: sandybrown;
+}
+
+.dlg-no-title .ui-dialog-titlebar{
+    display: none;
+}
+
+.ui-dialog {
+    background-color: white;
+    border: solid 2px #ffa31a;
+}
+
+.mrgPdgNull {
+    margin: 0px;
+    padding: 0px;
+}
+
+.tabla-top {
+    margin-top: 40px;
+}
+
+.preAux {
+    font-size: 20px;
+}
+
+.ficha {
+    margin-top: 20px;
+    font-size: 18px;
+    padding-bottom: 20px;
+}
+
+.ficha dt {
+    color: darkcyan;
+    text-align: right;
+    display: inline-block;
+    width: 46%;
+    margin: 0xp;
+    padding: 0px;
+    margin-bottom: 10px;
+}
+
+.ficha dd {
+    color: #000000;
+    text-align: center;
+    display: inline-block;
+    width: 50%;
+    margin-left: 2%;
+}
+
+.FichaHe {
+    font-weight: 600;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    width: 100%;
+    background-color: #ffd777;
+    border-bottom: 2px;
+    border-bottom-color: dimgray;
+}
+
+.baja {
+    margin-left: 20%;
+    width: 60%;
+    height: 40px;
+    margin-bottom: 30px;
+}
+
+#nombrar select, input[type="number"] {
+    font-size: 12px;
+    height: 28px;
+}
+
+.btnPrecur {
+    background-color: transparent;
+    border: none;
+    height: 20px;
+}
+
+.cabecero {
+    margin:0px;
+    padding:0px;
+    margin-top: 15px;
+}
+
+.Nfilter {
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+#main {
+    position:fixed;
+    width:100%;
+    height:100%;
+    background-color:#664988;
+}
+
+.grafNext {
+    font-size:16px;
+}
+
+.grafNext:hover {
+    color:#f2b14e;
+}
+
+#grafica2 {
+    margin-top:50px;
+    margin-bottom:50px;
+}
+
+#resultAT {
+    margin: 0px;
+    padding: 0px;
+    font-size: 20px;
+}
+
+#resultAT dt {
+	color: darkcyan;
+}
+#AT {
+    margin-top: 10px;
+}
+
+#send {
+    margin-top: 28px;
+    height: 34px;
+}
+
+label[for="line"] {
+    width:30%;
+    margin-left:30%;
+    text-align:center;
+}
+
+.doughnut-legend {
+	padding: 0px;
+}
+
+.doughnut-legend li{
+    list-style: none;
+    height: 20px;
+    margin-bottom: 5px;
+    position: relative;
+}
+
+.doughnut-legend-icon{
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+}
+
+.doughnut-legend-text {
+    display: inline-block;
+    height: 10px;
+    position: absolute;
+    top: 3px;
+    left: 35px;
+}
+
+#tDetail td{
+	text-align: center;
+}

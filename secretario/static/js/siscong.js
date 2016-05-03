@@ -466,7 +466,7 @@
 		})
 	}
 
-	function createDoughnut(array, init){
+	function createDoughnut(array, init=0){
 		function __init__(key, array){
 			if(array.torta){
 				exclude = ['torta', 'mes', 'result', 't']
@@ -579,9 +579,11 @@
 					break
 				}
 
-				$('label[for="pie'+labelPie+'"]').html('Distribucion del '+array.result+'% de '+mes)
-
+				mesDona = moment(array.mes, "MM").format('MMMM')
+				mesDona = toUpperFirst(mesDona)
+				$('label[for="pie'+labelPie+'"]').html('Distribucion del '+array.result+'% de '+mesDona)
 				labelPie--
+
 			} else {
 				switch(key){
 					case '0':
@@ -602,10 +604,32 @@
 			}
 		}
 
+		nkeys = Object.keys(array).length
+		tKeys = nkeys - init
+
+		switch(tKeys){
+			case 1:
+				initialDoughnut('pie2', pie2)
+				initialDoughnut('pie1', pie1)
+			break
+
+			case 2:
+				initialDoughnut('pie1', pie1)
+			break
+		}
+
+		if(nkeys > 3 && $('#grafica > span:eq(0)').css("pointer-events") == "none" ){
+			console.log('entre')
+			$('#grafica > span:eq(1)').css("pointer-events", "auto");
+		} else if(nkeys <= 3){
+			$('#grafica > span:eq(0)').css("pointer-events", "none");
+			$('#grafica > span:eq(1)').css("pointer-events", "none");
+		}
+
 		labelPie = 3
 
 		if(init){
-			while(init < Object.keys(array).length ){
+			while(init < nkeys ){
 				__init__(init, array[init])
 				init++
 			}

@@ -1,7 +1,3 @@
-'''def __init__(self, *args, **kwargs):
-    super(datGrupo, self).__init__(*args, **kwargs)
-    self.fields['encargado'].initial = datGrupo._enc
-    self.fields['auxiliar'].initial = datGrupo._aux'''
 
 from django import forms
 from secretario.models import *

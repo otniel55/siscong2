@@ -259,7 +259,7 @@
 		}
 		if($('#grafica > span:eq(0)').css("pointer-events") == "auto"){
 			$('#grafica > span:eq(0)').css("pointer-events", "none");
-			$('#grafica > span:eq(0)').siblings().css("pointer-events", "auto")
+			$('#grafica > span:eq(1)').css("pointer-events", "auto")
 		}
 
 		fecha = $('div.datepicker > input').val()
@@ -268,7 +268,6 @@
 			.success(function(res){
 				res = JSON.parse(res)
 				results = res
-				console.log(res)
 
 				$('#resultAT').children().detach()
 
