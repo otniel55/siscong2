@@ -99,11 +99,9 @@ def datGrupo(request,idGrupo):
           formPub = modalPub()
           modalGrupo = traerGrupo()
           modalInfo = regInforme()
-          mes = mesInfor()
           y=str(datetime.date.today().year-1)+""+str(datetime.date.today().year)
           datos = {'form': formDatGrupo, 'publicadores': p, 'num': g.pk, 'modalPub': formPub,
-                 'modalGrupo': modalGrupo, 'modalInfo': modalInfo, 'mes': mes,'y':y,
-                   'url':1,
+                 'modalGrupo': modalGrupo, 'modalInfo': modalInfo, 'y':y, 'url':1,
                  }
      return render(request, 'datGrupo.html',datos)
 

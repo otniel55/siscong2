@@ -1,23 +1,64 @@
 /* Media Queris*/
 
 @media (min-width: 1440px) {
+	#btnCon {
+		width: 50%;
+	}
 
+	.tGrupoClm1 {
+		width: 70%;
+	}
+
+	.tGrupoClm2 {
+		width: 20%;
+	}
+	.table-Font {
+		font-size: 16px;
+	}
 }
 
 @media (min-width: 1200px) and (max-width: 1439px) {
-
+	.tGrupoClm1 {
+		width: 70%;
+	}
+	.tGrupoClm2 {
+		width: 20%;
+	}
+	.table-Font {
+		font-size: 16px;
+	}
 }
 
 @media (min-width: 992px) and (max-width: 1199px) {
-
+	.table-Font {
+		font-size: 16px;
+	}
+	.tGrupoClm1 {
+		width: 70%;
+	}
+	.tGrupoClm2 {
+		width: 20%;
+	}
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
-
+	@media (min-width: 800px) and (max-width: 991px) {
+		.tGrupoClm1 {
+			width: 70%;
+		}
+		.tGrupoClm2 {
+			width: 20%;
+		}
+		.table-Font {
+			font-size: 16px;
+		}
+	}
 }
 
 @media (max-width: 767px){
-
+	.btnconXS {
+		padding: 0px;
+	}
 }
 
 /* End */
@@ -116,7 +157,12 @@
     margin-bottom: 30px;
 }
 
-#nombrar select, input[type="number"] {
+div#informe input[type="number"], div#informe input[type="text"]{
+	font-size: 14px;
+	height: 30px;
+}
+
+#nombrar select, #nombrar input[type="number"] {
     font-size: 12px;
     height: 28px;
 }
@@ -210,4 +256,11 @@ label[for="line"] {
 
 #tDetail td{
 	text-align: center;
+}
+
+.tableTitle {
+	padding: 0px;
+	margin: 0px;
+	margin-bottom:10px;
+	color: sandybrown;
 }

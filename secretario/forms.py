@@ -49,18 +49,12 @@ class regPub(forms.ModelForm):
 class regInforme(forms.ModelForm):
     class Meta:
         model = Informe
-        fields = ['horas', 'publicaciones', 'videos', 'revisitas', 'estudios']
+        fields = ['horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'observacion']
         widgets = {
             'horas': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number', 'min':'0'}),
             'publicaciones': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number', 'min':'0'}),
             'videos': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number', 'min':'0'}),
             'revisitas': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number', 'min':'0'}),
             'estudios': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number', 'min':'0'}),
+            'observacion': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'text'}),
         }
-
-class mesInfor(forms.Form):   
-    fecha = forms.CharField(
-        label='Mes a Informar:', 
-        max_length=6, 
-        widget=forms.TextInput(attrs={'class': 'form-control'})
-        )
