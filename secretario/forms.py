@@ -35,15 +35,13 @@ class modalPub(forms.ModelForm):
 class regPub(forms.ModelForm):
 	class Meta:
 		model = Publicador
-		fields = ['nombre', 'apellido', 'telefono', 'direccion', 'email', 'fechaBau', 'fechaNa']
+		fields = ['nombre', 'apellido', 'telefono', 'direccion', 'email']
 		widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control mrg-bottom'}),
             'apellido': forms.TextInput(attrs={'class': 'form-control mrg-bottom'}),
             'telefono': forms.TextInput(attrs={'class': 'form-control mrg-bottom'}),
             'direccion': forms.TextInput(attrs={'class': 'form-control mrg-bottom'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control mrg-bottom'}),
-            'fechaBau': forms.TextInput(attrs={'class':'form-control '}),
-            'fechaNa': forms.TextInput(attrs={'class':'form-control'}),
+            'email': forms.TextInput(attrs={'class': 'form-control mrg-bottom'}),
         }
 
 class regInforme(forms.ModelForm):
