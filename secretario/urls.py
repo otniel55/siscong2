@@ -40,4 +40,6 @@ urlpatterns = [
     url(r'^estadisticas/Publicador', views.estPub, name='estPub'),
     url(r'^pubEst', views.conEstPub, name='conEstPub'),
     url(r'^estadisticas/global', views.estGlobal, name='estGlobal'),
+    url(r'^pdf/tarjeta/publicador', views.vistaPdfPub, name='vistaPdfPub'),
+    url(r'^pdfTarPub', views.datosPdfPub, name='datosPdfPub'),
 ]

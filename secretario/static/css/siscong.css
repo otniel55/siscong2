@@ -1,3 +1,14 @@
+.pdfTable>tbody>tr>td{
+	border-top: none !important;
+}
+
+.pdfTable tr:nth-child(even) {
+    background-color: #f1f1f1;
+}
+
+.pdfTable tr:nth-child(odd) {
+    background-color: #ffffff;
+}
 
 .inputtrans:focus{
 	outline: 0px;

@@ -114,7 +114,11 @@
                         </a>
                         <ul class="sub">
                             <li><a href="{% url 'secretario:estadisticas' %}">Estadisticas</a></li>
-                            <li><a href="">Reportes</a></li>
+                            <li class="sub-menu"><a href="">Reportes</a>
+								<ul class="sub">
+									<li><a href="{% url 'secretario:vistaPdfPub' %}"></a>Tarjeta del publicador</li>
+								</ul>
+							</li>
                         </ul>
                     </li>
 
@@ -178,7 +182,9 @@
 
     <!-- libreria para graficos -->
     <script src="{% static 'js/Chart.min.js' %}"></script>
-
+	<!-- librerias para el PDF -->
+	<script src="{% static 'js/pdfmake/pdfmake.min.js' %}"></script>
+	<script src="{% static 'js/pdfmake/vfs_fonts.js' %}"></script>
     {% block scripts %} {% endblock %}
 
 </body>
