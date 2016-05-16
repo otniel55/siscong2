@@ -304,7 +304,7 @@ label[for="line"] {
 	width:8%;
 }
 
-/* Media Queris*/
+/* Media Queries*/
 @media (min-width: 1680px){
 	#btnCon {
 		width: 50%;
@@ -352,7 +352,7 @@ label[for="line"] {
 		margin-bottom: 0px;
 	}
 	#pubs{
-		margin-top: 0px;
+		margin-top: 40px;
 	}
 	#clear {
 		position: absolute;
