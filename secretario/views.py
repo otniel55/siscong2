@@ -1427,6 +1427,7 @@ def datosPdfPub(request):
           except(keyError, Publicador.DoesNotExist):
                data['msg']="Publicador no existe"
           else:
+               data['name']=p.nombre + " " + p.apellido
                if y>0:
                     inform=Informe.objects.filter(FKpub=p.pk).order_by("year", "mes")
                     if len(inform)>0:
@@ -1452,6 +1453,7 @@ def datosPdfPub(request):
                                         if mesPrimerInf==j[1] and yearPrimerInf==j[0]:
                                              fin=True
                                              data[i][cont]['obs']="Primer Informe."
+                                             break
                                    cont+=1
                               if fin:
                                    break
