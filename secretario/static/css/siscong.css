@@ -364,10 +364,24 @@ label[for="line"] {
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
-	@media (min-width: 800px) and (max-width: 991px) {
-
+	/* conPubs*/
+	div.btn-group.btnsPubs button, #mayor2Sm button {
+		font-size: 12px;
 	}
-	@media (max-width: 799px) {
+	.optionGroup {
+		margin-top: 25px;
+	}
+
+	#clear {
+		margin-top: 50px;
+	}
+	/* end */
+
+
+	/* tablas xs-sm */
+	@media (min-width: 801px) and (max-width: 991px) {}
+
+	@media (max-width: 800px) {
 		.tGrupoClm1 {
 			width: auto;
 		}
@@ -382,6 +396,7 @@ label[for="line"] {
 		}
 		.tConPubCol5 {
 			height: 20px;
+			color: #fff;
 		}
 	}
 }

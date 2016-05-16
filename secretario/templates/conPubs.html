@@ -11,7 +11,7 @@
 			{% csrf_token %}
 			<div class="row">
 				<div class="col-md-12 col-lg-3 panelConPubs">
-					<div class="hidden-md">
+					<div class="visible-lg">
 						<input type="search" class="form-control filtro" placeholder="Ingrese su Busqueda..." />
 
 						<div class="optionGroup">
@@ -118,6 +118,69 @@
 							</div>
 
 							<div class="col-md-6">
+								<div class="blockPicker">
+									<div class="form-group materialPicker">
+										<div class="pickerPubs"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="visible-sm">
+
+						<input type="search" class="form-control filtro" placeholder="Ingrese su Busqueda..." />
+
+						<div class="clearfix"></div>
+
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="optionGroup">
+									<label class="radio-inline">
+										<input type="radio" name="iCheck"> Nombre
+									</label>
+									<label class="radio-inline">
+										<input type="radio" name="iCheck"> Edad
+									</label>
+									<label class="radio-inline">
+										<input type="radio" name="iCheck"> Fecha
+									</label>
+									<label class="radio-inline">
+										<input type="radio" name="iCheck"> Grupo
+									</label>
+								</div>
+
+								<div id="busBauSm" class="btn-group btnsPubs" role="group">
+									<button class="btn btn-default">No Bautizados</button>
+									<button class="btn btn-default">Bautizados</button>
+									<button id="mayor1Sm" class="btn btn-default">Mayor de 1 año</button>
+								</div>
+
+								<div id="mayor2Sm" class="btn-group hide" role="group">
+									<button class="btn btn-default">Mas de 1 año</button>
+								</div>
+
+								<div class="clearfix"></div>
+
+								<div class="btn-group btnsPubs" role="group">
+									<button class="btn btn-default">Mayores de 18</button>
+									<button class="btn btn-default">Menores de 18</button>
+								</div>
+
+								<div class="clearfix"></div>
+
+								<span class="" style="color:darkcyan;font-size:14px;">Buscar por Estado:</span>
+								<div class="btn-group btnsPubs" role="group">
+									<button class="btn" style="background-color:#09B20F;width:40px;height:20px;"></button>
+									<button class="btn" style="background-color:#ffad33;width:40px;height:20px;"></button>
+									<button class="btn" style="background-color:#b30000;width:40px;height:20px;"></button>
+									<button class="btn" style="background-color:#009999;width:40px;height:20px;"></button>
+									<button class="btn" style="background-color:#b6b6b6;width:40px;height:20px;"></button>
+								</div>
+
+								<button id="clear" class="btn btn-success">Limpiar</button>
+							</div>
+							<div class="col-sm-6">
 								<div class="blockPicker">
 									<div class="form-group materialPicker">
 										<div class="pickerPubs"></div>
@@ -269,39 +332,102 @@
 
 {% block scripts %}
 	<script>
+		var check1
+		var check2
+		var vw
 
 		$(document).ready(function(){
+
 			$('input').iCheck({
 				radioClass: 'iradio_flat-green'
 			});
 
-			if($(window).width() >= 1200 && $(window).width() < 1300){
-				$('input[type="radio"]:eq(3)').parent().parent().removeClass('radio-inline')
-				$('input[type="radio"]:eq(3)').parent().parent().css('margin-top', '5px')
+			check1 = $('div.visible-lg input[type="radio"]:eq(3)').parent().parent()
+			check2 = $('div.visible-sm input[type="radio"]:eq(3)').parent().parent()
+			vw = $(window).width()
+
+			if(vw >= 1200 && vw < 1300){
+				check1.removeClass('radio-inline')
+				check1.css('margin-top', '5px')
 			}
 
-			if($(window).width() >= 1200 && $(window).width() < 1440){
+			if(vw >= 1200 && vw < 1440){
 				$('#mayor1').detach()
 				$('#mayor2').removeClass('hide')
+			}
+
+
+			if(vw > 768 && vw < 960){
+				if(vw <= 900){
+					check2.removeClass('radio-inline')
+					check2.css('margin-top', '5px')
+				}
+
+				$('#mayor1Sm').detach()
+				$('#mayor2Sm').removeClass('hide')
+			}
+		})
+
+		$('div.fa-bars').click(function(){
+
+			if((vw >768 && vw <= 904) && $('#container').attr('class') != 'sidebar-closed' ){
+				check2.removeClass('radio-inline')
+				check2.css('margin-top', '5px')
+			} else {
+				check2.addClass('radio-inline')
+				check2.css('margin-top', '0px')
+			}
+
+			if((vw >768 && vw < 960) && $('#container').attr('class') != 'sidebar-closed' ){
+				$('#mayor1Sm').detach()
+				$('#mayor2Sm').removeClass('hide')
+
+			} else if ((vw >= 960 && vw <= 991) || $('#container').attr('class') == 'sidebar-closed'){
+				if( $('#busBauSm').children().length == 2 ){
+					$('#busBauSm').append('<button id="mayor1Sm" class="btn btn-default">Mayor de 1 año</button>')
+					$('#mayor2Sm').addClass('hide')
+				}
 			}
 
 		})
 
 		$(window).resize(function(){
-			if($(window).width() >= 1200 && $(window).width() < 1300){
-				$('input[type="radio"]:eq(3)').parent().parent().removeClass('radio-inline')
-				$('input[type="radio"]:eq(3)').parent().parent().css('margin-top', '5px')
-			} if($(window).width() >= 1300){
-				$('input[type="radio"]:eq(3)').parent().parent().addClass('radio-inline')
-				$('input[type="radio"]:eq(3)').parent().parent().css('margin-top', '0px')
+
+			vw = $(this).width()
+
+			if( vw >= 1200 && vw < 1300){
+				check1.removeClass('radio-inline')
+				check1.css('margin-top', '5px')
+			} else if(vw >= 1300){
+				check1.addClass('radio-inline')
+				check1.css('margin-top', '0px')
 			}
 
-			if($(window).width() >= 1200 && $(window).width() < 1440){
+			if((vw >768 && vw <= 904) && $('#container').attr('class') != 'sidebar-closed'){
+				check2.removeClass('radio-inline')
+				check2.css('margin-top', '5px')
+			} else if((vw > 904 && vw <= 991) || $('#container').attr('class') == 'sidebar-closed'){
+				check2.addClass('radio-inline')
+				check2.css('margin-top', '0px')
+			}
+
+			if(vw >= 1200 && vw < 1440){
 				$('#mayor1').detach()
 				$('#mayor2').removeClass('hide')
-			} else if($(window).width() >= 1440){
+			} else if((vw < 991 || vw >= 1440) && $('#busBau').children().length == 2 ){
 				$('#busBau').append('<button id="mayor1" class="btn btn-default">Mayor de 1 año</button>')
 				$('#mayor2').addClass('hide')
+			}
+
+			if((vw >768 && vw < 960) && $('#container').attr('class') != 'sidebar-closed' ){
+				$('#mayor1Sm').detach()
+				$('#mayor2Sm').removeClass('hide')
+
+			} else if ((vw >= 960 && vw <= 991) || $('#container').attr('class') == 'sidebar-closed'){
+				if( $('#busBauSm').children().length == 2 ){
+					$('#busBauSm').append('<button id="mayor1Sm" class="btn btn-default">Mayor de 1 año</button>')
+					$('#mayor2Sm').addClass('hide')
+				}
 			}
 		})
 
