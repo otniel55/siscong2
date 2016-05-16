@@ -2,165 +2,264 @@
 
 {% block contenido %}
 
-	<div class="col-md-12 col-lg-12">
-		<div class="form-panel row">
-		    <div class="visible-md visible-lg">
-				<h1 class="text-center titlecolor"><i class="fa fa-angle-right"></i>Publicadores de "El Palito"</h1>
-			</div>
-			<div class="visible-xs visible-sm">
-				<h3 class="text-center"><i class="fa fa-angle-right"></i>Informacion de "El Palito"</h3>
-			</div>
-	<div class="form-horizontal style-form">
+<div class="col-xs-12">
+	<div class="form-panel">
+		<h1 class="text-center titlecolor visible-md visible-lg"><i class="fa fa-angle-right"></i>Publicadores de "El Palito"</h1>
+		<h3 class="text-center titlecolor visible-xs visible-sm"><i class="fa fa-angle-right"></i>Publicadores de "El Palito"</h3>
 
 		<div class="form-group">
 			{% csrf_token %}
-			<div class="col-lg-12">
-				<div class="row">
-					<div class="col-lg-3" style="padding:0px;margin-left:50px;margin-right:30px;">
-						<input type="search" id="filtro" class="form-control" style="margin-top: 40px;" placeholder="Ingrese su Busqueda..." />
+			<div class="row">
+				<div class="col-md-12 col-lg-3 panelConPubs">
+					<div class="hidden-md">
+						<input type="search" class="form-control filtro" placeholder="Ingrese su Busqueda..." />
+
+						<div class="optionGroup">
+							<label class="radio-inline">
+								<input type="radio" name="iCheck"> Nombre
+							</label>
+							<label class="radio-inline">
+								<input type="radio" name="iCheck"> Edad
+							</label>
+							<label class="radio-inline">
+								<input type="radio" name="iCheck"> Fecha
+							</label>
+							<label class="radio-inline">
+								<input type="radio" name="iCheck"> Grupo
+							</label>
+						</div>
+
+						<div id="busBau" class="btn-group btnsPubs" role="group">
+							<button class="btn btn-default">No Bautizados</button>
+							<button class="btn btn-default">Bautizados</button>
+							<button id="mayor1" class="btn btn-default">Mayor de 1 año</button>
+						</div>
+
+						<div id="mayor2" class="btn-group hide" role="group">
+							<button class="btn btn-default">Mas de 1 año</button>
+						</div>
+
+						<div class="clearfix"></div>
+
+						<div class="btn-group btnsPubs" role="group">
+							<button class="btn btn-default">Mayores de 18</button>
+							<button class="btn btn-default">Menores de 18</button>
+						</div>
+
+						<div class="clearfix"></div>
+
+						<span class="" style="color:darkcyan;font-size:14px;">Buscar por Estado:</span>
+						<div class="btn-group btnsPubs" role="group">
+							<button class="btn" style="background-color:#09B20F;width:40px;height:20px;"></button>
+							<button class="btn" style="background-color:#ffad33;width:40px;height:20px;"></button>
+							<button class="btn" style="background-color:#b30000;width:40px;height:20px;"></button>
+							<button class="btn" style="background-color:#009999;width:40px;height:20px;"></button>
+							<button class="btn" style="background-color:#b6b6b6;width:40px;height:20px;"></button>
+						</div>
+
+						<div class="clearfix"></div>
+
 						<div class="blockPicker">
-						    <div class="form-group materialPicker" style="padding:0px;margin:0px;">
-						        <div id="picker"></div>
-						    </div>
+							<div class="form-group materialPicker">
+								<div class="pickerPubs"></div>
+							</div>
 						</div>
-						<button id="clear" class="btn btn-success" style="width:50%;margin-left:25%;">Limpiar</button>
+
+						<button id="clear" class="btn btn-success">Limpiar</button>
 					</div>
-					<div id="pubs" class="col-lg-8" style="">
-		                <div class="content-panel">
-		                	<h3 class="text-center titlecolor" style="margin:0px;padding: 0px;">Informacion de los publicadores</h3>
-							<section id="no-more-tables" style="margin-top: 20px;">
-		                    	<table id="public" class="table table-bordered table-striped table-condensed cf" style="font-size:14px;">
-		                        	<thead class="cf">				
-										<tr>
-											<th class="text-center" style="width:34%;">Nombre y Apellido</th>
-											<th class="numeric text-center" style="width:10%;">Edad</th>
-											<th class="text-center" style="width:18%;">Fecha de Bautismo</th>
-											<th class="text-center" style="width:30%;">Grupo Asignado</th>
-											<th class="text-center" style="width:8%;">Estado</th>
-										</tr>
-									</thead>
-									<tbody>
-									{% for x in pub %}
-										<tr>
-											<td class="nombre" data-title="Nombre y Apellido" style="width:34%;">
-												<a href="{% url 'secretario:traerPub' x.id %}">{{ x.nombre }} {{ x.apellido }}</a>
-											</td>
-											<td class="numeric text-center" data-title="Edad" style="width:10%;">
-												{{ x.edad }}
-											</td>
-											<td class="text-center bau" data-title="Fecha de Bautismo" style="width:18%;">
-												{{ x.fechaBau }}
-											</td>
-											<td data-title="Grupo Asignado" style="width:30%;">
-												<a href="{% url 'secretario:conGrupoofPubs' x.g %}">{{ x.FKgrupo }}</a>
-											</td>
-											{% if x.status == 0 %}
-												<td class="estado" id="{{x.id}}" data-title="Estado" style="width:8%; background-color:#09B20F">
 
-													<div style="display: none">
-														<dl>
-															<dt>Estado:</dt>
-															<dd id="dgEstado">Activo</dd>
-															
-															<dt>Fecha del Ultimo Informe:</dt>
-															<dd id="dgFecha">{{ x.fecha }}</dd>
+					<div class="visible-md">
+						<div class="row">
+							<div id="panelConPubsMD" class="col-md-6">
+								<input type="search" class="form-control filtro" placeholder="Ingrese su Busqueda..." />
 
-															<dt>Intervalo:</dt>
-															<dd id="dgInt">{{ x.intervalo }}</dd>
+								<div class="optionGroup">
+									<label class="radio-inline">
+										<input type="radio" name="iCheck"> Nombre y Apellido
+									</label>
+									<label class="radio-inline">
+										<input type="radio" name="iCheck"> Edad
+									</label>
+									<label class="radio-inline">
+										<input type="radio" name="iCheck"> Fecha
+									</label>
+									<label class="radio-inline">
+										<input type="radio" name="iCheck"> Grupo
+									</label>
+								</div>
 
-															<dt>Conclusiones:</dt>
-															<dd id="dgConclu">publicador en buen estado</dd>
-														</dl>
-													</div>
-												</td>
-											{% elif x.status == 1 %}
-												<td class="estado" id="{{x.id}}" data-title="Estado" style="width:8%; background-color:#ffad33">
+								<div class="btn-group btnsPubs" role="group">
+									<button class="btn btn-default">No Bautizados</button>
+									<button class="btn btn-default">Bautizados</button>
+									<button class="btn btn-default">Mas de 1 año</button>
+								</div>
 
-													<div style="display: none">
-														<dl>
-															<dt>Estado:</dt>
-															<dd id="dgEstado">Irregular</dd>
-															
-															<dt>Fecha del Ultimo Informe:</dt>
-															<dd id="dgFecha">{{ x.fecha }}</dd>
+								<div class="clearfix"></div>
 
-															<dt>Intervalo:</dt>
-															<dd id="dgInt">{{ x.intervalo }}</dd>
+								<div class="btn-group btnsPubs" role="group">
+									<button class="btn btn-default">Mayores de 18</button>
+									<button class="btn btn-default">Menores de 18</button>
+								</div>
 
-															<dt>Conclusiones:</dt>
-															<dd id="dgConclu">publicador precaucion</dd>
-														</dl>
-													</div>
-												</td>
-											{% elif x.status ==  2 %}
-												<td class="estado" id="{{x.id}}" data-title="Estado" style="width:8%; background-color:#b30000">
+								<div class="clearfix"></div>
 
-													<div style="display: none">
-														<dl>
-															<dt>Estado:</dt>
-															<dd id="dgEstado">Inactivo</dd>
-															
-															<dt>Fecha del Ultimo Informe:</dt>
-															<dd id="dgFecha">{{ x.fecha }}</dd>
+								<span class="" style="color:darkcyan;font-size:14px;">Buscar por Estado:</span>
+								<div class="btn-group btnsPubs" role="group">
+									<button class="btn" style="background-color:#09B20F;width:40px;height:20px;"></button>
+									<button class="btn" style="background-color:#ffad33;width:40px;height:20px;"></button>
+									<button class="btn" style="background-color:#b30000;width:40px;height:20px;"></button>
+									<button class="btn" style="background-color:#009999;width:40px;height:20px;"></button>
+									<button class="btn" style="background-color:#b6b6b6;width:40px;height:20px;"></button>
+								</div>
 
-															<dt>Intervalo:</dt>
-															<dd id="dgInt">{{ x.intervalo }}</dd>
+								<div class="clearfix"></div>
 
-															<dt>Conclusiones:</dt>
-															<dd id="dgConclu">publicador mal</dd>
-														</dl>
-													</div>
-												</td>
-											{% elif x.status ==  3 %}
-												<td class="estado" id="{{x.id}}" data-title="Estado" style="width:8%;background-color: #009999">
+								<button id="clear" class="btn btn-success">Limpiar</button>
+							</div>
 
-													<div style="display: none">
-														<dl>
-															<dt>Estado:</dt>
-															<dd id="dgEstado">Nuevo</dd>
-
-															<dt>Intervalo:</dt>
-															<dd id="dgInt">{{ x.intervalo }}</dd>
-
-															<dt>Conclusiones:</dt>
-															<dd id="dgConclu">Publicador Nuevo</dd>
-														</dl>
-													</div>
-												</td>
-											{% else %}
-												<td class="estado" id="{{x.id}}" data-title="Estado" style="width:8%;background-color: rgba(182, 182, 182, 1)">
-													<div style="display: none">
-														<dl>
-															<dt>Estado:</dt>
-															<dd id="dgEstado">Activo</dd>
-
-															<dt>Fecha del Ultimo Informe:</dt>
-															<dd id="dgFecha">{{ x.fecha }}</dd>
-
-															<dt>Intervalo:</dt>
-															<dd id="dgInt">{{ x.intervalo }}</dd>
-
-															<dt>Conclusiones:</dt>
-															<dd id="dgConclu">No alcanzó el promedio de horas que realizan los publicadores</dd>
-														</dl>
-													</div>
-												</td>
-											{% endif %}
-										</tr>
-									{% endfor %}
-									</tbody>
-								</table>
-							</section>
+							<div class="col-md-6">
+								<div class="blockPicker">
+									<div class="form-group materialPicker">
+										<div class="pickerPubs"></div>
+									</div>
+								</div>
+							</div>
 						</div>
+					</div>
+				</div>
+
+				<div id="pubs" class="col-md-12 col-lg-8">
+					<div class="content-panel">
+						<h3 class="text-center tableTitle">Informacion de los publicadores</h3>
+						<section id="no-more-tables">
+							<table id="public" class="table table-bordered table-striped table-condensed cf">
+								<thead class="cf">
+									<tr>
+										<th class="text-center tConPubCol1">Nombre y Apellido</th>
+										<th class="numeric text-center tConPubCol2">Edad</th>
+										<th class="text-center tConPubCol3">Fecha de Bautismo</th>
+										<th class="text-center tConPubCol4">Grupo Asignado</th>
+										<th class="text-center tConPubCol5">Estado</th>
+									</tr>
+								</thead>
+								<tbody>
+								{% for x in pub %}
+									<tr>
+										<td class="text-center nombre tConPubCol1" data-title="Nombre:">
+											<a href="{% url 'secretario:traerPub' x.id %}">{{ x.nombre }} {{ x.apellido }}</a>
+										</td>
+										<td class="text-center numeric tConPubCol2" data-title="Edad:">
+											{{ x.edad }}
+										</td>
+										<td class="text-center bau tConPubCol3" data-title="Fecha de Bautismo:">
+											{{ x.fechaBau }}
+										</td>
+										<td class="text-center tConPubCol4" data-title="Grupo:">
+											<a href="{% url 'secretario:conGrupoofPubs' x.g %}">{{ x.FKgrupo }}</a>
+										</td>
+										{% if x.status == 0 %}
+											<td class="estado tConPubCol5" id="{{x.id}}" data-title="Estado" style="background-color:#09B20F">
+
+												<div style="display: none">
+													<dl>
+														<dt>Estado:</dt>
+														<dd id="dgEstado">Activo</dd>
+
+														<dt>Fecha del Ultimo Informe:</dt>
+														<dd id="dgFecha">{{ x.fecha }}</dd>
+
+														<dt>Intervalo:</dt>
+														<dd id="dgInt">{{ x.intervalo }}</dd>
+
+														<dt>Conclusiones:</dt>
+														<dd id="dgConclu">publicador en buen estado</dd>
+													</dl>
+												</div>
+											</td>
+										{% elif x.status == 1 %}
+											<td class="estado tConPubCol5" id="{{x.id}}" data-title="Estado" style="background-color:#ffad33">
+
+												<div style="display: none">
+													<dl>
+														<dt>Estado:</dt>
+														<dd id="dgEstado">Irregular</dd>
+
+														<dt>Fecha del Ultimo Informe:</dt>
+														<dd id="dgFecha">{{ x.fecha }}</dd>
+
+														<dt>Intervalo:</dt>
+														<dd id="dgInt">{{ x.intervalo }}</dd>
+
+														<dt>Conclusiones:</dt>
+														<dd id="dgConclu">publicador precaucion</dd>
+													</dl>
+												</div>
+											</td>
+										{% elif x.status ==  2 %}
+											<td class="estado tConPubCol5" id="{{x.id}}" data-title="Estado" style="background-color:#b30000">
+
+												<div style="display: none">
+													<dl>
+														<dt>Estado:</dt>
+														<dd id="dgEstado">Inactivo</dd>
+
+														<dt>Fecha del Ultimo Informe:</dt>
+														<dd id="dgFecha">{{ x.fecha }}</dd>
+
+														<dt>Intervalo:</dt>
+														<dd id="dgInt">{{ x.intervalo }}</dd>
+
+														<dt>Conclusiones:</dt>
+														<dd id="dgConclu">publicador mal</dd>
+													</dl>
+												</div>
+											</td>
+										{% elif x.status ==  3 %}
+											<td class="estado tConPubCol5" id="{{x.id}}" data-title="Estado" style="background-color: #009999">
+
+												<div style="display: none">
+													<dl>
+														<dt>Estado:</dt>
+														<dd id="dgEstado">Nuevo</dd>
+
+														<dt>Intervalo:</dt>
+														<dd id="dgInt">{{ x.intervalo }}</dd>
+
+														<dt>Conclusiones:</dt>
+														<dd id="dgConclu">Publicador Nuevo</dd>
+													</dl>
+												</div>
+											</td>
+										{% else %}
+											<td class="estado tConPubCol5" id="{{x.id}}" data-title="Estado" style="background-color: #b6b6b6">
+												<div style="display: none">
+													<dl>
+														<dt>Estado:</dt>
+														<dd id="dgEstado">Activo</dd>
+
+														<dt>Fecha del Ultimo Informe:</dt>
+														<dd id="dgFecha">{{ x.fecha }}</dd>
+
+														<dt>Intervalo:</dt>
+														<dd id="dgInt">{{ x.intervalo }}</dd>
+
+														<dt>Conclusiones:</dt>
+														<dd id="dgConclu">No alcanzó el promedio de horas que realizan los publicadores</dd>
+													</dl>
+												</div>
+											</td>
+										{% endif %}
+									</tr>
+								{% endfor %}
+								</tbody>
+							</table>
+						</section>
 					</div>
 				</div>
 			</div>
         </div>
-
 	</div>
-		</div>		
-
-	</div> 
+</div>
 
 <div id="dialogo" style="display: none">
 
@@ -170,6 +269,41 @@
 
 {% block scripts %}
 	<script>
+
+		$(document).ready(function(){
+			$('input').iCheck({
+				radioClass: 'iradio_flat-green'
+			});
+
+			if($(window).width() >= 1200 && $(window).width() < 1300){
+				$('input[type="radio"]:eq(3)').parent().parent().removeClass('radio-inline')
+				$('input[type="radio"]:eq(3)').parent().parent().css('margin-top', '5px')
+			}
+
+			if($(window).width() >= 1200 && $(window).width() < 1440){
+				$('#mayor1').detach()
+				$('#mayor2').removeClass('hide')
+			}
+
+		})
+
+		$(window).resize(function(){
+			if($(window).width() >= 1200 && $(window).width() < 1300){
+				$('input[type="radio"]:eq(3)').parent().parent().removeClass('radio-inline')
+				$('input[type="radio"]:eq(3)').parent().parent().css('margin-top', '5px')
+			} if($(window).width() >= 1300){
+				$('input[type="radio"]:eq(3)').parent().parent().addClass('radio-inline')
+				$('input[type="radio"]:eq(3)').parent().parent().css('margin-top', '0px')
+			}
+
+			if($(window).width() >= 1200 && $(window).width() < 1440){
+				$('#mayor1').detach()
+				$('#mayor2').removeClass('hide')
+			} else if($(window).width() >= 1440){
+				$('#busBau').append('<button id="mayor1" class="btn btn-default">Mayor de 1 año</button>')
+				$('#mayor2').addClass('hide')
+			}
+		})
 
 		//dateTable
 
@@ -185,7 +319,7 @@
 
 			$('#public_filter').css('display', 'none')
 
-	        $('#filtro').on( 'keyup change', function () {
+	        $('.filtro').on( 'keyup change', function () {
 							table.fnFilter(this.value);
 						});
 
@@ -194,7 +328,7 @@
 		//dataTimePicker
 
 			$(function () {
-	            $('#picker').datetimepicker({
+	            $('.pickerPubs').datetimepicker({
 	                inline: true,
 	                showTodayButton:true,
 	                viewMode: 'days',
