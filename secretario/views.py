@@ -370,7 +370,7 @@ def viewInfo(request):
 
 def regInf(request):
      hoy=datetime.date.today()
-     nums=['horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'publicador']
+     nums=['horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'publicador', 'horasCons']
      validar=validarVacio(request.POST, nums)
      if validar[0]:
           _horas = request.POST['horas']
@@ -380,6 +380,7 @@ def regInf(request):
           _estudios = request.POST['estudios']
           _fecha = request.POST['fecha']
           _pub=request.POST['publicador']
+          _obs=request.POST['obs']
           if getDiferenciaMes(int(_fecha[0:2]), int(_fecha[3:]),hoy.month, hoy.year)>-2:
                try:
                     p=Publicador.objects.get(pk=_pub)
@@ -388,7 +389,7 @@ def regInf(request):
                else:
                     inf=Informe.objects.filter(mes=int(_fecha[0:2]), year=int(_fecha[3:]),FKpub=_pub)
                     if len(inf)==0:
-                         p.informe_set.create(horas=_horas, publicaciones=_publicaciones, videos=_videos, revisitas=_revisitas, estudios=_estudios, mes=int(_fecha[0:2]), year=int(_fecha[3:]))
+                         p.informe_set.create(horas=_horas, publicaciones=_publicaciones, videos=_videos, revisitas=_revisitas, estudios=_estudios, mes=int(_fecha[0:2]), year=int(_fecha[3:]), observacion=_obs)
                          msg={'msg':'Informe Registrado con exito', 'on':1}
                     else:
                          msg={'msg':'Error informe ya existe'}
