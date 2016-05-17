@@ -143,13 +143,13 @@
 							header: {
 								fontSize: 18,
 								bold: true,
-								margin: [0, 0, 0, 10]
+								margin: [0, 0, 0, 0]
 							},
 							trPares:{
 								fillColor:'#F1F1F1',
 							},
 							table: {
-								margin: [15, 5, 0, 15],
+								margin: [0, 0, 0, 0],
 							},
 							tableHeader: {
 								bold: true,
@@ -199,6 +199,7 @@
 								style:'table',
 								table:{
 									headerRows: 1,
+									widths:["15%","10%","*","11%","11%","10%","20%"],
 									body: [
 										[
 											{ text: 'Meses', fillColor:'#00AF50' },
@@ -210,14 +211,6 @@
 											{ text: 'Observaciones', style: 'tableHeader' }
 										]
 									]
-								},
-								layout:{
-									hLineWidth: function(i, node) {
-										return (i === 0 || i === node.table.body.length) ? 2 : 1;
-									},
-									vLineWidth: function(i, node) {
-											return (i === 0 || i === node.table.widths.length) ? 2 : 1;
-									},
 								}
 							})
 							posicion++
@@ -241,12 +234,12 @@
 								} else{
 									datos={
 										mes:mes,
-										horas:"",
-										publicaciones:"",
-										revisitas:"",
-										estudios:"",
-										videos:"",
-										observaciones:"",
+										horas:"0",
+										publicaciones:"0",
+										revisitas:"0",
+										estudios:"0",
+										videos:"0",
+										observaciones:"No informó",
 									}
 								}
 								$("#"+value+" tbody").eq(0).append(stringTr(datos))
@@ -265,17 +258,17 @@
 											v.revisitas.toString(),
 											v.estudios.toString(),
 											v.videos.toString(),
-											v.obs
+											obs
 										])
 									}else{
 										dd.content[posicion].table.body.push([
 											mes,
-											"",
-											"",
-											"",
-											"",
-											"",
-											""
+											"0",
+											"0",
+											"0",
+											"0",
+											"0",
+											"No informó"
 										])
 									}
 								} else{
@@ -291,17 +284,17 @@
 											{text:v.revisitas.toString(), style:'trPares'},
 											{text:v.estudios.toString(), style:'trPares'},
 											{text:v.videos.toString(), style:'trPares'},
-											{text:obs, style:'trPares'},
+											{text:obs, style:'trPares'}
 										])
 									} else{
 										dd.content[posicion].table.body.push([
 											{text:mes, style:'trPares'},
-											{text:"", style:'trPares'},
-											{text:"", style:'trPares'},
-											{text:"", style:'trPares'},
-											{text:"", style:'trPares'},
-											{text:"", style:'trPares'},
-											{text:"", style:'trPares'},
+											{text:"0", style:'trPares'},
+											{text:"0", style:'trPares'},
+											{text:"0", style:'trPares'},
+											{text:"0", style:'trPares'},
+											{text:"0", style:'trPares'},
+											{text:"No informó", style:'trPares'}
 										])
 									}
 								}

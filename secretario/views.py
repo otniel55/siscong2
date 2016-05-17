@@ -1424,7 +1424,7 @@ def datosPdfPub(request):
           y=int(request.POST['year'])
           try:
                p=Publicador.objects.get(pk=idPub)
-          except(keyError, Publicador.DoesNotExist):
+          except(KeyError, Publicador.DoesNotExist):
                data['msg']="Publicador no existe"
           else:
                data['name']=p.nombre + " " + p.apellido
@@ -1445,7 +1445,12 @@ def datosPdfPub(request):
                                    try:
                                         inf=Informe.objects.get(FKpub=p.pk, mes=j[1], year=j[0])
                                    except:
-                                        data[i][cont]={'vacio':1, 'mes':j[1]}
+                                        if not fin:
+                                             data[i][cont]={'vacio':1, 'mes':j[1]}
+                                        else:
+                                             data[i][cont]={'mes':j[1], 'horas':"", 'publicaciones':"",
+                                                 'revisitas':"", 'estudios':"", 'videos':""
+                                                 }
                                    else:
                                         data[i][cont]={'mes':j[1], 'horas':inf.horas, 'publicaciones':inf.publicaciones,
                                                  'revisitas':inf.revisitas, 'estudios':inf.estudios, 'videos':inf.videos
@@ -1453,7 +1458,6 @@ def datosPdfPub(request):
                                         if mesPrimerInf==j[1] and yearPrimerInf==j[0]:
                                              fin=True
                                              data[i][cont]['obs']="Primer Informe."
-                                             break
                                    cont+=1
                               if fin:
                                    break
@@ -1469,24 +1473,21 @@ def arrayServicio(cant):
      cont=0
      cantM=cant*12
      meses={}
-     yActual=datetime.date.today().year
-     mActual=datetime.date.today().month
-     if mActual<9:
-          servicio=[yActual-1, yActual]
-     else:
-          servicio=[yActual, yActual+1]
+     yActual=datetime.date.today().year-cant
+     mActual=9
+     servicio=[yActual, yActual+1]
      strServicio=str(servicio[0])+"-"+str(servicio[1])
      meses[strServicio]=[[yActual, mActual]]
      for i in range(1, cantM):
-          mActual-=1
-          if mActual==0:
-               mActual=12
-               yActual-=1
-          if mActual==8:
+          mActual+=1
+          if mActual==13:
+               mActual=1
+               yActual+=1
+          if mActual==9:
                cont+=1
                if cont==cant:
                     break
-               strServicio=str(yActual-1)+"-"+str(yActual)
+               strServicio=str(yActual)+"-"+str(yActual+1)
                meses[strServicio]=[[yActual,mActual]]
           else:
                meses[strServicio].append([yActual,mActual])
