@@ -94,10 +94,8 @@ class privilegioPub(models.Model):
 	)
 
 class horasCon(models.Model):
-	mes=models.IntegerField()
-	year=models.IntegerField()
-	FKpub=models.ForeignKey(
-		'Publicador',
+	FKinf=models.ForeignKey(
+		'Informe',
 		on_delete=models.CASCADE,
 	)
 	horas=models.IntegerField()

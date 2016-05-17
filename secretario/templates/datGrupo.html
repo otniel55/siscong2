@@ -222,10 +222,10 @@
                 $("#closeInf").click()
                 datInf.Cargar()
             }
-            if ($("#id_observacion").val()==""){
+            if ($.trim($("#id_observacion").val())==""){
             	$("#id_observacion").val("n/t")
             }
-            if ($("#horasCon").val()==""){
+            if ($.trim($("#horasCon").val())==""){
             	$("#horasCon").val("0")
             }
 			datInf.getInputs('#informe')

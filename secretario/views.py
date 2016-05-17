@@ -381,6 +381,7 @@ def regInf(request):
           _fecha = request.POST['fecha']
           _pub=request.POST['publicador']
           _obs=request.POST['obs']
+          _horasCon=int(request.POST['horasCons'])
           if getDiferenciaMes(int(_fecha[0:2]), int(_fecha[3:]),hoy.month, hoy.year)>-2:
                try:
                     p=Publicador.objects.get(pk=_pub)
@@ -391,6 +392,34 @@ def regInf(request):
                     if len(inf)==0:
                          p.informe_set.create(horas=_horas, publicaciones=_publicaciones, videos=_videos, revisitas=_revisitas, estudios=_estudios, mes=int(_fecha[0:2]), year=int(_fecha[3:]), observacion=_obs)
                          msg={'msg':'Informe Registrado con exito', 'on':1}
+                         if _horasCon>0:
+                              informe=Informe.objects.filter(FKpub=p.pk, mes=int(_fecha[0:2]), year=int(_fecha[3:]))
+                              precurs=PubPrecursor.objects.filter(FKpub=p.pk, FKprecursor__in=[3,4]).order_by("-yearIni", "-mesIni")
+                              if len(precurs)>0:
+                                   for prec in precurs:
+                                        if getDiferenciaMes(prec.mesIni, prec.yearIni, int(_fecha[0:2]), int(_fecha[3:])) > -2:
+                                             if prec.duracion == 0:
+                                                  mesF = int(_fecha[0:2])
+                                                  yearF =int(_fecha[3:])
+                                             else:
+                                                  fechaF = getFechaFin(prec.mesIni, prec.yearIni, prec.duracion)
+                                                  mesF = fechaF[0]
+                                                  yearF = fechaF[1]
+                                             if getDiferenciaMes(int(_fecha[0:2]), int(_fecha[3::]), mesF, yearF) > -2:
+                                                  if _horasCon>100:
+                                                       informe[0].delete()
+                                                       msg={'msg':"Error las horas de consesion NO deben ser mayores a 30"}
+                                                  else:
+                                                       informe[0].horascon_set.create(horas=_horasCon)
+                                             else:
+                                                  msg={'msg':"Error esta persona no realizo precursorado en esta fecha"}
+                                                  informe[0].delete()
+                                        else:
+                                             informe[0].delete()
+                                             msg={'msg':"Error esta persona no realizo precursorado en esta fecha"}
+                              else:
+                                   informe.delete()
+                                   msg={'msg':"Error esta persona nunca realizo un precursorado regular o especial"}
                     else:
                          msg={'msg':'Error informe ya existe'}
           else:
