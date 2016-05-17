@@ -225,7 +225,7 @@
 			datInf.getInputs('#informe')
             input=datInf.getDataIn()
 			if(input.vacio==0){
-				keys=new Array('horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'fecha', 'publicador')
+				keys=new Array('horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'obs','fecha','horasCons', 'publicador')
 				datInf.generateJson(keys, '{{ csrf_token }}', id)
 				datInf.setPost("{% url 'secretario:regInf' %}", 'Regitro de informe!', close)
 			}
