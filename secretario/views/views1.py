@@ -1,31 +1,3 @@
-def validarVacio(elements, numerosKeys=[], fechaKeys=[]):
-     elemento=[]
-     vacio=True
-     for i in elements.keys():
-          if i in numerosKeys:
-               try:
-                    int(elements[i])
-               except(ValueError):
-                    vacio=False
-                    elemento.append(i)
-          elif i in fechaKeys:
-               try:
-                    datetime.date(int(elements[i][0:4]), int(elements[i][5:7]), int(elements[i][8:]))
-               except(ValueError):
-                    vacio=False
-                    elemento.append(i)
-          else:
-               if elements[i].strip()=="":
-                    vacio=False
-                    elemento.append(i)
-     return [vacio, elemento]
-
-def msgVacio(vacios):
-     msg={}
-     if len(vacios)>0:
-          msg={'msg':"Por favor no intente hacer trampa"}
-     return msg
-
 def conGrupo(request):
      try:
           request.session['idgrupo']

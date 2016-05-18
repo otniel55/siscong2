@@ -5,8 +5,8 @@ from . import views
 app_name="secretario"
 urlpatterns = [
     url(r'^$', views.index, name='index'),
-	url(r'^grupos/registrar/$', views.registrarGrupo, name='registrarGrupo'),
-    url(r'^registrar/grupos/$', views.grupos_registrar, name='grupos_registrar'),
+	url(r'^grupos/registrar/$', views.grupos.Vista_registrar, name='registrarGrupo'),
+    url(r'^registrar/grupos/$', views.grupos.registrar, name='grupos_registrar'),
     url(r'^consultar/grupos/$', views.conGrupo, name='conGrupo'),
     url(r'^(?P<idGrupo>[0-9]+)/grupoPublicador/$', views.conGrupoofPubs, name='conGrupoofPubs'),
     url(r'^(?P<idGrupo>[0-9]+)/datos_grupo/$', views.datGrupo, name='datGrupo'),

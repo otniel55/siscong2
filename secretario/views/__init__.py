@@ -12,13 +12,8 @@ from django.utils import timezone
 from django.db.models import Q
 from django.contrib.auth.models import User
 #modulos propios del proyexto
-from ..forms import *
 from .views1 import *
-from .grupos_registrar import *
+from .grupos import *
 
 def index(request):
      return render(request, 'layout.html', {'url':0})
-
-def registrarGrupo(request):
-     form = CrearGrupo()
-     return render(request, 'regGrupo.html', {'form': form, 'url':1})
