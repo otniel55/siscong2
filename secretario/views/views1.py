@@ -1,7 +1,3 @@
-def registrarGrupo(request):
-     form = CrearGrupo()
-     return render(request, 'regGrupo.html', {'form': form, 'url':1})
-
 def validarVacio(elements, numerosKeys=[], fechaKeys=[]):
      elemento=[]
      vacio=True
@@ -23,26 +19,6 @@ def validarVacio(elements, numerosKeys=[], fechaKeys=[]):
                     vacio=False
                     elemento.append(i)
      return [vacio, elemento]
-
-def grupos_registrar(request):
-     msg={}
-     validar=validarVacio(request.POST)
-     if validar[0]:
-          _encargado=request.POST['encargado'].upper()
-          _auxiliar=request.POST['auxiliar'].upper()
-          _encargado=_encargado.strip()
-          _auxiliar=_auxiliar.strip()
-          try:
-               verificar = GruposPred.objects.get(encargado=_encargado)
-          except(KeyError, GruposPred.DoesNotExist):
-               grupo=GruposPred(encargado=_encargado, auxiliar=_auxiliar)
-               grupo.save()
-               msg={'msg':"Grupo Registrado con exito", 'on':1}
-          else:
-               msg = {'msg': "Este encargado se encuentra en otro grupo"}
-     else:
-          msg=msgVacio(validar[1])
-     return  HttpResponse(json.dumps(msg))
 
 def msgVacio(vacios):
      msg={}
