@@ -1,5 +1,7 @@
 #libs propias de python
 import datetime
+#modulos de django
+from django.db.models import Q
 #modulos propios del proyecto
 from secretario.models import PubPrecursor
 
@@ -61,3 +63,32 @@ def bajaAuto():
                if diferenciaMes>-1:
                     i.status=False
                     i.save()
+
+def obtenerStatus(mes, year):
+     hoy=datetime.date.today()
+     meses=getDiferenciaMes(mes,year,hoy.month,hoy.year)
+     if meses<1:
+          meses=0
+          status=0
+     elif meses>0 and meses<7:
+          status=1
+     else:
+          status=2
+     return (status, meses)
+
+def prom(nums):
+     acum=0
+     for i in nums:
+          acum+=i
+     if len(nums)>0:
+          acum=acum//len(nums)
+     return acum
+
+def getDiferenciaMes(mesI, yearI, mesF, yearF):
+     if yearF==yearI:
+          meses=(mesF-1)-mesI
+     else:
+          mesYear=(yearF-yearI)*12
+          mesYear=mesYear-mesI
+          meses=mesYear+(mesF-1)
+     return meses
