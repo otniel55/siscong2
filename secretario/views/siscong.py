@@ -42,3 +42,6 @@ class gestion:
               else:
                    modElemets[i]=self.elementos[i]
          return modElemets
+
+def getEdad(fechaIni, fechaFin):
+    return fechaFin.year-fechaIni.year-((fechaFin.month, fechaFin.day)<(fechaIni.month, fechaIni.day))
