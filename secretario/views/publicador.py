@@ -139,3 +139,72 @@ def consultarTodos(request):
           cont=cont+1
      pubs=pubs.values()
      return render(request, 'conPubs.html',{'pub':pubs,'msg':msg, 'url':2})
+
+def consultar(request, idpub):
+     fechaNa=""
+     data={}
+     try:
+          p=Publicador.objects.get(pk=idpub)
+     except(KeyError, Publicador.DoesNotExist):
+          pg="page404.html"
+     else:
+          pg='regPubli.html'
+          request.session['pub']=idpub
+          formPub = regPub(instance=p)
+          cmbGrupo = traerGrupo(initial={'Encargado': p.FKgrupo.pk})
+          mes=p.fechaNa.month
+          day=p.fechaNa.day
+          fechaNa=str(p.fechaNa.year)+"-"+addZero(p.fechaNa.month)+"-"+addZero(p.fechaNa.day)
+          data={'form': formPub, 'form2':cmbGrupo, 'on': 1, 'url':2, 'fechaNa':fechaNa, 'fechaBau':p.fechaBau}
+     return render(request, pg, data)
+
+def addZero(num):
+     if num<10:
+          num="0"+str(num)
+     return str(num)
+
+def modPub(request):
+     hoy=datetime.date.today()
+     nums=['Encargado']
+     vFecha=['fechaNa']
+     validar=gestion(request.POST,nums,vFecha, msg="Error introdujo algun campo incorrecto")
+     if not validar.error:
+          validar.ignore=['fechaBau', 'email']
+          datosP=validar.trimUpper()
+          _nombre=datosP['nombre']
+          _apellido=datosP['apellido']
+          _telefono=datosP['telefono']
+          _direccion =datosP['direccion']
+          _email=datosP['email']
+          _fechaBau=datosP['fechaBau']
+          _fechaNa=datosP['fechaNa']
+          _grupo=datosP['Encargado']
+          edad=getEdad(datetime.date(int(_fechaNa[0:4]),int(_fechaNa[5:7]), int(_fechaNa[8:])), hoy)
+          if edad>3:
+               try:
+                    _id=request.session['pub']
+               except KeyError:
+                    msg="Error! Antes de modificar seleccione un publicador"
+               else:
+                    p=Publicador.objects.get(pk=_id)
+                    try:
+                         g=GruposPred.objects.get(pk=_grupo)
+                    except(KeyError, GruposPred.DoesNotExist):
+                         msg='Grupo no existe'
+                    else:
+                         Publicador.objects.filter(pk=_id).update(FKgrupo=_grupo)
+                         p.nombre=_nombre
+                         p.apellido=_apellido
+                         p.telefono=_telefono
+                         p.direccion=_direccion
+                         p.email=_email
+                         p.fechaBau=_fechaBau
+                         p.fechaNa=_fechaNa
+                         p.save()
+                         msg='Publicador modificado con exito'
+          else:
+               msg="El minimo de edad aceptable es 4 anios en adelante"
+     else:
+          msg=validar.mensaje
+     request.session['msgpub']=msg
+     return HttpResponse(json.dumps({'msg':msg}))

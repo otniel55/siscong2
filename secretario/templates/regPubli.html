@@ -69,6 +69,10 @@
 {% block scripts %}
 	<script>
 		$(document).ready(function() {
+			{% if on %}
+				$("#fechaNA").val("{{ fechaNa }}")
+				$('#fechaBau').val("{{ fechaBau }}")
+			{% endif %}
 
 			$('span.btn').click(function(){
 		  		$('#fechaBau').val('No Bautizado')
@@ -110,7 +114,7 @@
 			datMod.getInputs('.form-group')
             inputs=datMod.getDataIn()
 			if (inputs.vacio==0){
-				keys=new Array('nombre', 'apellido', 'telefono', 'direccion', 'email', 'fechaBau', 'fechaNa', 'Encargado')
+				keys=new Array('nombre', 'apellido', 'telefono', 'direccion', 'email', 'fechaNa', 'fechaBau', 'Encargado')
 				datMod.generateJson(keys, "{{ csrf_token }}")
 				datMod.setPost("{% url 'secretario:modPub' %}", '', redirect)
 			}
