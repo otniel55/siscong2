@@ -1,3 +1,8 @@
+#libs propias de python
+import datetime
+#modulos propios del proyecto
+from secretario.models import PubPrecursor
+
 class gestion:
     elementos={}
     nroKeys=[]
@@ -45,3 +50,14 @@ class gestion:
 
 def getEdad(fechaIni, fechaFin):
     return fechaFin.year-fechaIni.year-((fechaFin.month, fechaFin.day)<(fechaIni.month, fechaIni.day))
+
+def bajaAuto():
+     hoy=datetime.date.today()
+     precs=PubPrecursor.objects.filter(Q(FKprecursor=1) | Q(FKprecursor=2),status=True)
+     for i in precs:
+          if i.duracion!=0:
+               fechaF=getFechaFin(i.mesIni,i.yearIni, i.duracion)
+               diferenciaMes=getDiferenciaMes(fechaF[0],fechaF[1], hoy.month, hoy.year)
+               if diferenciaMes>-1:
+                    i.status=False
+                    i.save()

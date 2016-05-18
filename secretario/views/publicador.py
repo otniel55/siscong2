@@ -84,3 +84,57 @@ def cambiarPub(request):
      else:
           msg=validar.mensaje
      return HttpResponse(json.dumps(msg))
+
+def consultarTodos(request):
+     bajaAuto()
+     promInf=[]
+     try:
+          request.session['msgpub']
+     except KeyError:
+          msg=""
+     else:
+          msg=request.session['msgpub']
+          request.session['msgpub']=""
+     c=[]
+     cont=0
+     pubs={}
+     p=Publicador.objects.all()
+     for i in p:
+          inf=Informe.objects.filter(FKpub=i.pk).order_by("-year", "-mes")
+          if len(inf)>0:
+               status=obtenerStatus(inf[0].mes, inf[0].year)[0]
+               intervalo=obtenerStatus(inf[0].mes, inf[0].year)[1]
+               fecha=str(inf[0].mes)+"-"+str(inf[0].year)
+               if status==0:
+                    mesi=inf[0].mes
+                    yeari=inf[0].year
+                    mesi-=1
+                    if mesi==0:
+                         mesi=12
+                         yeari-=1
+                    informes=Informe.objects.filter(mes=mesi, year=yeari)
+                    if len(informes)>0:
+                         for infs in informes:
+                              add=True
+                              pre=PubPrecursor.objects.filter(FKpub=infs.FKpub.pk).order_by("-yearIni", "-mesIni")
+                              if len(pre)>0:
+                                   if pre[0].duracion==0:
+                                        add=False
+                                   else:
+                                        fechaF=getFechaFin(pre[0].mesIni,pre[0].yearIni,pre[0].duracion)
+                                        diferencia=getDiferenciaMes(fechaF[0],fechaF[1],mesi,yeari)
+                                        if diferencia<0:
+                                             add=False
+                              if add:
+                                   promInf.append(infs.horas)
+                         if len(promInf)>0:
+                              if prom(promInf)>inf[0].horas:
+                                   status=4
+          else:
+               status=3
+               intervalo="Este publicador nunca ha informado"
+               fecha="Nulo"
+          pubs[cont]={'nombre':i.nombre, 'apellido':i.apellido, 'fechaBau':i.fechaBau, 'edad':obteneredad(i), 'FKgrupo':i.FKgrupo, 'id':i.pk, 'g':i.FKgrupo.pk, 'status': status, 'intervalo': intervalo, 'fecha':fecha}
+          cont=cont+1
+     pubs=pubs.values()
+     return render(request, 'conPubs.html',{'pub':pubs,'msg':msg, 'url':2})
