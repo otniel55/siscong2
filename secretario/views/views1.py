@@ -1,19 +1,3 @@
-from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponseRedirect, HttpResponse
-from django.template import loader
-from .forms import *
-from django.core.urlresolvers import reverse
-from secretario.models import *
-from django.views import generic
-import json
-import datetime
-from django.utils import timezone
-from django.db.models import Q
-from django.contrib.auth.models import User
-
-def index(request):
-     return render(request, 'layout.html', {'url':0})
-
 def registrarGrupo(request):
      form = CrearGrupo()
      return render(request, 'regGrupo.html', {'form': form, 'url':1})
