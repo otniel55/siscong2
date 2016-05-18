@@ -49,3 +49,38 @@ def registrar(request):
      else:
           msg=validar.mensaje
      return HttpResponse(json.dumps(msg))
+
+def consultarNameGroup(request):
+     try:
+        p=Publicador.objects.get(pk=request.POST['id'])
+     except(KeyError, Publicador.DoesNotExist):
+        return HttpResponse(json.dumps({'msg':'Error, Publicador no existe'}))
+     else:
+          p={'nombre':p.nombre, 'apellido':p.apellido,'grupo':p.FKgrupo.pk}
+          datos={'pub':p}
+          return HttpResponse(json.dumps(datos))
+
+def cambiarPub(request):
+     n=['id','grupo']
+     validar=gestion(request.POST,n)
+     if not validar.error:
+          _p=request.POST['id']
+          _g=request.POST['grupo']
+          try:
+               p=Publicador.objects.get(pk=_p)
+          except(KeyError, Publicador.DoesNotExist):
+               msg={'msg':'Publicador no existe'}
+          else:
+               try:
+                    g=GruposPred.objects.get(pk=_g)
+               except(KeyError, GruposPred.DoesNotExist):
+                    msg={'msg':'Grupo no existe'}
+               else:
+                    if p.FKgrupo.pk!=g.pk:
+                         Publicador.objects.filter(pk=_p).update(FKgrupo=g)
+                         msg={'msg':'El publicador ha sido movido con exito', 'on':1}
+                    else:
+                         msg={'msg':'No hubo ningun cambio realizado'}
+     else:
+          msg=validar.mensaje
+     return HttpResponse(json.dumps(msg))

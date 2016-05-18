@@ -15,8 +15,8 @@ urlpatterns = [
     #url relacionadas con publicadores
     url(r'^regPubli/$', views.publicador.vistaRegistrar, name='regPubli'),
     url(r'^publicreg/$', views.publicador.registrar, name='publicReg'),
-    url(r'^conPub/$', views.conPub, name='conPub'),
-    url(r'^cambiarpub/$', views.cambiarPub, name='cambiarPub'),
+    url(r'^conPub/$', views.publicador.consultarNameGroup, name='conPub'),
+    url(r'^cambiarpub/$', views.publicador.cambiarPub, name='cambiarPub'),
     url(r'^consultar/Publicadores/$', views.conPubs, name='conPubs'),
     url(r'^(?P<idpub>[0-9]+)/Publicador/$', views.traerPub, name='traerPub'),
     url(r'^informe/registrar/$', views.viewInfo, name='viewInfo'),

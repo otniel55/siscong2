@@ -1,15 +1,3 @@
-
-def conPub(request):
-     cont=0
-     try:
-        p=Publicador.objects.get(pk=request.POST['id'])
-     except(KeyError, Publicador.DoesNotExist):
-        return HttpResponse(json.dumps({'msg':'Error, Publicador no existe'}))
-     else:
-          p={'nombre':p.nombre, 'apellido':p.apellido,'grupo':p.FKgrupo.pk}
-          datos={'pub':p}
-          return HttpResponse(json.dumps(datos))
-
 def conPubs(request):
      bajaAuto()
      promInf=[]
