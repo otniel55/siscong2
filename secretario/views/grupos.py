@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 #modulos propios del proyecto
 from ..forms import CrearGrupo, traerGrupo, modalPub, regInforme
-from .siscong import validacion
+from .siscong import gestion
 #modelos
 from secretario.models import GruposPred, Publicador
 
@@ -16,13 +16,12 @@ def Vista_registrar(request):
 
 def registrar(request):
      msg={}
-     validar=validacion(request.POST)
+     validar=gestion(request.POST)
      validar.validar()
      if not validar.error:
-          _encargado=request.POST['encargado'].upper()
-          _auxiliar=request.POST['auxiliar'].upper()
-          _encargado=_encargado.strip()
-          _auxiliar=_auxiliar.strip()
+          datosG=validar.trimUpper()
+          _encargado=datosG['encargado']
+          _auxiliar=datosG['auxiliar']
           try:
                verificar = GruposPred.objects.get(encargado=_encargado)
           except(KeyError, GruposPred.DoesNotExist):
@@ -73,3 +72,28 @@ def consultar(request,idGrupo):
                  'modalGrupo': modalGrupo, 'modalInfo': modalInfo, 'y':y, 'url':1,
                  }
      return render(request, 'datGrupo.html',datos)
+
+def modificar(request):
+     validar=gestion(request.POST)
+     validar.validar()
+     if not validar.error:
+          datosG=validar.trimUpper()
+          _encargado=datosG['enc']
+          _auxiliar=datosG['aux']
+          try:
+               _pk=request.session['conGrupoId']
+          except(KeyError):
+               msg={'msg':'Seleccione un grupo.'}
+          else:
+               try:
+                    g=GruposPred.objects.get(pk=_pk)
+               except(KeyError, GruposPred.DoesNotExist):
+                    msg={'msg':'Grupo no existe'}
+               else:
+                    g.encargado=_encargado
+                    g.auxiliar=_auxiliar
+                    g.save()
+                    msg={'msg':'Grupo modificado con exito', 'on':1}
+     else:
+          msg=validar.mensaje
+     return HttpResponse(json.dumps(msg))

@@ -5,18 +5,19 @@ from . import views
 app_name="secretario"
 urlpatterns = [
     url(r'^$', views.index, name='index'),
+    #urls relacionada con grupos
 	url(r'^grupos/registrar/$', views.grupos.Vista_registrar, name='registrarGrupo'),
     url(r'^registrar/grupos/$', views.grupos.registrar, name='grupos_registrar'),
     url(r'^consultar/grupos/$', views.grupos.vistaConsultar, name='conGrupo'),
     url(r'^(?P<idGrupo>[0-9]+)/grupoPublicador/$', views.grupos.conGrupoofPubs, name='conGrupoofPubs'),
     url(r'^(?P<idGrupo>[0-9]+)/datos_grupo/$', views.grupos.consultar, name='datGrupo'),
+    url(r'^modGrup/$', views.grupos.modificar, name='modGrup'),
     url(r'^regPubli/$', views.regPubli, name='regPubli'),
     url(r'^conPub/$', views.conPub, name='conPub'),
     url(r'^publicreg/$', views.publicReg, name='publicReg'),
     url(r'^cambiarpub/$', views.cambiarPub, name='cambiarPub'),
     url(r'^consultar/Publicadores/$', views.conPubs, name='conPubs'),
     url(r'^(?P<idpub>[0-9]+)/Publicador/$', views.traerPub, name='traerPub'),
-	url(r'^modGrup/$', views.modGrup, name='modGrup'),
     url(r'^informe/registrar/$', views.viewInfo, name='viewInfo'),
 	url(r'^regInf/$', views.regInf, name='regInf'),
 	url(r'^(?P<vista>[1-2]+)/(?P<idPub>[0-9]+)/Tarjeta/(?P<y>[0-9]+)/$', views.tarjeta, name='tarjeta'),

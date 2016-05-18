@@ -1,3 +1,4 @@
+
 def conPub(request):
      cont=0
      try:
@@ -220,42 +221,6 @@ def modPub(request):
           msg="Error introdujo algun campo invalido"
      request.session['msgpub']=msg
      return HttpResponse(json.dumps({'msg':msg}))
-
-def trimUpper(elements, no=[]):
-     modElemets={}
-     for i in elements.keys():
-          if i not in no:
-               try:
-                    modElemets[i]=elements[i].upper().strip()
-               except(AttributeError):
-                    modElemets[i]=elements[i]
-          else:
-               modElemets[i]=elements[i]
-     return modElemets
-
-def modGrup(request):
-     validar=validarVacio(request.POST)
-     if validar[0]:
-          datosG=trimUpper(request.POST)
-          _encargado=datosG['enc']
-          _auxiliar=datosG['aux']
-          try:
-               _pk=request.session['conGrupoId']
-          except(KeyError):
-               msg={'msg':'Seleccione un grupo.'}
-          else:
-               try:
-                    g=GruposPred.objects.get(pk=_pk)
-               except(KeyError, GruposPred.DoesNotExist):
-                    msg={'msg':'Grupo no existe'}
-               else:
-                    g.encargado=_encargado
-                    g.auxiliar=_auxiliar
-                    g.save()
-                    msg={'msg':'Grupo modificado con exito', 'on':1}
-     else:
-          msg=msgVacio(validar[1])
-     return HttpResponse(json.dumps(msg))
 
 def viewInfo(request):
      formInfo = regInforme()
