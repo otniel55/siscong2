@@ -98,7 +98,7 @@
 			datP.getInputs('.form-group')
             inputs=datP.getDataIn()
 			if (inputs.vacio==0){
-				keys=new Array('nombre', 'apellido', 'telefono', 'direccion', 'email', 'fechaBau', 'fechaNa', 'Encargado')
+				keys=new Array('nombre', 'apellido', 'telefono', 'direccion', 'email', 'fechaNa', 'fechaBau', 'Encargado')
 				datP.generateJson(keys, "{{ csrf_token }}")
 				datP.setPost("{% url 'secretario:publicReg' %}", 'Registro de Publicadores!', limpiar)
 			}

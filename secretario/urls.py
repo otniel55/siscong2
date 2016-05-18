@@ -12,9 +12,10 @@ urlpatterns = [
     url(r'^(?P<idGrupo>[0-9]+)/grupoPublicador/$', views.grupos.conGrupoofPubs, name='conGrupoofPubs'),
     url(r'^(?P<idGrupo>[0-9]+)/datos_grupo/$', views.grupos.consultar, name='datGrupo'),
     url(r'^modGrup/$', views.grupos.modificar, name='modGrup'),
-    url(r'^regPubli/$', views.regPubli, name='regPubli'),
+    #url relacionadas con publicadores
+    url(r'^regPubli/$', views.publicador.vistaRegistrar, name='regPubli'),
+    url(r'^publicreg/$', views.publicador.registrar, name='publicReg'),
     url(r'^conPub/$', views.conPub, name='conPub'),
-    url(r'^publicreg/$', views.publicReg, name='publicReg'),
     url(r'^cambiarpub/$', views.cambiarPub, name='cambiarPub'),
     url(r'^consultar/Publicadores/$', views.conPubs, name='conPubs'),
     url(r'^(?P<idpub>[0-9]+)/Publicador/$', views.traerPub, name='traerPub'),

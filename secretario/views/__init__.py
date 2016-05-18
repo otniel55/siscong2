@@ -14,6 +14,7 @@ from django.contrib.auth.models import User
 #modulos propios del proyexto
 from .views1 import *
 from .grupos import *
+from .publicador import *
 
 def index(request):
      return render(request, 'layout.html', {'url':0})

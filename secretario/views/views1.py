@@ -93,56 +93,6 @@ def obtenerStatus(mes, year):
           status=2
      return (status, meses)
 
-def obteneredad(persona, tb=0):
-     hoy=datetime.date.today()
-     if tb==0:
-          fecha=persona.fechaNa
-     else:
-          year=int(persona.fechaBau[0:4])
-          mes=int(persona.fechaBau[5:7])
-          dia=int(persona.fechaBau[8:])
-          fecha=datetime.date(year,mes,dia)
-     return hoy.year-fecha.year-((hoy.month, hoy.day)<(fecha.month, fecha.day))
-
-def regPubli(request):
-     formPub = regPub()
-     cmbGrupo = traerGrupo()
-     return render(request, 'regPubli.html', {'form': formPub, 'form2': cmbGrupo, 'url':2})
-
-def publicReg(request):
-     hoy=datetime.date.today()
-     nums=['Encargado']
-     vFechas=['fechaNa']
-     validar=validarVacio(request.POST, nums, vFechas)
-     if validar[0]:
-          datosP=trimUpper(request.POST, ['email', 'fechaBau'])
-          _nombre=datosP['nombre']
-          _apellido=datosP['apellido']
-          _telefono=datosP['telefono']
-          _direccion =datosP['direccion']
-          _email=datosP['email']
-          _fechaBau=datosP['fechaBau']
-          _fechaNa=datosP['fechaNa']
-          _grupo=datosP['Encargado']
-          edad=hoy.year-int(_fechaNa[0:4])-((hoy.month, hoy.day)<(int(_fechaNa[5:7]), (int(_fechaNa[8:]))))
-          if edad>3:
-               try:
-                    pub=Publicador.objects.get(nombre=_nombre, apellido=_apellido, fechaNa=_fechaNa)
-               except(KeyError, Publicador.DoesNotExist):
-                    try:
-                         g=GruposPred.objects.get(pk=_grupo)
-                    except(KeyError, GruposPred.DoesNotExist):
-                         msg={'msg':"El grupo no existe"}
-                    else:
-                         g.publicador_set.create(nombre=_nombre, apellido=_apellido, telefono=_telefono, direccion=_direccion,email=_email, fechaBau=_fechaBau, fechaNa=_fechaNa)
-                         msg={'msg':"Publicador Registrado con exito", 'on':1}
-               else:
-                    msg={ 'msg': "Error! Este publicador ya esta registrado."}
-          else:
-               msg={'msg':"Error! Para ser registrado debe tener como minimo 4 anios"}
-     else:
-          msg=msgVacio(validar[1])
-     return HttpResponse(json.dumps(msg))
 
 def cambiarPub(request):
      validar=validarVacio(request.POST)
