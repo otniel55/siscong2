@@ -52,36 +52,6 @@ def conPubs(request):
      pubs=pubs.values()
      return render(request, 'conPubs.html',{'pub':pubs,'msg':msg, 'url':2})
 
-def prom(nums):
-     acum=0
-     for i in nums:
-          acum+=i
-     if len(nums)>0:
-          acum=acum//len(nums)
-     return acum
-
-def getDiferenciaMes(mesI, yearI, mesF, yearF):
-     if yearF==yearI:
-          meses=(mesF-1)-mesI
-     else:
-          mesYear=(yearF-yearI)*12
-          mesYear=mesYear-mesI
-          meses=mesYear+(mesF-1)
-     return meses
-
-def obtenerStatus(mes, year):
-     hoy=datetime.date.today()
-     meses=getDiferenciaMes(mes,year,hoy.month,hoy.year)
-     if meses<1:
-          meses=0
-          status=0
-     elif meses>0 and meses<7:
-          status=1
-     else:
-          status=2
-     return (status, meses)
-
-
 def cambiarPub(request):
      validar=validarVacio(request.POST)
      if validar[0]:

@@ -7,7 +7,7 @@ from django.shortcuts import render
 #modulos propios del proyecto
 from ..forms import traerGrupo, regPub
 from .siscong import *
-from secretario.models import GruposPred, Publicador
+from secretario.models import GruposPred, Publicador, Informe
 
 def vistaRegistrar(request):
      formPub = regPub()
@@ -86,6 +86,7 @@ def cambiarPub(request):
      return HttpResponse(json.dumps(msg))
 
 def consultarTodos(request):
+     hoy=datetime.date.today()
      bajaAuto()
      promInf=[]
      try:
@@ -94,7 +95,7 @@ def consultarTodos(request):
           msg=""
      else:
           msg=request.session['msgpub']
-          request.session['msgpub']=""
+          del request.session['msgpub']
      c=[]
      cont=0
      pubs={}
@@ -134,7 +135,7 @@ def consultarTodos(request):
                status=3
                intervalo="Este publicador nunca ha informado"
                fecha="Nulo"
-          pubs[cont]={'nombre':i.nombre, 'apellido':i.apellido, 'fechaBau':i.fechaBau, 'edad':obteneredad(i), 'FKgrupo':i.FKgrupo, 'id':i.pk, 'g':i.FKgrupo.pk, 'status': status, 'intervalo': intervalo, 'fecha':fecha}
+          pubs[cont]={'nombre':i.nombre, 'apellido':i.apellido, 'fechaBau':i.fechaBau, 'edad':getEdad(i.fechaNa, hoy), 'FKgrupo':i.FKgrupo, 'id':i.pk, 'g':i.FKgrupo.pk, 'status': status, 'intervalo': intervalo, 'fecha':fecha}
           cont=cont+1
      pubs=pubs.values()
      return render(request, 'conPubs.html',{'pub':pubs,'msg':msg, 'url':2})
