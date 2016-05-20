@@ -16,16 +16,16 @@
 
 						<div class="optionGroup">
 							<label class="radio-inline">
-								<input type="radio" name="iCheck"> Nombre
+								<input type="radio" id="opt1" name="iCheck"> Nombre
 							</label>
 							<label class="radio-inline">
-								<input type="radio" name="iCheck"> Edad
+								<input type="radio" id="opt2" name="iCheck"> Edad
 							</label>
 							<label class="radio-inline">
-								<input type="radio" name="iCheck"> Fecha
+								<input type="radio" id="opt3" name="iCheck"> Fecha
 							</label>
 							<label class="radio-inline">
-								<input type="radio" name="iCheck"> Grupo
+								<input type="radio" id="opt4" name="iCheck"> Grupo
 							</label>
 						</div>
 
@@ -75,16 +75,16 @@
 
 								<div class="optionGroup">
 									<label class="radio-inline">
-										<input type="radio" name="iCheck"> Nombre y Apellido
+										<input type="radio" id="opt1" name="iCheck"> Nombre
 									</label>
 									<label class="radio-inline">
-										<input type="radio" name="iCheck"> Edad
+										<input type="radio" id="opt2" name="iCheck"> Edad
 									</label>
 									<label class="radio-inline">
-										<input type="radio" name="iCheck"> Fecha
+										<input type="radio" id="opt3" name="iCheck"> Fecha
 									</label>
 									<label class="radio-inline">
-										<input type="radio" name="iCheck"> Grupo
+										<input type="radio" id="opt4" name="iCheck"> Grupo
 									</label>
 								</div>
 
@@ -137,16 +137,16 @@
 							<div class="col-sm-6">
 								<div class="optionGroup">
 									<label class="radio-inline">
-										<input type="radio" name="iCheck"> Nombre
+										<input type="radio" id="opt1" name="iCheck"> Nombre
 									</label>
 									<label class="radio-inline">
-										<input type="radio" name="iCheck"> Edad
+										<input type="radio" id="opt2" name="iCheck"> Edad
 									</label>
 									<label class="radio-inline">
-										<input type="radio" name="iCheck"> Fecha
+										<input type="radio" id="opt3" name="iCheck"> Fecha
 									</label>
 									<label class="radio-inline">
-										<input type="radio" name="iCheck"> Grupo
+										<input type="radio" id="opt4" name="iCheck"> Grupo
 									</label>
 								</div>
 
@@ -432,8 +432,7 @@
 		})
 
 		//dateTable
-
-			var table = $('#public').dataTable({
+			var table = $('#public').DataTable({
 				"bPaginate":false,
 				"bInfo":false,
 				"bFilter":true,
@@ -445,14 +444,12 @@
 
 			$('#public_filter').css('display', 'none')
 
-	        $('.filtro').on( 'keyup change', function () {
-							table.fnFilter(this.value);
-						});
-
-        //fin dateTable
+	        $('.filtro').on( 'keyup change', function (){
+				$('#public').dataTable().fnFilter( this.value )
+			})
+        //end dateTable
 
 		//dataTimePicker
-
 			$(function () {
 	            $('.pickerPubs').datetimepicker({
 	                inline: true,
@@ -464,22 +461,59 @@
 			            vertical: 'auto'
 			        }
 	            }).on("dp.change", function(e) {
-						date = $('#picker').data("DateTimePicker").viewDate()
-						date = moment(date._d.toJSON()).format('DD-MM-YYYY')
-	            		$('#filtro').val(date)
-	            		$('#filtro').change()	
+						date = $('.pickerPubs').data("DateTimePicker").viewDate()
+						date = moment(date._d.toJSON()).format('YYYY-MM-DD')
+	            		$('.filtro').val(date)
+	            		$('.filtro').change()
 	        		});
 	        });
+		//end dataTimePicker
 
-		//fin del dataTimePicker
+		//icheck
+			var column
+			$('input').on('ifChecked', function(){
+				opt = ""
+				column = ""
 
-		//boton limpiar filtro
+				opt = parseInt( $(this).eq(0).attr('id').substr(-1) )
+
+				if(opt == 1){
+					column = table.column(0)
+					console.log("entre en: 0")
+				}
+
+				if(opt == 2){
+					column = table.column(1)
+					console.log("entre en: 1")
+				}
+
+				if(opt == 3){
+					column = table.column(2)
+					console.log("entre en: 2")
+				}
+
+				if(opt == 4){
+					column = table.column(3)
+					console.log("entre en: 3")
+				}
+			})
+
+			$('.filtro').on( 'keyup change', function(){
+				if( column && column.search() !== this.value ){
+					column
+						.search( this.value )
+						.draw();
+				}
+			})
+		//end icheck
+
+		//button clear filter
 		$("#clear").click(function(){
-			$('#filtro').val("")
-			$('#filtro').change()
+			$('.filtro').val("")
+			$('.filtro').change()
 		})
 
-		//dialogo
+		//dialog
 			$('td.estado').mouseover(function(){
 				$('#dialogo').html(
 					$(this).find('div').html()
@@ -493,6 +527,9 @@
 			$('td.estado').mouseleave(function(){
 				$('#dialogo').dialog("destroy")
 			})
+		//end dialog
+
+		//alert when edit public
             {% if msg %}
                 $.gritter.add({
 					title: 'Modificar publicador',
@@ -503,6 +540,6 @@
 					class_name: ''
 				});
             {% endif %}
-		//fin del dialogo
+		//end alert
 	</script>
 {% endblock %}
