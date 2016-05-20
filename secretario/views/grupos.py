@@ -12,7 +12,7 @@ from secretario.models import GruposPred, Publicador
 
 def Vista_registrar(request):
      form = CrearGrupo()
-     return render(request, 'regGrupo.html', {'form': form, 'url':1})
+     return render(request, 'Grupo/regGrupo.html', {'form': form, 'url':1})
 
 def registrar(request):
      msg={}
@@ -49,11 +49,11 @@ def vistaConsultar(request):
                cGrupo = traerGrupo(initial={'Encargado': fkgrupo })
                request.session['idgrupo']=""
                on = 1
-     return render(request, 'conGrupo.html', {'form': cGrupo, 'onPub': on, 'url':1 })
+     return render(request, 'Grupo/conGrupo.html', {'form': cGrupo, 'onPub': on, 'url':1 })
 
 def conGrupoofPubs(request, idGrupo):
      cGrupo = traerGrupo(initial={'Encargado': idGrupo})
-     return render(request, 'conGrupo.html', {'form': cGrupo, 'onPub': 1, 'url':1 })
+     return render(request, 'Grupo/conGrupo.html', {'form': cGrupo, 'onPub': 1, 'url':1 })
 
 def consultar(request,idGrupo):
      try:
@@ -71,7 +71,7 @@ def consultar(request,idGrupo):
           datos = {'form': formDatGrupo, 'publicadores': p, 'num': g.pk, 'modalPub': formPub,
                  'modalGrupo': modalGrupo, 'modalInfo': modalInfo, 'y':y, 'url':1,
                  }
-     return render(request, 'datGrupo.html',datos)
+     return render(request, 'Grupo/datGrupo.html',datos)
 
 def modificar(request):
      validar=gestion(request.POST)
