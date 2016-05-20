@@ -12,7 +12,7 @@ from secretario.models import GruposPred, Publicador, Informe
 def vistaRegistrar(request):
      formPub = regPub()
      cmbGrupo = traerGrupo()
-     return render(request, 'regPubli.html', {'form': formPub, 'form2': cmbGrupo, 'url':2})
+     return render(request, 'Publicador/regPubli.html', {'form': formPub, 'form2': cmbGrupo, 'url':2})
 
 def registrar(request):
      hoy=datetime.date.today()
@@ -138,7 +138,7 @@ def consultarTodos(request):
           pubs[cont]={'nombre':i.nombre, 'apellido':i.apellido, 'fechaBau':i.fechaBau, 'edad':getEdad(i.fechaNa, hoy), 'FKgrupo':i.FKgrupo, 'id':i.pk, 'g':i.FKgrupo.pk, 'status': status, 'intervalo': intervalo, 'fecha':fecha}
           cont=cont+1
      pubs=pubs.values()
-     return render(request, 'conPubs.html',{'pub':pubs,'msg':msg, 'url':2})
+     return render(request, 'Publicador/conPubs.html',{'pub':pubs,'msg':msg, 'url':2})
 
 def consultar(request, idpub):
      fechaNa=""
@@ -148,7 +148,7 @@ def consultar(request, idpub):
      except(KeyError, Publicador.DoesNotExist):
           pg="page404.html"
      else:
-          pg='regPubli.html'
+          pg='Publicador/regPubli.html'
           request.session['pub']=idpub
           formPub = regPub(instance=p)
           cmbGrupo = traerGrupo(initial={'Encargado': p.FKgrupo.pk})
