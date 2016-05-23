@@ -163,7 +163,7 @@ def addZero(num):
           num="0"+str(num)
      return str(num)
 
-def modPub(request):
+def modificar(request):
      hoy=datetime.date.today()
      nums=['Encargado']
      vFecha=['fechaNa']

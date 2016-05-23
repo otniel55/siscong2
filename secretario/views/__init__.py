@@ -15,6 +15,7 @@ from django.contrib.auth.models import User
 from .views1 import *
 from .grupos import *
 from .publicador import *
+from .informe import *
 
 def index(request):
      return render(request, 'layout.html', {'url':0})
