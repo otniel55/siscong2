@@ -507,11 +507,60 @@
 			})
 		//end icheck
 
+		//panel
+			panels = $('.visible-lg .btn-group')
+			console.log(panels)
+
+			//first group
+				group1 = panels.eq(0).children('button')
+
+				//search for 'no bautazados'
+				group1.eq(0).click(function(){
+					$("#clear").click()
+					table.column(2).search( 'No Bautizado' ).draw()
+				})
+
+				//search for 'bautizados'
+				group1.eq(1).click(function(){
+					$("#clear").click()
+					fechai = '1900'
+					fechaf = moment( new Date() ).format('YYYY')
+					table.draw()
+				})
+
+				//search for 'mayores de 1 año'
+				group1.eq(2).click(function(){
+					$("#clear").click()
+					fechaActual = moment( new Date() ).format('YYYY-MM-DD')
+					fechaActual = moment(fechaActual)
+					table.draw()
+				})
+			//end first group
+
+			//second group
+				group2 = panels.eq(2).children('button')
+
+				group2.eq(0).click(function(){
+					$("#clear").click()
+					look = 1
+					table.draw()
+				})
+
+				group2.eq(1).click(function(){
+					$("#clear").click()
+					look = 2
+					table.draw()
+				})
+			//end second group
+		//end panel
+
 		//button clear filter
-		$("#clear").click(function(){
-			$('.filtro').val("")
-			$('.filtro').change()
-		})
+			$("#clear").click(function(){
+				fechai = fechaf = fechaActual = look = ""
+				$('.filtro').val("").change()
+				table.columns().search('').draw()
+			})
+		//end button clear
 
 		//dialog
 			$('td.estado').mouseover(function(){
