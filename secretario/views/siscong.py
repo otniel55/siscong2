@@ -53,6 +53,15 @@ class gestion:
 def getEdad(fechaIni, fechaFin):
     return fechaFin.year-fechaIni.year-((fechaFin.month, fechaFin.day)<(fechaIni.month, fechaIni.day))
 
+def getFechaFin(mesI, yearI, duracion):
+     for i in range(1, duracion):
+          mesI+=1
+          if mesI==13:
+               mesI=1
+               yearI+=1
+     fecha=[mesI, yearI]
+     return fecha
+
 def bajaAuto():
      hoy=datetime.date.today()
      precs=PubPrecursor.objects.filter(Q(FKprecursor=1) | Q(FKprecursor=2),status=True)
