@@ -20,11 +20,11 @@ urlpatterns = [
     url(r'^consultar/Publicadores/$', views.publicador.consultarTodos, name='conPubs'),
     url(r'^(?P<idpub>[0-9]+)/Publicador/$', views.publicador.consultar, name='traerPub'),
     url(r'^modPub/$', views.publicador.modificar, name='modPub'),
+	url(r'^Publicador/verTarjeta$', views.publicador.verTarjetaPub, name='verTarjetaPub'),
     #urls relacionadas con informes
 	url(r'^regInf/$', views.informe.registrar, name='regInf'),
-	url(r'^(?P<vista>[1-2]+)/(?P<idPub>[0-9]+)/Tarjeta/(?P<y>[0-9]+)/$', views.tarjeta, name='tarjeta'),
+	url(r'^(?P<vista>[1-2]+)/(?P<idPub>[0-9]+)/Tarjeta/(?P<y>[0-9]+)/$', views.informe.tarjeta, name='tarjeta'),
 	url(r'^conPubG/$', views.conPubG, name='conPubG'),
-	url(r'^Publicador/verTarjeta$', views.verTarjetaPub, name='verTarjetaPub'),
     url(r'^Precursores/horas/$', views.editPrecur, name='editPrecur'),
     url(r'^Precursores/nombrar/$', views.vistaNombrar, name='vistaNombrar'),
     url(r'^nombrar/$', views.NombrarPrecur, name='NombrarPrecur'),

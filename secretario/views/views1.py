@@ -1,34 +1,3 @@
-def tarjeta(request, vista, idPub, y):
-     yIni=int(y[:4])
-     yFin=int(y[4:])
-     datos={}
-     cont=0
-     inf={}
-     try:
-          p=Publicador.objects.get(pk=idPub)
-     except(KeyError, Publicador.DoesNotExist):
-          pagina="page404.html"
-     else:
-          infs=Informe.objects.filter(Q(year=yIni, mes__in=range(9, 13)) | Q(year=yFin, mes__in=range(1,9)), FKpub=idPub)
-          if len(infs)>0 and yIni<yFin:
-               request.session['tarjetaPub']=idPub
-               request.session['tarjetaY']=y
-               for i in infs:
-                    inf[cont]={'mes':datetime.date(2016,i.mes,4), 'horas':i.horas, 'publicaciones':i.publicaciones, 'videos':i.videos, 'revisitas':i.revisitas, 'estudios':i.estudios}
-                    cont+=1
-               inf=inf.values()
-               datos={'pub':inf, 'p':p, 'url':2}
-          else:
-               datos={'vacio':1, 'url':2}
-
-          if vista == '1':
-               pagina = 'conTarjetaGrupoPub.html'
-               request.session['idgrupo'] = p.FKgrupo.pk
-          else:
-               pagina = 'tarjetaPub.html'
-
-     return render(request, pagina , datos)
-
 def modInf(request):
      msg={}
      try:
@@ -81,17 +50,6 @@ def conPubG(request):
           else:
                datos={'on':1, 'msg':'Este grupo no tiene ningun publcador'}
      return HttpResponse(json.dumps(datos))
-
-def verTarjetaPub(request):
-     years=[]
-     cont=0
-     yearHoy=datetime.date.today().year
-     while cont<5:
-          years.append([yearHoy-1, yearHoy])
-          yearHoy=yearHoy-1
-          cont+=1
-     cGrupo = traerGrupo()
-     return render(request, 'verTarjetaPub.html', {'form': cGrupo, 'years':years, 'url':2})
 
 def editPrecur(request):
      return render(request, 'editPrecur.html', {'precur': Precursor.objects.all(), 'url':3})
@@ -468,15 +426,6 @@ def yearServicio(request):
                else:
                     data={'msg':"Esta persona nunca ha sido precursor."}
      return HttpResponse(json.dumps(data))
-
-def getFechaFin(mesI, yearI, duracion):
-     for i in range(1, duracion):
-          mesI+=1
-          if mesI==13:
-               mesI=1
-               yearI+=1
-     fecha=[mesI, yearI]
-     return fecha
 
 def arrayYear(mesI,yearI,mesF,yearF, normalY=0):
      years=[]

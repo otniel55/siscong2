@@ -4,6 +4,7 @@ import json
 #modulos de django
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.db.models import Q
 #modulos propios del proyecto
 from .siscong import *
 from secretario.models import Publicador, Informe
@@ -83,18 +84,18 @@ def tarjeta(request, vista, idPub, y):
           if len(infs)>0 and yIni<yFin:
                request.session['tarjetaPub']=idPub
                request.session['tarjetaY']=y
-               for i in infs:
-                    inf[cont]={'mes':datetime.date(2016,i.mes,4), 'horas':i.horas, 'publicaciones':i.publicaciones, 'videos':i.videos, 'revisitas':i.revisitas, 'estudios':i.estudios}
-                    cont+=1
+               inf=arrayObjectToDict(infs,['Idinf', 'year', 'FKpub_id', '_state','mes'],{'mes':{'datos':['mes'],'function':convertToDate}})
                inf=inf.values()
                datos={'pub':inf, 'p':p, 'url':2}
           else:
                datos={'vacio':1, 'url':2}
-
           if vista == '1':
-               pagina = 'conTarjetaGrupoPub.html'
+               pagina = 'Informe/conTarjetaGrupoPub.html'
                request.session['idgrupo'] = p.FKgrupo.pk
           else:
-               pagina = 'tarjetaPub.html'
+               pagina = 'Informe/tarjetaPub.html'
 
      return render(request, pagina , datos)
+
+def convertToDate(mes):
+     return datetime.date(2016,mes[0],4)
