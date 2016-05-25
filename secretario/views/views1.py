@@ -484,61 +484,6 @@ def Regusu(request):
           msg={'msg':'Por favor no intente hacer trampa'}
      return HttpResponse(json.dumps(msg))
 
-def conInfPrec(request):
-     cont = 0
-     data = {}
-     try:
-          mes = int(request.POST['fecha'][0:2])
-          year = int(request.POST['fecha'][3:])
-     except:
-          data = {'msg': "No intente hacer trampa"}
-     else:
-          meses = []
-          meses.append([year, mes])
-          for i in range(1, 6):
-               mes -= 1
-               if mes == 0:
-                    mes = 12
-                    year -= 1
-               meses.append([year, mes])
-          meses.sort(reverse=True)
-          precurs = PubPrecursor.objects.all().order_by("-yearIni", "-mesIni")
-          for i in meses:
-               promH = []
-               promE = []
-               promR = []
-               contP = 0
-               data[cont]={'mes':i[1], 'year':i[0]}
-               for p in precurs:
-                    if getDiferenciaMes(p.mesIni, p.yearIni, i[1], i[0]) > -2:
-                         if p.duracion == 0:
-                              mesF = i[1]
-                              yearF = i[0]
-                         else:
-                              fechaF = getFechaFin(p.mesIni, p.yearIni, p.duracion)
-                              mesF = fechaF[0]
-                              yearF = fechaF[1]
-                         if getDiferenciaMes(i[1], i[0], mesF, yearF) > -2:
-                              data[cont][contP] = {'nombre': p.FKpub.nombre + " " + p.FKpub.apellido,
-                                                   'tipo': p.FKprecursor.nombre}
-                              try:
-                                   inf = Informe.objects.get(FKpub=p.FKpub.pk, mes=i[1], year=i[0])
-                              except:
-                                   promH.append(0)
-                                   promE.append(0)
-                                   promR.append(0)
-                              else:
-                                   promH.append(inf.horas)
-                                   promE.append(inf.estudios)
-                                   promR.append(inf.revisitas)
-                              contP += 1
-               if len(data[cont]) > 1:
-                    data[cont]['promH'] = prom(promH)
-                    data[cont]['promE'] = prom(promE)
-                    data[cont]['promR'] = prom(promR)
-               cont += 1
-     return HttpResponse(json.dumps(data))
-
 def conEstPub(request):
      data={}
      try:

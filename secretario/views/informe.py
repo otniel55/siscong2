@@ -250,6 +250,43 @@ def conInfPrec(request):
                cont += 1
      return HttpResponse(json.dumps(data))
 
+def conEstPub(request):
+     data={}
+     try:
+          mes = int(request.POST['fecha'][0:2])
+          year = int(request.POST['fecha'][3:])
+     except:
+          data = {'msg': "No intente hacer trampa"}
+     else:
+          cont=0
+          meses = arrayUltSixMonth(mes, year)
+          for i in meses:
+               pubH=[]
+               horas=[]
+               revisitas=[]
+               estudios=[]
+               infs=Informe.objects.filter(mes=i[1], year=i[0])
+               if len(infs)>0:
+                    for inf in infs:
+                         add=True
+                         prec=PubPrecursor.objects.filter(FKpub=inf.FKpub.pk).order_by("-yearIni", "-mesIni")
+                         for p in prec:
+                              if precursorActivo(p, i[1], i[0]):
+                                   add=False
+                                   break
+                         horas.append(inf.horas)
+                         revisitas.append(inf.revisitas)
+                         estudios.append(inf.estudios)
+                         if add:
+                              pubH.append(inf.horas)
+                    data[cont]={'year':i[0],'mes':i[1], 'promE':prom(estudios), 'promH':prom(horas), 'promR':prom(revisitas)}
+                    if len(pubH)>0:
+                         data[cont]['promP']=prom(pubH)
+                    else:
+                         data[cont]['promP']=0
+                    cont+=1
+     return HttpResponse(json.dumps(data))
+
 def precursorActivo(precursorado, mes, year):
      activo=False
      if getDiferenciaMes(precursorado.mesIni, precursorado.yearIni, mes, year) > -2:
