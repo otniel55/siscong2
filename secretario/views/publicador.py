@@ -158,11 +158,6 @@ def consultar(request, idpub):
           data={'form': formPub, 'form2':cmbGrupo, 'on': 1, 'url':2, 'fechaNa':fechaNa, 'fechaBau':p.fechaBau}
      return render(request, pg, data)
 
-def addZero(num):
-     if num<10:
-          num="0"+str(num)
-     return str(num)
-
 def modificar(request):
      hoy=datetime.date.today()
      nums=['Encargado']

@@ -115,3 +115,8 @@ def arrayObjectToDict(arrayObject, ignore=[], add={}):
                 dictionary[cont][j]=add[j]['function']([i.__dict__[k] for k in add[j]['datos']])
         cont+=1
     return dictionary
+
+def addZero(num):
+     if num<10:
+          num="0"+str(num)
+     return str(num)
