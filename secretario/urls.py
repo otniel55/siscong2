@@ -32,6 +32,8 @@ urlpatterns = [
     url(r'^estadisticas/informeGeneral', views.informe.obtenerInf, name='infG'),
     url(r'^PrecursInf', views.informe.conInfPrec, name='conInfPrec'),
     url(r'^pubEst', views.informe.conEstPub, name='conEstPub'),
+    url(r'^pdf/tarjeta/publicador', views.informe.vistaPdfPub, name='vistaPdfPub'),
+    url(r'^pdfTarPub', views.informe.datosPdfPub, name='datosPdfPub'),
     url(r'^Precursores/horas/$', views.editPrecur, name='editPrecur'),
     url(r'^Precursores/nombrar/$', views.vistaNombrar, name='vistaNombrar'),
     url(r'^nombrar/$', views.NombrarPrecur, name='NombrarPrecur'),
@@ -42,6 +44,4 @@ urlpatterns = [
     url(r'^darBaja/$', views.darBaja, name='darBaja'),
     url(r'^registrar/usuario/$', views.usuReg, name='usuReg'),
     url(r'^regusu/$', views.Regusu, name='Regusu'),
-    url(r'^pdf/tarjeta/publicador', views.vistaPdfPub, name='vistaPdfPub'),
-    url(r'^pdfTarPub', views.datosPdfPub, name='datosPdfPub'),
 ]

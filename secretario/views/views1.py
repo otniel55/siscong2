@@ -484,62 +484,6 @@ def Regusu(request):
           msg={'msg':'Por favor no intente hacer trampa'}
      return HttpResponse(json.dumps(msg))
 
-def conEstPub(request):
-     data={}
-     try:
-          mes = int(request.POST['fecha'][0:2])
-          year = int(request.POST['fecha'][3:])
-     except:
-          data = {'msg': "No intente hacer trampa"}
-     else:
-          cont=0
-          meses = []
-          meses.append([year, mes])
-          for i in range(1, 6):
-               mes -= 1
-               if mes == 0:
-                    mes = 12
-                    year -= 1
-               meses.append([year, mes])
-          meses.sort(reverse=True)
-          for i in meses:
-               pubH=[]
-               horas=[]
-               revisitas=[]
-               estudios=[]
-               infs=Informe.objects.filter(mes=i[1], year=i[0])
-               if len(infs)>0:
-                    for inf in infs:
-                         add=True
-                         prec=PubPrecursor.objects.filter(FKpub=inf.FKpub.pk).order_by("-yearIni", "-mesIni")
-                         for p in prec:
-                              if getDiferenciaMes(p.mesIni, p.yearIni, i[1], i[0]) > -2:
-                                   if p.duracion == 0:
-                                        mesF = i[1]
-                                        yearF = i[0]
-                                   else:
-                                        fechaF = getFechaFin(p.mesIni, p.yearIni, p.duracion)
-                                        mesF = fechaF[0]
-                                        yearF = fechaF[1]
-                                   if getDiferenciaMes(i[1], i[0], mesF, yearF) > -2:
-                                        add=False
-                         horas.append(inf.horas)
-                         revisitas.append(inf.revisitas)
-                         estudios.append(inf.estudios)
-                         if add:
-                              pubH.append(inf.horas)
-                    data[cont]={'year':i[0],'mes':i[1], 'promE':prom(estudios), 'promH':prom(horas), 'promR':prom(revisitas)}
-                    if len(pubH)>0:
-                         data[cont]['promP']=prom(pubH)
-                    else:
-                         data[cont]['promP']=0
-                    cont+=1
-     return HttpResponse(json.dumps(data))
-
-def vistaPdfPub(request):
-     cGrupo = traerGrupo()
-     return render(request, "pdfTarPub.html", {'form':cGrupo})
-
 def datosPdfPub(request):
      mK=[]
      fin=False
@@ -604,35 +548,6 @@ def datosPdfPub(request):
      else:
           data['msg']="no intente hacer trampa"
      return HttpResponse(json.dumps(data))
-
-def arrayServicio(cant):
-     cont=0
-     cantM=cant*12
-     meses={}
-     yActual=datetime.date.today().year
-     mActual=datetime.date.today().month
-     if mActual<9:
-          servicio=[yActual-1, yActual]
-     else:
-          servicio=[yActual, yActual+1]
-          yActual+=1
-     mActual=8
-     strServicio=str(servicio[0])+"-"+str(servicio[1])
-     meses[strServicio]=[[yActual, mActual]]
-     for i in range(1, cantM):
-          mActual-=1
-          if mActual==0:
-               mActual=12
-               yActual-=1
-          if mActual==8:
-               cont+=1
-               if cont==cant:
-                    break
-               strServicio=str(yActual-1)+"-"+str(yActual)
-               meses[strServicio]=[[yActual,mActual]]
-          else:
-               meses[strServicio].append([yActual,mActual])
-     return meses
 
 def reverseDict(dict):
      dictReverse={}
