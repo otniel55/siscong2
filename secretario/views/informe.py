@@ -121,15 +121,7 @@ def obtenerInf(request):
           primerInf=[]
           cont=0
           data={}
-          meses=[]
-          meses.append([year, mes])
-          for i in range(1, 6):
-               mes -= 1
-               if mes == 0:
-                    mes = 12
-                    year -= 1
-               meses.append([year, mes])
-          meses.sort(reverse=True)
+          meses=arrayUltSixMonth(mes, year)
           pu=Publicador.objects.all()
           for i in pu:
                inform=Informe.objects.filter(FKpub=i.pk)
@@ -219,6 +211,71 @@ def obtenerInf(request):
                     cont += 1
      return HttpResponse(json.dumps(data))
 
+def conInfPrec(request):
+     cont = 0
+     data = {}
+     try:
+          mes = int(request.POST['fecha'][0:2])
+          year = int(request.POST['fecha'][3:])
+     except:
+          data = {'msg': "No intente hacer trampa"}
+     else:
+          meses = arrayUltSixMonth(mes, year)
+          precurs = PubPrecursor.objects.all().order_by("-yearIni", "-mesIni")
+          for i in meses:
+               promH = []
+               promE = []
+               promR = []
+               contP = 0
+               data[cont]={'mes':i[1], 'year':i[0]}
+               for p in precurs:
+                    if precursorActivo(p, i[1], i[0]):
+                         data[cont][contP] = {'nombre': p.FKpub.nombre + " " + p.FKpub.apellido,
+                                              'tipo': p.FKprecursor.nombre}
+                         try:
+                              inf = Informe.objects.get(FKpub=p.FKpub.pk, mes=i[1], year=i[0])
+                         except:
+                              promH.append(0)
+                              promE.append(0)
+                              promR.append(0)
+                         else:
+                              promH.append(inf.horas)
+                              promE.append(inf.estudios)
+                              promR.append(inf.revisitas)
+                         contP += 1
+               if len(data[cont]) > 1:
+                    data[cont]['promH'] = prom(promH)
+                    data[cont]['promE'] = prom(promE)
+                    data[cont]['promR'] = prom(promR)
+               cont += 1
+     return HttpResponse(json.dumps(data))
+
+def precursorActivo(precursorado, mes, year):
+     activo=False
+     if getDiferenciaMes(precursorado.mesIni, precursorado.yearIni, mes, year) > -2:
+          if precursorado.duracion == 0:
+               mesF = mes
+               yearF = year
+          else:
+               fechaF = getFechaFin(precursorado.mesIni, precursorado.yearIni, precursorado.duracion)
+               mesF = fechaF[0]
+               yearF = fechaF[1]
+          if getDiferenciaMes(mes, year, mesF, yearF) > -2:
+               activo=True
+     return activo
+
+def arrayUltSixMonth(mes, year):
+     meses = []
+     meses.append([year, mes])
+     for i in range(1, 6):
+          mes -= 1
+          if mes == 0:
+               mes = 12
+               year -= 1
+          meses.append([year, mes])
+     meses.sort(reverse=True)
+     return meses
+
 def cantBau(fecha):
      bautizados=Publicador.objects.filter(fechaBau__startswith=fecha)
      return len(bautizados)
@@ -263,17 +320,9 @@ def cantPrecursores(publicadores, mes, year, precursorado=[]):
      for i in publicadores:
           precurs=PubPrecursor.objects.filter(FKpub=i.pk, FKprecursor__in=precursorado).order_by("-yearIni", "-mesIni")
           for l in precurs:
-               if getDiferenciaMes(l.mesIni, l.yearIni, mes, year)>-2:
-                    if l.duracion==0:
-                         mesF=mes
-                         yearF=year
-                    else:
-                         fechaF=getFechaFin(l.mesIni, l.yearIni, l.duracion)
-                         mesF=fechaF[0]
-                         yearF=fechaF[1]
-                    if getDiferenciaMes(mes, year, mesF, yearF)>-2:
-                         cantPrec+=1
-                         break
+               if precursorActivo(l, mes, year):
+                    cantPrec+=1
+                    break
      return cantPrec
 
 def convertToDate(mes):
