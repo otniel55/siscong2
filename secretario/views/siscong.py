@@ -101,3 +101,22 @@ def getDiferenciaMes(mesI, yearI, mesF, yearF):
           mesYear=mesYear-mesI
           meses=mesYear+(mesF-1)
      return meses
+
+def arrayObjectToDict(arrayObject, ignore=[], add={}):
+    cont=0
+    dictionary={}
+    for i in arrayObject:
+        dictionary[cont]={}
+        for j in i.__dict__.keys():
+            if j not in ignore:
+                dictionary[cont][j]=i.__dict__[j]
+        if add:
+            for j in add.keys():
+                dictionary[cont][j]=add[j]['function']([i.__dict__[k] for k in add[j]['datos']])
+        cont+=1
+    return dictionary
+
+def addZero(num):
+     if num<10:
+          num="0"+str(num)
+     return str(num)

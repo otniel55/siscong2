@@ -158,11 +158,6 @@ def consultar(request, idpub):
           data={'form': formPub, 'form2':cmbGrupo, 'on': 1, 'url':2, 'fechaNa':fechaNa, 'fechaBau':p.fechaBau}
      return render(request, pg, data)
 
-def addZero(num):
-     if num<10:
-          num="0"+str(num)
-     return str(num)
-
 def modificar(request):
      hoy=datetime.date.today()
      nums=['Encargado']
@@ -208,3 +203,30 @@ def modificar(request):
           msg=validar.mensaje
      request.session['msgpub']=msg
      return HttpResponse(json.dumps({'msg':msg}))
+
+def verTarjetaPub(request):
+     years=[]
+     cont=0
+     yearHoy=datetime.date.today().year
+     while cont<5:
+          years.append([yearHoy-1, yearHoy])
+          yearHoy=yearHoy-1
+          cont+=1
+     cGrupo = traerGrupo()
+     return render(request, 'Publicador/verTarjetaPub.html', {'form': cGrupo, 'years':years, 'url':2})
+
+def conPubG(request):
+     cont=0
+     pubs={}
+     grupo=request.POST['g']
+     try:
+          g=GruposPred.objects.get(pk=grupo)
+     except:
+          datos={'on':1, 'msg':"Error grupo no existe"}
+     else:
+          p=Publicador.objects.filter(FKgrupo=g)
+          if len(p)>0:
+               datos={'p':arrayObjectToDict(p,['fechaNa','email','telefono','_state','FKgrupo','direccion','fechaBau'])}
+          else:
+               datos={'on':1, 'msg':'Este grupo no tiene ningun publcador'}
+     return HttpResponse(json.dumps(datos))

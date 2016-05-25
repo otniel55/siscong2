@@ -34,7 +34,7 @@
 							</div>
 						</div>
 					</div>
-					<div id="result" class="col-lg-10 col-md-offset-1" style="margin-top:40px;margin-bottom:30px;color:#000000;"></div>
+					<div id="result" class="col-lg-10 col-md-offset-1" style="margin-top:40px;margin-bottom:30px;color:#000000;text-align:center;"></div>
 					<div class="clearfix"></div>
 		    	</div>
 			</div>		
@@ -90,7 +90,7 @@
                         combos.eq(1).find('option:first').siblings().detach()
                         combos.eq(1).attr('disabled', false)
                         $.each(res.p, function(key, values){
-							combos.eq(1).append("<option value="+values.id+">"+values.nombre+" "+values.apellido+"</option>")
+							combos.eq(1).append("<option value="+values.IDpub+">"+values.nombre+" "+values.apellido+"</option>")
 						})
                         combos.eq(1).each(function() {
 						    $(this).html($("option", $(this)).sort(function(a, b) {

@@ -85,7 +85,7 @@
                         combos.eq(1).find('option:first').siblings().detach()
                         combos.eq(1).attr('disabled', false)
                         $.each(res.p, function(key, values){
-							combos.eq(1).append("<option value="+values.id+">"+values.nombre+" "+values.apellido+"</option>")
+							combos.eq(1).append("<option value="+values.IDpub+">"+values.nombre+" "+values.apellido+"</option>")
 						})
                         combos.eq(1).each(function() {
 						    $(this).html($("option", $(this)).sort(function(a, b) {
