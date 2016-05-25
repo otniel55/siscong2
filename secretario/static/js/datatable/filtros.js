@@ -39,6 +39,7 @@ $.fn.dataTable.ext.search.push(
 )
 
 var look = ""
+
 $.fn.dataTable.ext.search.push(
 	function( settings, data, dataIndex ) {
 		var on = look
@@ -52,3 +53,39 @@ $.fn.dataTable.ext.search.push(
 		return false;
 	}
 )
+
+function rgbToHex(rgb){
+	rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+	return (rgb && rgb.length === 4) ? "#" +
+	("0" + parseInt(rgb[1],10).toString(16).toUpperCase()).slice(-2) +
+	("0" + parseInt(rgb[2],10).toString(16).toUpperCase()).slice(-2) +
+	("0" + parseInt(rgb[3],10).toString(16).toUpperCase()).slice(-2) : '';
+}
+
+jQuery.fn.dataTable.Api.register( 'rowColor()', function ( color ) {
+    $.each(this.nodes(), function(key, node){
+		colorRow = $(node).css('background-color')
+		colorRow = rgbToHex(colorRow)
+
+		if( colorRow === color){
+			console.log(colorRow)
+		}
+	})
+
+	/*$.fn.dataTable.ext.search.push(
+		function( settings, searchData, index, rowData, counter ) {
+			console.log(rowData)
+			console.log(searchData)
+			return true;
+			return false;
+		}
+	);*/
+})
+
+
+
+
+
+
+
+

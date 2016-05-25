@@ -221,7 +221,7 @@
 											<a href="{% url 'secretario:conGrupoofPubs' x.g %}">{{ x.FKgrupo }}</a>
 										</td>
 										{% if x.status == 0 %}
-											<td class="estado tConPubCol5" id="{{x.id}}" data-title="Estado" style="background-color:#09B20F">
+											<td class="estado tConPubCol5" id="{{x.id}}" data-title="Estado" style="background-color: #09B20F;" >
 
 												<div style="display: none">
 													<dl>
@@ -395,6 +395,7 @@
 
 			vw = $(this).width()
 
+			//responsive of the panel: options
 			if( vw >= 1200 && vw < 1300){
 				check1.removeClass('radio-inline')
 				check1.css('margin-top', '5px')
@@ -411,11 +412,13 @@
 				check2.css('margin-top', '0px')
 			}
 
+			//responsive of the panel: buttons filters
 			if(vw >= 1200 && vw < 1440){
 				$('#mayor1').detach()
 				$('#mayor2').removeClass('hide')
 			} else if((vw < 991 || vw >= 1440) && $('#busBau').children().length == 2 ){
 				$('#busBau').append('<button id="mayor1" class="btn btn-default">Mayor de 1 año</button>')
+				$('#mayor1').click(function(){ searchHigherOneYear() })
 				$('#mayor2').addClass('hide')
 			}
 
@@ -529,29 +532,44 @@
 				})
 
 				//search for 'mayores de 1 año'
-				group1.eq(2).click(function(){
+				function searchHigherOneYear(){
 					$("#clear").click()
 					fechaActual = moment( new Date() ).format('YYYY-MM-DD')
 					fechaActual = moment(fechaActual)
 					table.draw()
-				})
+				}
+
+				panels.eq(1).children('button').click(function(){ searchHigherOneYear() })
+				group1.eq(2).click(function(){ searchHigherOneYear() })
 			//end first group
 
 			//second group
 				group2 = panels.eq(2).children('button')
 
+				//search for 'mayores de 18'
 				group2.eq(0).click(function(){
 					$("#clear").click()
 					look = 1
 					table.draw()
 				})
 
+				//search for 'menores de 18'
 				group2.eq(1).click(function(){
 					$("#clear").click()
 					look = 2
 					table.draw()
 				})
 			//end second group
+
+			//third group
+				group3 = panels.eq(3).children('button')
+
+				group3.eq(0).click(function(){
+					filas = table.column( 4 ).rowColor('#09B20F')
+					//console.log(filas)
+					//#09B20F, #ffad33, #b30000, #009999, #b6b6b6
+				})
+			//end third group
 		//end panel
 
 		//button clear filter
