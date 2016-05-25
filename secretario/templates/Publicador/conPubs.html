@@ -235,7 +235,7 @@
 														<dd id="dgInt">{{ x.intervalo }}</dd>
 
 														<dt>Conclusiones:</dt>
-														<dd id="dgConclu">publicador en buen estado</dd>
+														<dd id="dgConclu">El Publicador se encuentra en buen estado. Encomielo por su fiel labor</dd>
 													</dl>
 												</div>
 											</td>
@@ -254,7 +254,7 @@
 														<dd id="dgInt">{{ x.intervalo }}</dd>
 
 														<dt>Conclusiones:</dt>
-														<dd id="dgConclu">publicador precaucion</dd>
+														<dd id="dgConclu">El Publicador tiene {{ x.intervalo }} mes(es) sin informar. Se recomienda realizar un seguimiento con el fin de impartirle animo</dd>
 													</dl>
 												</div>
 											</td>
@@ -273,7 +273,7 @@
 														<dd id="dgInt">{{ x.intervalo }}</dd>
 
 														<dt>Conclusiones:</dt>
-														<dd id="dgConclu">publicador mal</dd>
+														<dd id="dgConclu">El Publicador tiene mas de 6 meses sin informar, su estado es critico. Se recomienda realizar una Visita de Pastoreo</dd>
 													</dl>
 												</div>
 											</td>
@@ -289,7 +289,7 @@
 														<dd id="dgInt">{{ x.intervalo }}</dd>
 
 														<dt>Conclusiones:</dt>
-														<dd id="dgConclu">Publicador Nuevo</dd>
+														<dd id="dgConclu">El Publicador esta recien nombrado ¡Que alegria contar con mas obreros para la ciega!</dd>
 													</dl>
 												</div>
 											</td>
@@ -307,7 +307,7 @@
 														<dd id="dgInt">{{ x.intervalo }}</dd>
 
 														<dt>Conclusiones:</dt>
-														<dd id="dgConclu">No alcanzó el promedio de horas que realizan los publicadores</dd>
+														<dd id="dgConclu">El Publicador no alcanzó el Promedio de Horas de los publicadores en el mes, Si esto continua se recomienda Seguimiento</dd>
 													</dl>
 												</div>
 											</td>
@@ -512,7 +512,7 @@
 
 		//panel
 			panels = $('.visible-lg .btn-group')
-			console.log(panels)
+			//console.log(panels)
 
 			//first group
 				group1 = panels.eq(0).children('button')
@@ -563,11 +563,22 @@
 
 			//third group
 				group3 = panels.eq(3).children('button')
+				table.rowColor()
 
 				group3.eq(0).click(function(){
-					filas = table.column( 4 ).rowColor('#09B20F')
-					//console.log(filas)
-					//#09B20F, #ffad33, #b30000, #009999, #b6b6b6
+					table.searchColor('#09B20F')//green
+				})
+				group3.eq(1).click(function(){
+					table.searchColor('#FFAD33')//orange
+				})
+				group3.eq(2).click(function(){
+					table.searchColor('#B30000')//red
+				})
+				group3.eq(3).click(function(){
+					table.searchColor('#009999')//turquoise
+				})
+				group3.eq(4).click(function(){
+					table.searchColor('#B6B6B6')//gray
 				})
 			//end third group
 		//end panel

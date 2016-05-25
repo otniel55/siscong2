@@ -54,35 +54,34 @@ $.fn.dataTable.ext.search.push(
 	}
 )
 
-function rgbToHex(rgb){
-	rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
-	return (rgb && rgb.length === 4) ? "#" +
-	("0" + parseInt(rgb[1],10).toString(16).toUpperCase()).slice(-2) +
-	("0" + parseInt(rgb[2],10).toString(16).toUpperCase()).slice(-2) +
-	("0" + parseInt(rgb[3],10).toString(16).toUpperCase()).slice(-2) : '';
-}
 
 jQuery.fn.dataTable.Api.register( 'rowColor()', function ( color ) {
-    $.each(this.nodes(), function(key, node){
-		colorRow = $(node).css('background-color')
-		colorRow = rgbToHex(colorRow)
+	function rgbToHex(rgb){
+		rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+		return (rgb && rgb.length === 4) ? "#" +
+		("0" + parseInt(rgb[1],10).toString(16).toUpperCase()).slice(-2) +
+		("0" + parseInt(rgb[2],10).toString(16).toUpperCase()).slice(-2) +
+		("0" + parseInt(rgb[3],10).toString(16).toUpperCase()).slice(-2) : '';
+	}
 
-		if( colorRow === color){
-			console.log(colorRow)
-		}
+	var _settings = this.rows().settings()[0];
+	var _rows = _settings.aoData
+
+	$.each(_rows, function(key, row){
+		colorRow = rgbToHex( row.anCells[4].style.backgroundColor )
+		str = row._sFilterRow
+		ubicacion = str.search('Estado')
+		stringFilter = str.substring(0, ubicacion-1)
+		stringFilter = stringFilter + " " + colorRow
+		row._sFilterRow = stringFilter
 	})
 
-	/*$.fn.dataTable.ext.search.push(
-		function( settings, searchData, index, rowData, counter ) {
-			console.log(rowData)
-			console.log(searchData)
-			return true;
-			return false;
-		}
-	);*/
+	this.draw()
 })
 
-
+jQuery.fn.dataTable.Api.register( 'searchColor()', function ( color ) {
+	this.search( color ).draw()
+})
 
 
 
