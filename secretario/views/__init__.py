@@ -18,6 +18,7 @@ from .publicador import *
 from .informe import *
 from .estadisticas import *
 from .pdfs import *
+from .precursor import *
 
 def index(request):
      return render(request, 'layout.html', {'url':0})

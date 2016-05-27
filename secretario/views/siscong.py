@@ -120,3 +120,17 @@ def addZero(num):
      if num<10:
           num="0"+str(num)
      return str(num)
+
+def precursorActivo(precursorado, mes, year):
+     activo=False
+     if getDiferenciaMes(precursorado.mesIni, precursorado.yearIni, mes, year) > -2:
+          if precursorado.duracion == 0:
+               mesF = mes
+               yearF = year
+          else:
+               fechaF = getFechaFin(precursorado.mesIni, precursorado.yearIni, precursorado.duracion)
+               mesF = fechaF[0]
+               yearF = fechaF[1]
+          if getDiferenciaMes(mes, year, mesF, yearF) > -2:
+               activo=True
+     return activo
