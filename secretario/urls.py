@@ -25,6 +25,8 @@ urlpatterns = [
     #urls relacionadas con informes
 	url(r'^regInf/$', views.informe.registrar, name='regInf'),
 	url(r'^(?P<vista>[1-2]+)/(?P<idPub>[0-9]+)/Tarjeta/(?P<y>[0-9]+)/$', views.informe.tarjeta, name='tarjeta'),
+    url(r'^modInf/$', views.informe.modificar, name='modInf'),
+    #urls relacionadas con estadisticas
     url(r'^estadisticas/$', views.estadisticas.verEstadisticas, name='estadisticas'),
     url(r'^estadisticas/global', views.estadisticas.estGlobal, name='estGlobal'),
     url(r'^estadisticas/Precurs', views.estadisticas.infPrec, name='infPrec'),
@@ -32,6 +34,7 @@ urlpatterns = [
     url(r'^estadisticas/informeGeneral', views.estadisticas.obtenerInf, name='infG'),
     url(r'^PrecursInf', views.estadisticas.conInfPrec, name='conInfPrec'),
     url(r'^pubEst', views.estadisticas.conEstPub, name='conEstPub'),
+    #urls relacionadas con psdfs
     url(r'^pdf/tarjeta/publicador', views.pdfs.vistaPdfPub, name='vistaPdfPub'),
     url(r'^pdfTarPub', views.pdfs.datosPdfPub, name='datosPdfPub'),
     #urls relacionadas con precursores
@@ -43,6 +46,7 @@ urlpatterns = [
     url(r'^conYear/$', views.precursor.yearServicio, name='yearServicio'),
     url(r'^historia/precursor/(?P<year>[a-zA-Z0-9]+)/$', views.precursor.historiaPrec, name='historiaPrec'),
     url(r'^darBaja/$', views.precursor.darBaja, name='darBaja'),
-    url(r'^registrar/usuario/$', views.usuReg, name='usuReg'),
-    url(r'^regusu/$', views.Regusu, name='Regusu'),
+    #urls relacionadas con usuarios
+    url(r'^registrar/usuario/$', views.usuario.vistaRegistro, name='usuReg'),
+    url(r'^regusu/$', views.usuario.registrar, name='Regusu'),
 ]
