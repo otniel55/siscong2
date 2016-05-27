@@ -16,6 +16,7 @@ from .views1 import *
 from .grupos import *
 from .publicador import *
 from .informe import *
+from .estadisticas import *
 
 def index(request):
      return render(request, 'layout.html', {'url':0})
