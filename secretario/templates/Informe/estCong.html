@@ -318,8 +318,15 @@
 			})
 	})
 
+	//variable que determina la posicion del slide
+	var slideOn = 0
+
+	//hacer slide hacia la izquierda
 	$('#grafica > span:eq(0)').click(function(){
 		if(results){
+
+			slideOn = 0 //posicion inicial
+
 			$("#line").toggle( 'slide', { direction: 'left' }, 500, function(){
 				$.each(results, function(key, value){
 					if(key < 3){
@@ -360,8 +367,12 @@
 		}
 	})
 
+	//hacer slide hacia la derecha
 	$('#grafica > span:eq(1)').click(function(){
 		if(results){
+
+			slideOn = 1 //slide activado
+
 			lineChart.options.onAnimationComplete = function(){
 				lineImg[1] = lineChart.toBase64Image()
 			}
@@ -411,16 +422,28 @@
 
 	$('#pie3').siblings().children().click(function(){
 		$('#details').dialog(dialogCondig)
-		crearTablePie(results, 0)
+		if (slideOn == 0) {
+			crearTablePie(results, 0)
+		} else {
+			crearTablePie(results, 3)
+		}
 	})
 
 	$('#pie2').siblings().children().click(function(){
 		$('#details').dialog(dialogCondig)
-		crearTablePie(results, 1)
+		if (slideOn == 0) {
+			crearTablePie(results, 1)
+		} else {
+			crearTablePie(results, 4)
+		}
 	})
 
 	$('#pie1').siblings().children().click(function(){
 		$('#details').dialog(dialogCondig)
-		crearTablePie(results, 2)
+		if (slideOn == 0) {
+			crearTablePie(results, 2)
+		} else {
+			crearTablePie(results, 5)
+		}
 	})
 </script>

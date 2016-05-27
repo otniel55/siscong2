@@ -42,8 +42,8 @@
 						<div class="clearfix"></div>
 
 						<div class="btn-group btnsPubs" role="group">
-							<button class="btn btn-default">Mayores de 18</button>
 							<button class="btn btn-default">Menores de 18</button>
+							<button class="btn btn-default">Mayores de 18</button>
 						</div>
 
 						<div class="clearfix"></div>
@@ -97,8 +97,8 @@
 								<div class="clearfix"></div>
 
 								<div class="btn-group btnsPubs" role="group">
-									<button class="btn btn-default">Mayores de 18</button>
 									<button class="btn btn-default">Menores de 18</button>
+									<button class="btn btn-default">Mayores de 18</button>
 								</div>
 
 								<div class="clearfix"></div>
@@ -436,7 +436,7 @@
 
 		//dateTable
 			var table = $('#public').DataTable({
-				"bPaginate":false,
+				"bPaginate":true,
 				"bInfo":false,
 				"bFilter":true,
 				"oLanguage": {
@@ -445,8 +445,10 @@
 						     }
 				});
 
-			$('#public_filter').css('display', 'none')
-
+			//estilisando los filtros por defecto
+			$('#public_length').hide()
+			$('#public_filter').hide()
+			//$('#public_paginate').hide()
 	        $('.filtro').on( 'keyup change', function (){
 				$('#public').dataTable().fnFilter( this.value )
 			})
@@ -546,14 +548,14 @@
 			//second group
 				group2 = panels.eq(2).children('button')
 
-				//search for 'mayores de 18'
+				//search for 'Menores de 18'
 				group2.eq(0).click(function(){
 					$("#clear").click()
 					look = 1
 					table.draw()
 				})
 
-				//search for 'menores de 18'
+				//search for 'Mayores de 18'
 				group2.eq(1).click(function(){
 					$("#clear").click()
 					look = 2
@@ -566,18 +568,23 @@
 				table.rowColor()
 
 				group3.eq(0).click(function(){
+					$("#clear").click()
 					table.searchColor('#09B20F')//green
 				})
 				group3.eq(1).click(function(){
+					$("#clear").click()
 					table.searchColor('#FFAD33')//orange
 				})
 				group3.eq(2).click(function(){
+					$("#clear").click()
 					table.searchColor('#B30000')//red
 				})
 				group3.eq(3).click(function(){
+					$("#clear").click()
 					table.searchColor('#009999')//turquoise
 				})
 				group3.eq(4).click(function(){
+					$("#clear").click()
 					table.searchColor('#B6B6B6')//gray
 				})
 			//end third group
