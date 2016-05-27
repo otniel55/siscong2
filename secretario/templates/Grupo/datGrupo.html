@@ -217,11 +217,6 @@
 		})
 
 		$("#regInf").click(function(){
-			/*
-				Exprecion regular para obetener nro enteros o flotantes de solo 2 digitos.
-				ej: 2 = true, a2 = false, 2.45 = true, 2.48965 = false, 2,45 = false
-				/^[0-9]+(\.[0-9]{0,2})?$/
-			*/
 			close = function(res){
                 $("#closeInf").click()
                 datInf.Cargar()
@@ -231,7 +226,7 @@
             	$("#id_observacion").val("n/t")
             }
 
-            if ( "#horasCon").val().trim() == "" ){
+            if ( $("#horasCon").val().trim() == "" ){
             	$("#horasCon").val("0")
             }
 
