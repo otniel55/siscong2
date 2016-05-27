@@ -222,32 +222,34 @@
 				ej: 2 = true, a2 = false, 2.45 = true, 2.48965 = false, 2,45 = false
 				/^[0-9]+(\.[0-9]{0,2})?$/
 			*/
-            datInf=new Gestion()
-			close=function(res){
+			close = function(res){
                 $("#closeInf").click()
                 datInf.Cargar()
             }
-            if ($.trim($("#id_observacion").val())==""){
+
+            if ( $("#id_observacion").val().trim() == "" ){
             	$("#id_observacion").val("n/t")
             }
-            if ($.trim($("#horasCon").val())==""){
+
+            if ( "#horasCon").val().trim() == "" ){
             	$("#horasCon").val("0")
             }
+
+			datInf = new Gestion()
 			datInf.getInputs('#informe')
-            input=datInf.getDataIn()
-			if(input.vacio==0){
-				keys=new Array('horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'obs','fecha','horasCons', 'publicador')
+            input = datInf.getDataIn()
+
+			if ( input.vacio == 0 ){
+				keys = new Array('horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'obs','fecha','horasCons', 'publicador')
 				datInf.generateJson(keys, '{{ csrf_token }}', id)
 				datInf.setPost("{% url 'secretario:regInf' %}", 'Regitro de informe!', close)
 			}
 		})
 
 		$('#sinAct').click(function(){
-			ini=new Gestion()
+			ini = new Gestion()
             ini.getInputs('#informe', [0,4])
             ini.Cargar('0')
 		})
-
-
 	</script>
 {% endif %}

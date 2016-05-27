@@ -34,7 +34,6 @@
             $(this).css('border-color', '#ccc')
             if (datos){
                 if ( !Array.isArray() ){
-                    console.log($(this))
                     $(this).val(datos)
                 }else{
                     $(this).val(datos[key])
@@ -80,8 +79,6 @@
         } else {
             this._inputs = input
         }
-
-        console.log(this._inputs)
     }
 
     this.getDataIn = function(){
@@ -89,15 +86,15 @@
         Data = []
 
         this._inputs.each(function(){
-            vacio=false
+            vacio = false
             $(this).css('border-color', '#ccc')
 
             if( !$(this).val().trim() ){
-                vacio=true
+                vacio = true
             } else {
                 if ( $(this).is('[type="number"]') ){
-                    if( !/^([0-9])*$/.test( $(this).val() ) ){
-                        vacio=true
+                    if( !/^[0-9]+(\.[0-9]{0,2})?$/.test( $(this).val() ) ){
+                        vacio = true
                     }
                 }
             }
@@ -115,7 +112,7 @@
                 'Data': Data,
                 'vacio': Clear
                 }
-        console.log(this._datosIn)
+
         return this._datosIn
     }
 
@@ -166,36 +163,36 @@
 
             this._json = json
 
-            console.log(this._json)
             return this._json
         }
 
     }
 
-    this.setPost = function(url, titulo, func){
+    this.setPost = function(url, titulo, fn){
 
         $.post(url, this._json)
-        .success(function(res){
-            res = JSON.parse(res)
+			.success(function(res){
+				res = JSON.parse(res)
 
-			if (titulo){
-				$.gritter.add({
-					title: titulo,
-					text: ''+res.msg,
-					image: '',
-					sticky: false,
-					time: 3000,
-					class_name: ''
-				});
-				if(func){
-					if (res.on==1){
-						func(res)
+				if ( titulo ){
+
+					$.gritter.add({
+						title: titulo,
+						text: ''+res.msg,
+						image: '',
+						sticky: false,
+						time: 3000,
+						class_name: ''
+					});
+
+					if ( fn && res.on == 1 ){
+						fn(res)
 					}
+
+				} else {
+					fn(res)
 				}
-			} else {
-				func(res)
-			}
-        })
+			})
     }
 
     this.ejecutarLoad = function(url, div){
@@ -619,7 +616,6 @@
 		}
 
 		if(nkeys > 3 && $('#grafica > span:eq(0)').css("pointer-events") == "none" ){
-			console.log('entre')
 			$('#grafica > span:eq(1)').css("pointer-events", "auto");
 		} else if(nkeys <= 3){
 			$('#grafica > span:eq(0)').css("pointer-events", "none");
