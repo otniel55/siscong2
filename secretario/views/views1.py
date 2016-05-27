@@ -548,15 +548,3 @@ def datosPdfPub(request):
      else:
           data['msg']="no intente hacer trampa"
      return HttpResponse(json.dumps(data))
-
-def reverseDict(dict):
-     dictReverse={}
-     keys=[]
-     cont=0
-     for i in dict.keys():
-          keys.append(i)
-     keys.reverse()
-     for i in keys:
-          dictReverse[cont]=dict[i]
-          cont+=1
-     return dictReverse
