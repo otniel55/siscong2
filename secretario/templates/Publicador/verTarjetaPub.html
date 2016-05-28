@@ -61,6 +61,7 @@
 		        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1
 		    }));
 		})
+		combos.eq(0).find(':first-child').prop('selected', true)
 
 		combos.eq(0).change(function(){
             cmbG=new Gestion()
@@ -92,6 +93,7 @@
 						        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1
 						    }));
 						})
+						combos.eq(1).find(':first-child').prop('selected', true)
                     }
                 }
                 keys=new Array('g')

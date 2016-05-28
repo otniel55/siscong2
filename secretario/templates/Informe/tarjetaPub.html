@@ -27,23 +27,46 @@
 						<td class="numeric text-center" data-title="Horas" style="width:15%;">
 							{{ x.horas }}
 						</td>
-						<td class="numeric text-center" data-title="" style="width:15%;">
+						<td class="numeric text-center" data-title="Public." style="width:15%;">
 							{{ x.publicaciones }}
 						</td>
-						<td class="numeric text-center" data-title="" style="width:15%;">
+						<td class="numeric text-center" data-title="Videos" style="width:15%;">
 							{{ x.videos }}
 						</td>
-						<td class="numeric text-center" data-title="" style="width:15%;">
+						<td class="numeric text-center" data-title="Revisitas" style="width:15%;">
 							{{ x.revisitas }}
 						</td>
-						<td class="numeric text-center" data-title="" style="width:20%;">
+						<td class="numeric text-center" data-title="Estudios" style="width:20%;">
 							{{ x.estudios }}
 						</td>
-						<td class="numeric text-center" data-title="" style="width:20%;">
+						<td class="numeric text-center" data-title="Observ." style="width:20%;">
 							{{ x.observacion }}
 						</td>
 					</tr>
 				{% endfor %}
+					<tr>
+						<td class="numeric text-center" data-title="Totales" style="width:20%;">
+							Totales
+						</td>
+						<td class="numeric text-center" data-title="Horas" style="width:15%;">
+							{{ pub.totalHoras }}
+						</td>
+						<td class="numeric text-center" data-title="Public." style="width:15%;">
+							{{ pub.totalPublicaciones }}
+						</td>
+						<td class="numeric text-center" data-title="Videos" style="width:15%;">
+							{{ pub.totalVideos }}
+						</td>
+						<td class="numeric text-center" data-title="Revisitas" style="width:15%;">
+							{{ pub.totalRevisitas }}
+						</td>
+						<td class="numeric text-center" data-title="Estudios" style="width:20%;">
+							{{ pub.totalEstudios }}
+						</td>
+						<td class="numeric text-center" data-title="Observ." style="width:20%;">
+
+						</td>
+					</tr>
 				</tbody>
 			</table>
 		</section>
