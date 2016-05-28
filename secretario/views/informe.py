@@ -64,8 +64,6 @@ def tarjeta(request, vista, idPub, y):
      yIni=int(y[:4])
      yFin=int(y[4:])
      datos={}
-     cont=0
-     inf={}
      try:
           p=Publicador.objects.get(pk=idPub)
      except(KeyError, Publicador.DoesNotExist):
@@ -77,9 +75,13 @@ def tarjeta(request, vista, idPub, y):
                request.session['tarjetaY']=y
                mesesY=arraymeses(yFin)
                inf=recorrerArrayMeses(mesesY, idPub)[0]
-               print(inf.values())
                inf=inf.values()
-               datos={'pub':inf, 'p':p, 'url':2}
+               totales={'horas':0, 'publicaciones':0, 'revisitas':0, 'estudios':0, 'videos':0}
+               for i in inf:
+                    for j in i.keys():
+                         if j not in ["mes", "obs"] and i[j]!="":
+                              totales[j]+=int(i[j])
+               datos={'pub':inf, 'p':p, 'url':2, "total":totales}
           else:
                datos={'vacio':1, 'url':2}
           if vista == '1':
