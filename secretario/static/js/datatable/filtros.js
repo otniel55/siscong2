@@ -45,7 +45,7 @@ $.fn.dataTable.ext.search.push(
 		var on = look
 		var edad = data[1]
 
-		if ( ( look == "" ) || ( on == 1 && edad < 18 ) || ( on == 2 && edad > 18 ) )
+		if ( ( look == "" ) || ( on == 1 && edad < 18 ) || ( on == 2 && edad >= 18 ) )
 		{
 			return true;
 		}

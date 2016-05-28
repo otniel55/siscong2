@@ -163,8 +163,8 @@
 								<div class="clearfix"></div>
 
 								<div class="btn-group btnsPubs" role="group">
-									<button class="btn btn-default">Mayores de 18</button>
 									<button class="btn btn-default">Menores de 18</button>
+									<button class="btn btn-default">Mayores de 18</button>
 								</div>
 
 								<div class="clearfix"></div>
@@ -344,6 +344,7 @@
 
 			check1 = $('div.visible-lg input[type="radio"]:eq(3)').parent().parent()
 			check2 = $('div.visible-sm input[type="radio"]:eq(3)').parent().parent()
+
 			vw = $(window).width()
 
 			if(vw >= 1200 && vw < 1300){
@@ -429,6 +430,7 @@
 			} else if ((vw >= 960 && vw <= 991) || $('#container').attr('class') == 'sidebar-closed'){
 				if( $('#busBauSm').children().length == 2 ){
 					$('#busBauSm').append('<button id="mayor1Sm" class="btn btn-default">Mayor de 1 año</button>')
+					$('#mayor1Sm').click(function(){ searchHigherOneYear() })
 					$('#mayor2Sm').addClass('hide')
 				}
 			}
@@ -474,6 +476,15 @@
 	        });
 		//end dataTimePicker
 
+		//button clear filter
+				btnClear = $(".visible-lg #clear, .visible-md #clear, .visible-sm #clear")
+				btnClear.click(function(){
+				fechai = fechaf = fechaActual = look = ""
+				$('.filtro').val("").change()
+				table.columns().search('').draw()
+			})
+		//end button clear
+
 		//icheck
 			var column
 			$('input').on('ifChecked', function(){
@@ -484,22 +495,18 @@
 
 				if(opt == 1){
 					column = table.column(0)
-					console.log("entre en: 0")
 				}
 
 				if(opt == 2){
 					column = table.column(1)
-					console.log("entre en: 1")
 				}
 
 				if(opt == 3){
 					column = table.column(2)
-					console.log("entre en: 2")
 				}
 
 				if(opt == 4){
 					column = table.column(3)
-					console.log("entre en: 3")
 				}
 			})
 
@@ -513,21 +520,24 @@
 		//end icheck
 
 		//panel
-			panels = $('.visible-lg .btn-group')
-			//console.log(panels)
+			panels = $('.visible-lg .btn-group, .visible-md .btn-group, .visible-sm .btn-group')
 
 			//first group
-				group1 = panels.eq(0).children('button')
-
 				//search for 'no bautazados'
-				group1.eq(0).click(function(){
-					$("#clear").click()
+				$( '.visible-lg .btn-group:eq(0) > button:eq(0), \
+					.visible-md .btn-group:eq(0) > button:eq(0), \
+					.visible-sm .btn-group:eq(0) > button:eq(0)' )
+				.click(function(){
+					btnClear.click()
 					table.column(2).search( 'No Bautizado' ).draw()
 				})
 
 				//search for 'bautizados'
-				group1.eq(1).click(function(){
-					$("#clear").click()
+				$( '.visible-lg .btn-group:eq(0) > button:eq(1), \
+					.visible-md .btn-group:eq(0) > button:eq(1), \
+					.visible-sm .btn-group:eq(0) > button:eq(1)' )
+				.click(function(){
+					btnClear.click()
 					fechai = '1900'
 					fechaf = moment( new Date() ).format('YYYY')
 					table.draw()
@@ -535,68 +545,84 @@
 
 				//search for 'mayores de 1 año'
 				function searchHigherOneYear(){
-					$("#clear").click()
+					btnClear.click()
 					fechaActual = moment( new Date() ).format('YYYY-MM-DD')
 					fechaActual = moment(fechaActual)
 					table.draw()
 				}
 
-				panels.eq(1).children('button').click(function(){ searchHigherOneYear() })
-				group1.eq(2).click(function(){ searchHigherOneYear() })
+				$( '#mayor2 button, \
+					#mayor2Sm button' )
+				.click(function(){ searchHigherOneYear() })
+
+				$( '.visible-lg .btn-group:eq(0) > button:eq(2), \
+					.visible-md .btn-group:eq(0) > button:eq(2), \
+					.visible-sm .btn-group:eq(0) > button:eq(2)' )
+				.click(function(){ searchHigherOneYear() })
 			//end first group
 
 			//second group
-				group2 = panels.eq(2).children('button')
-
 				//search for 'Menores de 18'
-				group2.eq(0).click(function(){
-					$("#clear").click()
+				$( '.visible-lg .btn-group:eq(2) > button:eq(0), \
+					.visible-md .btn-group:eq(1) > button:eq(0), \
+					.visible-sm .btn-group:eq(2) > button:eq(0)' )
+				.click(function(){
+					btnClear.click()
 					look = 1
 					table.draw()
 				})
 
 				//search for 'Mayores de 18'
-				group2.eq(1).click(function(){
-					$("#clear").click()
+				$( '.visible-lg .btn-group:eq(2) > button:eq(1), \
+					.visible-md .btn-group:eq(1) > button:eq(1), \
+					.visible-sm .btn-group:eq(2) > button:eq(1)' )
+				.click(function(){
+					btnClear.click()
 					look = 2
 					table.draw()
 				})
 			//end second group
 
 			//third group
-				group3 = panels.eq(3).children('button')
 				table.rowColor()
 
-				group3.eq(0).click(function(){
-					$("#clear").click()
+				$( '.visible-lg .btn-group:eq(3) > button:eq(0), \
+					.visible-md .btn-group:eq(2) > button:eq(0), \
+					.visible-sm .btn-group:eq(3) > button:eq(0)' )
+				.click(function(){
+					btnClear.click()
 					table.searchColor('#09B20F')//green
 				})
-				group3.eq(1).click(function(){
-					$("#clear").click()
+				$( '.visible-lg .btn-group:eq(3) > button:eq(1), \
+					.visible-md .btn-group:eq(2) > button:eq(1), \
+					.visible-sm .btn-group:eq(3) > button:eq(1)' )
+				.click(function(){
+					btnClear.click()
 					table.searchColor('#FFAD33')//orange
 				})
-				group3.eq(2).click(function(){
-					$("#clear").click()
+				$( '.visible-lg .btn-group:eq(3) > button:eq(2), \
+					.visible-md .btn-group:eq(2) > button:eq(2), \
+					.visible-sm .btn-group:eq(3) > button:eq(2)' )
+				.click(function(){
+					btnClear.click()
 					table.searchColor('#B30000')//red
 				})
-				group3.eq(3).click(function(){
-					$("#clear").click()
+				$( '.visible-lg .btn-group:eq(3) > button:eq(3), \
+					.visible-md .btn-group:eq(2) > button:eq(3), \
+					.visible-sm .btn-group:eq(3) > button:eq(3)' )
+				.click(function(){
+					btnClear.click()
 					table.searchColor('#009999')//turquoise
 				})
-				group3.eq(4).click(function(){
-					$("#clear").click()
+				$( '.visible-lg .btn-group:eq(3) > button:eq(4), \
+					.visible-md .btn-group:eq(2) > button:eq(4), \
+					.visible-sm .btn-group:eq(3) > button:eq(4)' )
+				.click(function(){
+					btnClear.click()
 					table.searchColor('#B6B6B6')//gray
 				})
 			//end third group
 		//end panel
-
-		//button clear filter
-			$("#clear").click(function(){
-				fechai = fechaf = fechaActual = look = ""
-				$('.filtro').val("").change()
-				table.columns().search('').draw()
-			})
-		//end button clear
 
 		//dialog
 			$('td.estado').mouseover(function(){
