@@ -31,6 +31,8 @@ def registrar(request):
                else:
                     inf=Informe.objects.filter(mes=int(_fecha[0:2]), year=int(_fecha[3:]),FKpub=_pub)
                     if len(inf)==0:
+                         if _horas=="0" and _publicaciones=="0" and _videos=="0" and _revisitas=="0" and _estudios=="0" and _obs=="n/t":
+                              _obs="Informo, pero no tuvo actividad"
                          p.informe_set.create(horas=_horas, publicaciones=_publicaciones, videos=_videos, revisitas=_revisitas, estudios=_estudios, mes=int(_fecha[0:2]), year=int(_fecha[3:]), observacion=_obs)
                          msg={'msg':'Informe Registrado con exito', 'on':1}
                          if _horasCon>0:
@@ -38,23 +40,12 @@ def registrar(request):
                               precurs=PubPrecursor.objects.filter(FKpub=p.pk, FKprecursor__in=[3,4]).order_by("-yearIni", "-mesIni")
                               if len(precurs)>0:
                                    for prec in precurs:
-                                        if getDiferenciaMes(prec.mesIni, prec.yearIni, int(_fecha[0:2]), int(_fecha[3:])) > -2:
-                                             if prec.duracion == 0:
-                                                  mesF = int(_fecha[0:2])
-                                                  yearF =int(_fecha[3:])
-                                             else:
-                                                  fechaF = getFechaFin(prec.mesIni, prec.yearIni, prec.duracion)
-                                                  mesF = fechaF[0]
-                                                  yearF = fechaF[1]
-                                             if getDiferenciaMes(int(_fecha[0:2]), int(_fecha[3::]), mesF, yearF) > -2:
-                                                  if _horasCon>100:
-                                                       informe[0].delete()
-                                                       msg={'msg':"Error las horas de consesion NO deben ser mayores a 100"}
-                                                  else:
-                                                       informe[0].horascon_set.create(horas=_horasCon)
-                                             else:
-                                                  msg={'msg':"Error esta persona no realizo precursorado en esta fecha"}
+                                        if precursorActivo(prec, int(_fecha[0:2]), int(_fecha[3:])):
+                                             if _horasCon>100:
                                                   informe[0].delete()
+                                                  msg={'msg':"Error las horas de consesion NO deben ser mayores a 100"}
+                                             else:
+                                                  informe[0].horascon_set.create(horas=_horasCon)
                                         else:
                                              informe[0].delete()
                                              msg={'msg':"Error esta persona no realizo precursorado en esta fecha"}
@@ -84,7 +75,9 @@ def tarjeta(request, vista, idPub, y):
           if len(infs)>0 and yIni<yFin:
                request.session['tarjetaPub']=idPub
                request.session['tarjetaY']=y
-               inf=arrayObjectToDict(infs,['Idinf', 'year', 'FKpub_id', '_state','mes'],{'mes':{'datos':['mes'],'function':convertToDate}})
+               mesesY=arraymeses(yFin)
+               inf=recorrerArrayMeses(mesesY, idPub)[0]
+               print(inf.values())
                inf=inf.values()
                datos={'pub':inf, 'p':p, 'url':2}
           else:

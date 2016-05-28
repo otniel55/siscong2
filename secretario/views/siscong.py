@@ -3,7 +3,7 @@ import datetime
 #modulos de django
 from django.db.models import Q
 #modulos propios del proyecto
-from secretario.models import PubPrecursor
+from secretario.models import PubPrecursor, Informe
 
 class gestion:
     elementos={}
@@ -134,3 +134,64 @@ def precursorActivo(precursorado, mes, year):
           if getDiferenciaMes(mes, year, mesF, yearF) > -2:
                activo=True
      return activo
+
+def recorrerArrayMeses(array, idPub):
+     stringMeses=["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+     fin=False
+     cont=0
+     data={}
+     ultimoInf=Informe.objects.filter(FKpub=idPub).order_by("-year", "-mes")[0]
+     primerInf=Informe.objects.filter(FKpub=idPub).order_by("year", "mes")[0]
+     for j in array:
+          if getDiferenciaMes(j[1],j[0],ultimoInf.mes,ultimoInf.year)>-2:
+               try:
+                    inf=Informe.objects.get(FKpub=idPub, mes=j[1], year=j[0])
+               except:
+                    if not fin:
+                         data[cont]={'mes':stringMeses[j[1]-1], 'horas':"0", 'publicaciones':"0",
+                             'revisitas':"0", 'estudios':"0", 'videos':"0", "obs":"no informo"
+                             }
+                    else:
+                         data[cont]={'mes':stringMeses[j[1]-1], 'horas':"", 'publicaciones':"",
+                             'revisitas':"", 'estudios':"", 'videos':"", "obs":""
+                             }
+               else:
+                    data[cont]={'mes':stringMeses[j[1]-1], 'horas':inf.horas, 'publicaciones':inf.publicaciones,
+                             'revisitas':inf.revisitas, 'estudios':inf.estudios, 'videos':inf.videos, 'obs':inf.observacion
+                             }
+                    if primerInf.mes==j[1] and primerInf.year==j[0]:
+                         fin=True
+                         if inf.observacion=="n/t":
+                              data[cont]['obs']="Primer Informe."
+                         else:
+                              data[cont]['obs']+="(Primer Informe)"
+          else:
+               data[cont]={'mes':stringMeses[j[1]-1], 'horas':"", 'publicaciones':"",
+                             'revisitas':"", 'estudios':"", 'videos':"", "obs":""
+                             }
+          cont+=1
+     return [reverseDict(data), fin]
+
+def reverseDict(dict):
+     dictReverse={}
+     keys=[]
+     cont=0
+     for i in dict.keys():
+          keys.append(i)
+     keys.reverse()
+     for i in keys:
+          dictReverse[cont]=dict[i]
+          cont+=1
+     return dictReverse
+
+def arraymeses(year):
+     meses=[]
+     mes=8
+     meses.append([year, mes])
+     for i in range(1, 12):
+          mes-=1
+          if mes==0:
+               mes=12
+               year-=1
+          meses.append([year,mes])
+     return meses

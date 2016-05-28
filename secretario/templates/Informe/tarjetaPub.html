@@ -22,7 +22,7 @@
 				{% for x in pub %}
 					<tr>
 						<td class="numeric text-center" data-title="Meses" style="width:20%;">
-							{{ x.mes|date:"F"}}
+							{{ x.mes}}
 						</td>
 						<td class="numeric text-center" data-title="Horas" style="width:15%;">
 							{{ x.horas }}
@@ -40,7 +40,7 @@
 							{{ x.estudios }}
 						</td>
 						<td class="numeric text-center" data-title="" style="width:20%;">
-							{{ x.observacion }}
+							{{ x.obs }}
 						</td>
 					</tr>
 				{% endfor %}

@@ -216,8 +216,7 @@
 							posicion++
 							contador=1
 							$.each(res[value], function(k,v){
-								mes = moment(v['mes'], "MM").format('MMMM')
-								mes = toUpperFirst(mes)
+								mes = v['mes']
 								if(!v.vacio){
 									datos={
 										mes:mes,
@@ -243,8 +242,7 @@
 									}
 								}
 								$("#"+value+" tbody").eq(0).append(stringTr(datos))
-								mes = moment(v['mes'], "MM").format('MMMM')
-								mes = toUpperFirst(mes)
+								mes = v['mes']
 								if(contador%2!=0){
 									if(!v.vacio){
 										obs=""
