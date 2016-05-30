@@ -1,6 +1,5 @@
-{% extends "layout.html" %}
+{% extends "layout.html" %} {% load staticfiles %} {% block contenido %}
 
-{% block contenido %}
 	<div id="mainGrupo" class="col-lg-12">
 		<div class="form-panel row">
 			<h3 class="text-center titlecolor"><i class="fa fa-angle-right"></i>Grupo de Predicación</h3>
@@ -8,23 +7,37 @@
 			<div>
 				{% csrf_token %}
 				<div class="form-group">
-					<div class="col-xs-12 col-md-2 col-md-offset-2">
+					<div class="col-xs-12 col-md-2 col-md-offset-1">
 						<label for="idgrupo">Numero de Grupo:</label>
 						<input type="number" id="idgrupo" class="form-control mrg-bottom">
 					</div>
 
 					<div class="col-xs-12 col-md-3">
 						<label for="enc">Encargado:</label>
-						<select id="enc" class="form-control mrg-bottom">
-							<option value="">Seleccione un Encargado</option>
-						</select>
+						<div class="col-xs-10" style="padding:0px;">
+							<select id="enc" class="form-control mrg-bottom">
+								<option value="">Seleccione un Encargado</option>
+							</select>
+						</div>
+						<div class="col-xs-2" style="padding:0px;padding-left:15px;">
+							<button id="newEnc" class="btn btn-success btn-block fa fa-plus" style="height:34px;"></button>
+						</div>
 					</div>
 
 					<div class="col-xs-12 col-md-3">
 						<label for="aux">Auxiliar:</label>
-						<select id="aux" class="form-control mrg-bottom">
-							<option value="">Seleccione un Auxiliar</option>
-						</select>
+						<div class="col-xs-10" style="padding:0px;">
+							<select id="enc" class="form-control mrg-bottom">
+								<option value="">Seleccione un Auxiliar</option>
+							</select>
+						</div>
+						<div class="col-xs-2" style="padding:0px;padding-left:15px;">
+							<button id="newAux" class="btn btn-success btn-block fa fa-plus" style="height:34px;"></button>
+						</div>
+					</div>
+
+					<div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">
+						<button id="save" class="btn btn-primary btn-block" style="margin-top:28px;" disabled>Crear</button>
 					</div>
 				</div>
 
@@ -48,8 +61,7 @@
 										</th>
 										<th class="numeric text-center">Nombre y Apellido</th>
 										<th class="numeric text-center">Direccion</th>
-										<th class="numeric text-center">Fecha de Bautismo</th>
-										<th class="numeric text-center">Estado</th>
+										<th class="numeric text-center" style="width:10%;">Estado</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -59,11 +71,11 @@
 										<td class="numeric text-center" data-title="Nombre y Apellido">
 											{{ pubs.nombre }} {{ pubs.apellido }}
 										</td>
-										<td class="numeric text-center" data-title="Fecha de Bautismo">
-											{{ pubs.fechaBau }}
+										<td class="numeric text-center" data-title="Direccion">
+											{{ pubs.dir}}
 										</td>
-										<td class="numeric text-center" data-title="Tiempo Bautizado">
-											{{ pubs.tiempoB }}
+										<td class="numeric text-center" data-title="">
+										<!--background-color:{{ pubs.estado }}-->
 										</td>
 									</tr>
 								{% endfor %}
@@ -107,8 +119,8 @@
 											<input type="checkbox" id="selectAll2" />
 										</th>
 										<th class="numeric text-center">Nombre y Apellido</th>
-										<th class="numeric text-center">Fecha de Bautismo</th>
-										<th class="numeric text-center">Estado</th>
+										<th class="numeric text-center">Direccion</th>
+										<th class="numeric text-center" style="width:10%;">Estado</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -136,59 +148,290 @@
 				</div>
 
 				<div class="clearfix"></div>
+			</div>
+		</div>
+	</div>
 
-				<div class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-sm-offset-3 col-md-offset-4">
-					<button id="btnSave" class="btn btn-primary btn-block">Crear</button>
+	<div class="modal fade" id="modNewEnc" role="dialog">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+				  <button type="button" class="close" data-dismiss="modal">&times;</button>
+				  <h4 class="modal-title">Nuevo Publicador</h4>
+				</div>
+
+				<div class="modal-body">
+
+				</div>
+
+				<div class="modal-footer">
+				  <button id="changePub" type="button" class="btn btn-default">Guardar</button>
 				</div>
 			</div>
 		</div>
 	</div>
 {% endblock %}
 
-
-
 {% block scripts %}
-	<script>
-/*		$(document).ready(function() {
-			div = $('#mainGrupo')
-			maxwidth = $(window).width()
-			if(maxwidth >= 1200 && maxwidth < 1440 ){
-				div.removeClass('col-lg-4').removeClass('col-lg-offset-4')
-				div.addClass('col-lg-6').addClass('col-lg-offset-3')
-			} else if(maxwidth > 1440){
-				div.removeClass('col-lg-6').removeClass('col-lg-offset-3')
-				div.addClass('col-lg-4').addClass('col-lg-offset-4')
-			}
+<script>
+	var publics, nombrar, altoT
+
+	$(document).ready(function () {
+
+		tablaConfig = {
+			columnDefs: [{
+				orderable: false
+				, className: 'select-checkbox'
+				, targets: 0
+					        }]
+			, select: {
+				style: 'multi'
+				, selector: 'td:first-child'
+			, }
+			, order: [[1, 'asc']]
+			, "bInfo": false
+			, "oLanguage": {
+				"sInfoEmpty": "La Tabla esta Vacia"
+				, "sZeroRecords": "No se Encontraron Registros"
+			, }
+		}
+
+		//instancia de las tablas
+		publics = $('#publics').DataTable(tablaConfig);
+		nombrar = $('#nombrar').DataTable(tablaConfig);
+
+		//estilisando los filtros
+		$('#publics_length').hide()
+		$('#publics_filter').hide()
+		$('#publics_paginate').hide()
+		$('#filtro1').on('keyup change', function () {
+			$('#publics').dataTable().fnFilter(this.value);
 		});
 
-		$(window).resize(function(){
-			div = $('#mainGrupo')
-			maxwidth = $(window).width()
-			if(maxwidth >= 1200 && maxwidth < 1440 ){
-				div.removeClass('col-lg-4').removeClass('col-lg-offset-4')
-				div.addClass('col-lg-6').addClass('col-lg-offset-3')
-			} else if(maxwidth > 1440){
-				div.removeClass('col-lg-6').removeClass('col-lg-offset-3')
-				div.addClass('col-lg-4').addClass('col-lg-offset-4')
+		$('#nombrar_length').hide()
+		$('#nombrar_filter').hide()
+		$('#nombrar_paginate').hide()
+		$('#filtro2').on('keyup change', function () {
+			$('#nombrar').dataTable().fnFilter(this.value);
+		});
+
+		//asignacion de altura de las tablas
+		reajustarTables()
+
+		//creacion del pager
+		pg1 = createPager(publics, 1)
+
+		if (pg1 == 1) {
+			altoT = $('#tabla1')[0].clientHeight
+		}
+
+	});
+
+	//check para seleccionar todo los elementos de la tabla
+	$('#selectAll').click(function () {
+
+		if (this.checked) {
+			publics.rows().select();
+		} else {
+			publics.rows().deselect();
+		}
+
+	})
+
+	$('#selectAll2').click(function () {
+
+		if (this.checked) {
+			nombrar.rows().select();
+		} else {
+			nombrar.rows().deselect();
+		}
+
+	})
+
+	$('#nombrar th, #publics th').click(function () {
+		reajustarTables(altoT)
+	})
+
+	//btns para cambiar de tabla
+
+	//cambiar a la tabla Nombrar
+	$('#move-right').click(function () {
+			row = ""
+			col = ""
+			nodo = ""
+
+			//obtener la filas seleccionadas
+			row = publics.rows('.selected').data()
+			publics.rows('.selected').remove().draw()
+
+			//crear las filas en la tabla Nombrar
+			$.each(row, function (key, value) {
+
+				nodo = nombrar.row.add([
+									col
+						            , value[1]
+						            , value[2]
+						            , value[3]
+						        , ]).draw().node()
+
+				//asignar atributos a la fila creada
+				$(nodo).attr('id', row[key].DT_RowId )
+			})
+
+			if ($('#move-left').is(':disabled') && row.length > 0) {
+				$('#move-left').removeAttr('disabled')
+				$('#save').removeProp('disabled')
+			} else {
+				if (row.length == 0) {
+					$.gritter.add({
+						title: 'Nombrar Publicadores!'
+						, text: 'No Hay Ninguna Fila Seleccionada'
+						, image: "{% static 'img/error.png' %}"
+						, time: 3000
+					, })
+				}
 			}
-		})*/
 
-		$('#btnSave').click(function(){
-            limpiar=function(res){
-                obj.Cargar()
-            }
-            obj = new Gestion()
-            obj.getInputs('.form-group')
-            input=obj.getDataIn()
+			if ($('#selectAll').is(':checked'))
+				$('#selectAll').removeProp('checked')
 
-            if(input.vacio == 0){
-                keys = new Array('encargado', 'auxiliar')
+			if (publics.data().length == 0)
+				$(this).prop('disabled', true)
 
-                obj.generateJson(keys, '{{ csrf_token }}')
+			reajustarTables()
+			pg1 = createPager(publics, 1)
+			pg2 = createPager(nombrar, 2)
 
-                obj.setPost("{% url 'secretario:grupos_registrar' %}", 'Registro de Grupos!', limpiar)
-            }
+			if (pg2 == 1) {
+				altoT = $('#tabla2')[0].clientHeight
+			} else if (pg1 == 1) {
+				altoT = $('#tabla1')[0].clientHeight
+			} else {
+				altoT = null
+			}
+		}) //fin del moveright
+
+	$('#move-left').click(function () {
+			row = ""
+			col = ""
+			nodo = ""
+
+			row = nombrar.rows('.selected').data()
+			rowNode = nombrar.rows('.selected').nodes()
+			nombrar.rows('.selected').remove().draw()
+
+			$.each(row, function (key, value) {
+
+				nodo = publics.row.add([
+									col
+						            , value[1]
+                                    , value[2]
+                                    , value[3]
+						        ]).draw().node()
+
+				$(nodo).attr('id', '' + rowNode[key].id).find('td').addClass("numeric text-center")
+			})
+
+			if ($('#selectAll2').is(':checked'))
+				$('#selectAll2').removeProp('checked')
+
+			if ($('#move-right').is(':disabled') && row.length > 0) {
+				$('#move-right').removeProp('disabled')
+			} else {
+				if (row.length == 0) {
+					$.gritter.add({
+						title: 'Nombrar Publicadores!'
+						, text: 'No Hay Ninguna Fila Seleccionada'
+						, image: "{% static 'img/error.png' %}"
+						, time: 3000
+					, })
+				}
+			}
+
+			if (nombrar.data().length == 0) {
+				$(this).prop('disabled', true)
+				$('#save').prop('disabled', true)
+			}
+
+			reajustarTables()
+			pg2 = createPager(nombrar, 2)
+			pg1 = createPager(publics, 1)
+
+			if (pg1 == 1) {
+				altoT = $('#tabla1')[0].clientHeight
+			} else if (pg2 == 1) {
+				altoT = $('#tabla2')[0].clientHeight
+			} else {
+				altoT = null
+			}
+		}) //fin del moveleft
+
+	//fin de cambiar de tabla
+
+	$('#save').click(function () {
+		result = function (res) {
+			bien = 0
+			mal = 0
+
+			if (!res.msg) {
+				$.each(res, function (key, value) {
+					if (value.bien == 1) {
+						nombrar.row('#' + value.id).remove().draw()
+						bien++
+					} else {
+						mal++
+					}
+				})
+			} else {
+				bien++
+			}
+
+			if (bien > 0) {
+				$.gritter.add({
+					title: 'Nombrar Publicadores!'
+					, text: 'Precursores Nombrados Con Exito!'
+					, image: "{% static 'img/success.png' %}"
+					, time: 3000
+				, });
+			}
+
+			if (mal > 0) {
+				$.gritter.add({
+					title: 'Nombrar Publicadores!'
+					, text: 'Algunos Precursores No Pudieron Ser Nombrados\n Verifique Sus Datos en la Tabla'
+					, image: "{% static 'img/error.png' %}"
+					, time: 3000
+				, });
+			} else {
+				setTimeout(
+					function () {
+						window.location = "{% url 'secretario:registrarGrupo' %}"
+					}
+					, 3000
+				)
+			}
+		}
+		pubs = []
+
+		rows = nombrar.rows().nodes()
+
+		$.each(rows, function (key, value) {
+			pubs.push({
+				'id': $(value).attr('id')
+			})
 		})
 
-	</script>
+		obj = new Gestion()
+		obj.getInputs('.form-group')
+		input = obj.getDataIn()
+
+		if(input.vacio == 0){
+			keys = new Array('IDgrupo', 'encargado', 'auxiliar', 'pubs')
+
+			obj.generateJson(keys, '{{ csrf_token }}', pubs)
+
+			obj.setPost("{% url 'secretario:grupos_registrar' %}", 'Registro de Grupos!', result)
+		}
+	})
+</script>
 {% endblock %}
