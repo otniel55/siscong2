@@ -16,7 +16,7 @@ def nombrar(request):
     for x in p:
        fechaBau=datetime.date(int(x.fechaBau[0:4]), int(x.fechaBau[5:7]), int(x.fechaBau[8:]))
        if getEdad(x.fechaNa, hoy)>17 and x.sexo=="M":
-           data[cont]={'pk':x.pk, 'nombre':x.nombre, 'apellido':x.apellido, 'tiempoB':getEdad(fechaBau, hoy), 'fechaBau':x.fechaBau}
+           data[cont]={'pk':x.pk, 'nombre':x.nombre, 'apellido':x.apellido, 'tiempoB':getEdad(fechaBau, hoy), 'fechaBau':x.fechaBau, 'edad':getEdad(x.fechaNa, hoy)}
            cont+=1
     data=data.values()
     return render(request, "Privilegio/nombrar.html", {'data':data})
