@@ -16,11 +16,11 @@ def vistaRegistrar(request):
 
 def registrar(request):
      hoy=datetime.date.today()
-     nums=['Encargado']
      vFechas=['fechaNa']
-     validar=gestion(request.POST,nums,vFechas)
+     validar=gestion(request.POST,[],vFechas)
      if not validar.error:
-          validar.ignore=['email', 'fechaBau']
+          validar.ignore.append('email')
+          validar.ignore.append('fechaBau')
           datosP=validar.trimUpper()
           _nombre=datosP['nombre']
           _apellido=datosP['apellido']
@@ -29,19 +29,15 @@ def registrar(request):
           _email=datosP['email']
           _fechaBau=datosP['fechaBau']
           _fechaNa=datosP['fechaNa']
-          _grupo=datosP['Encargado']
+          _sexo=datosP['sexo']
           edad=getEdad(datetime.date(int(_fechaNa[0:4]),int(_fechaNa[5:7]), int(_fechaNa[8:])), hoy)
           if edad>3:
                try:
                     pub=Publicador.objects.get(nombre=_nombre, apellido=_apellido, fechaNa=_fechaNa)
                except(KeyError, Publicador.DoesNotExist):
-                    try:
-                         g=GruposPred.objects.get(pk=_grupo)
-                    except(KeyError, GruposPred.DoesNotExist):
-                         msg={'msg':"El grupo no existe"}
-                    else:
-                         g.publicador_set.create(nombre=_nombre, apellido=_apellido, telefono=_telefono, direccion=_direccion,email=_email, fechaBau=_fechaBau, fechaNa=_fechaNa)
-                         msg={'msg':"Publicador Registrado con exito", 'on':1}
+                    p=Publicador(nombre=_nombre, apellido=_apellido, telefono=_telefono, direccion=_direccion,email=_email, fechaBau=_fechaBau, fechaNa=_fechaNa, sexo=_sexo)
+                    p.save()
+                    msg={'msg':"Publicador Registrado con exito", 'on':1}
                else:
                     msg={ 'msg': "Error! Este publicador ya esta registrado."}
           else:
