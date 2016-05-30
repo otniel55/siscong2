@@ -5,7 +5,7 @@ from django.db import models
 # Create your models here.
 
 class GruposPred(models.Model):
-	IDgrupo = models.AutoField(primary_key=True)
+	IDgrupo = models.IntegerField(primary_key=True)
 	encargado = models.ForeignKey(
         'Publicador',
         on_delete = models.CASCADE,
@@ -43,7 +43,7 @@ class Publicador(models.Model):
 	precursorado=models.ManyToManyField(Precursor, through='PubPrecursor')
 	privilegio=models.ManyToManyField(privilegio, through='privilegioPub')
 	grupo = models.ManyToManyField(GruposPred)
-	
+	sexo = models.CharField(max_length=10)
 	def __str__(self):
 		return self.nombre
 	
