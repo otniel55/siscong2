@@ -97,6 +97,7 @@ class privilegioPub(models.Model):
 		on_delete=models.CASCADE,
 	)
 	responsabilidad=models.CharField("Responsabilidad", max_length=200)
+	status = models.BooleanField()
 
 class horasCon(models.Model):
 	FKinf=models.ForeignKey(
