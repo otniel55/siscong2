@@ -32,6 +32,7 @@ class privilegio(models.Model):
 	tiempoBauMin=models.IntegerField("Tiempo minimo de bautizado")
 	def __str__(self):
 		return self.nombre
+
 class Publicador(models.Model):
 	IDpub = models.AutoField(primary_key=True)
 	nombre = models.CharField(max_length=50)
@@ -99,6 +100,7 @@ class privilegioPub(models.Model):
 	)
 	responsabilidad=models.CharField("Responsabilidad", max_length=200)
 	status = models.BooleanField()
+	fechaFin=models.CharField(max_length=200)
 
 class horasCon(models.Model):
 	FKinf=models.ForeignKey(

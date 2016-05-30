@@ -8,7 +8,7 @@ from .estadisticas import *
 from .pdfs import *
 from .precursor import *
 from .usuario import *
-from .privilegio import *
+from .privilegios import *
 
 def index(request):
      return render(request, 'layout.html', {'url':0})
