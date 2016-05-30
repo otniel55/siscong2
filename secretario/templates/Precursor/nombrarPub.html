@@ -78,17 +78,17 @@
 								</tr>
 							</thead>
 							<tbody>
-							{% for pubs in pub %}
+							{% for pubs in data %}
 								<tr id="{{ pubs.pk }}">
 									<td></td>
 									<td class="numeric text-center" data-title="Nombre y Apellido">
-										{{ pubs.nombre }} {{ pubs.apellido }}
+										{{ data.nombre }} {{ data.apellido }}
 									</td>
 									<td class="numeric text-center" data-title="Fecha de Bautismo">
-										{{ pubs.fechaBau }}
+										{{ data.fechaBau }}
 									</td>
 									<td class="numeric text-center" data-title="Tiempo Bautizado">
-										{{ pubs.tiempoB }}
+										{{ data.tiempoB }}
 									</td>
 								</tr>
 							{% endfor %}

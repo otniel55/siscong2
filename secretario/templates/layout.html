@@ -75,7 +75,7 @@
 
                     <li class="sub-menu">
                         <a href="" class="{% if url == 1 %} active {% endif %}">
-                            <i class="fa fa-map-marker"></i>
+                            <i class="fa fa-users"></i>
                             <span>Grupos</span>
                         </a>
                         <ul class="sub">
@@ -93,6 +93,18 @@
                             <li><a href="{% url 'secretario:regPubli' %}">Registrar</a></li>
                             <li><a href="{% url 'secretario:conPubs' %}">Consultar</a></li>
                             <li><a href="{% url 'secretario:verTarjetaPub' %}">Ver Tarjeta</a></li>
+                        </ul>
+                    </li>
+
+                	<li class="sub-menu">
+                        <a href="">
+                            <i class="fa fa-sitemap"></i>
+                            <span>Privilegios</span>
+                        </a>
+                        <ul class="sub">
+                            <li><a href="{% url 'secretario:privCon' %}">Consultar</a></li>
+                            <li><a href="{% url 'secretario:privnombrar' %}">Nombrar</a></li>
+                            <li><a href="{% url 'secretario:privconsnombrados' %}">Consultar Nombrados</a></li>
                         </ul>
                     </li>
 
@@ -123,20 +135,10 @@
 							</li>
                         </ul>
                     </li>
+
                     <li class="sub-menu">
                         <a href="">
-                            <i class="fa fa-users"></i>
-                            <span>Privilegios</span>
-                        </a>
-                        <ul class="sub">
-                            <li><a href="{% url 'secretario:privCon' %}">Consultar</a></li>
-                            <li><a href="{% url 'secretario:privnombrar' %}">Nombrar</a></li>
-                            <li><a href="{% url 'secretario:privconsnombrados' %}">Consultar Nombrados</a></li>
-                        </ul>
-                    </li>
-                    <li class="sub-menu">
-                        <a href="">
-                            <i class="fa fa-users"></i>
+                            <i class="fa fa-server"></i>
                             <span>Usuarios</span>
                         </a>
                         <ul class="sub">

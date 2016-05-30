@@ -30,7 +30,8 @@ class privilegio(models.Model):
 	nombre=models.CharField("Nombre", max_length=200)
 	edadMin=models.IntegerField("Edad minima")
 	tiempoBauMin=models.IntegerField("Tiempo minimo de bautizado")
-
+	def __str__(self):
+		return self.nombre
 class Publicador(models.Model):
 	IDpub = models.AutoField(primary_key=True)
 	nombre = models.CharField(max_length=50)
