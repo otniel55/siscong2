@@ -50,7 +50,7 @@ urlpatterns = [
     url(r'^registrar/usuario/$', views.usuario.vistaRegistro, name='usuReg'),
     url(r'^regusu/$', views.usuario.registrar, name='Regusu'),
     #urls relacionadas con privilegios
-    url(r'^privilegio/consultar$', views.privilegio.consultar, name='privReg'),
+    url(r'^privilegio/consultar$', views.privilegio.consultar, name='privCon'),
     url(r'^privilegio/nombrar$', views.privilegio.nombrar, name='privnombrar'),
     url(r'^privilegio/consultarnombrados$', views.privilegio.consultarNombrados, name='privconsnombrados')
 ]

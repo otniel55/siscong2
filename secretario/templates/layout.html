@@ -123,7 +123,17 @@
 							</li>
                         </ul>
                     </li>
-
+                    <li class="sub-menu">
+                        <a href="">
+                            <i class="fa fa-users"></i>
+                            <span>Privilegios</span>
+                        </a>
+                        <ul class="sub">
+                            <li><a href="{% url 'secretario:privCon' %}">Consultar</a></li>
+                            <li><a href="{% url 'secretario:privnombrar' %}">Nombrar</a></li>
+                            <li><a href="{% url 'secretario:privconsnombrados' %}">Consultar Nombrados</a></li>
+                        </ul>
+                    </li>
                     <li class="sub-menu">
                         <a href="">
                             <i class="fa fa-users"></i>
