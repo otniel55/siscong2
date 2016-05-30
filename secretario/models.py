@@ -6,8 +6,15 @@ from django.db import models
 
 class GruposPred(models.Model):
 	IDgrupo = models.AutoField(primary_key=True)
-	encargado = models.CharField(max_length=50)
-	auxiliar = models.CharField(max_length=50)
+	encargado = models.ForeignKey(
+        'Publicador',
+        on_delete = models.CASCADE,
+    )
+	auxiliar = models.ForeignKey(
+        'Publicador',
+        on_delete = models.CASCADE,
+		related_name='pubauxiliar'
+    )
 	def __str__(self):
 		return self.encargado
 
@@ -35,10 +42,7 @@ class Publicador(models.Model):
 	fechaNa = models.DateField('Fecha de Nacimiento')
 	precursorado=models.ManyToManyField(Precursor, through='PubPrecursor')
 	privilegio=models.ManyToManyField(privilegio, through='privilegioPub')
-	FKgrupo = models.ForeignKey(
-        'GruposPred',
-        on_delete = models.CASCADE,
-    )
+	grupo = models.ManyToManyField(GruposPred)
 	
 	def __str__(self):
 		return self.nombre
@@ -92,6 +96,7 @@ class privilegioPub(models.Model):
 		'privilegio',
 		on_delete=models.CASCADE,
 	)
+	responsabilidad=models.CharField("Responsabilidad", max_length=200)
 
 class horasCon(models.Model):
 	FKinf=models.ForeignKey(
