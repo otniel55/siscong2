@@ -30,18 +30,21 @@ def registrar(request):
           _fechaBau=datosP['fechaBau']
           _fechaNa=datosP['fechaNa']
           _sexo=datosP['sexo']
-          edad=getEdad(datetime.date(int(_fechaNa[0:4]),int(_fechaNa[5:7]), int(_fechaNa[8:])), hoy)
-          if edad>3:
-               try:
-                    pub=Publicador.objects.get(nombre=_nombre, apellido=_apellido, fechaNa=_fechaNa)
-               except(KeyError, Publicador.DoesNotExist):
-                    p=Publicador(nombre=_nombre, apellido=_apellido, telefono=_telefono, direccion=_direccion,email=_email, fechaBau=_fechaBau, fechaNa=_fechaNa, sexo=_sexo)
-                    p.save()
-                    msg={'msg':"Publicador Registrado con exito", 'on':1}
+          if _sexo in ["F", "M"]:
+               edad=getEdad(datetime.date(int(_fechaNa[0:4]),int(_fechaNa[5:7]), int(_fechaNa[8:])), hoy)
+               if edad>3:
+                    try:
+                         pub=Publicador.objects.get(nombre=_nombre, apellido=_apellido, fechaNa=_fechaNa)
+                    except(KeyError, Publicador.DoesNotExist):
+                         p=Publicador(nombre=_nombre, apellido=_apellido, telefono=_telefono, direccion=_direccion,email=_email, fechaBau=_fechaBau, fechaNa=_fechaNa, sexo=_sexo)
+                         p.save()
+                         msg={'msg':"Publicador Registrado con exito", 'on':1}
+                    else:
+                         msg={ 'msg': "Error! Este publicador ya esta registrado."}
                else:
-                    msg={ 'msg': "Error! Este publicador ya esta registrado."}
+                    msg={'msg':"Error! Para ser registrado debe tener como minimo 4 anios"}
           else:
-               msg={'msg':"Error! Para ser registrado debe tener como minimo 4 anios"}
+               msg=validar.mensaje
      else:
           msg=validar.mensaje
      return HttpResponse(json.dumps(msg))
