@@ -76,7 +76,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									{% for pubs in pub %}
+									{% for pubs in data %}
 									<tr id="{{ pubs.pk }}">
 										<td></td>
 										<td class="numeric text-center" data-title="Nombre y Apellido">
@@ -123,7 +123,7 @@
 								<input type="text" id="filtro2" class="form-control" placeholder="Buscar...">
 							</div>
 
-							<table id="nombrar" class="display table table-condensed cf" cellspacing="0" style="font-size:14px;" width: "100%">
+							<table id="nombrar" class="display table table-condensed cf" cellspacing="0" width: "100%">
 								<thead class="cf">
 									<tr>
 										<th style="width:5%;">
@@ -136,8 +136,8 @@
 													Privilegio <span class="fa fa-caret-square-o-down"></span>
 												</button>
 												<ul class="dropdown-menu">
-													<li><a href="#" val="2">Superintendente (Anciano)</a></li>
-													<li><a href="#" val="1">Siervo Ministerial</a></li>
+													<li><a href="#" val="1">Superintendente (Anciano)</a></li>
+													<li><a href="#" val="2">Siervo Ministerial</a></li>
 												</ul>
 											</div>
 										</th>
@@ -175,13 +175,7 @@
 {% endblock %} {% block scripts %}
 <script>
 	var publics, nombrar, altoT
-
-	var cmb = '<select class="form-control" disabled>\
-                        <option value="1">1 mes</option>\
-                        <option value="2">2 meses</option>\
-                        <option value="3">3 meses</option>\
-                        <option value="0">Indefinido</option>\
-                    <select>'
+	var cmb = "<input type='text' class='form-control' pleaceholder='ingrese su asignacion'>"
 
 	$(document).ready(function () {
 
@@ -268,11 +262,6 @@
 
 				//obtener los select hijos de la columna
 				$(this).children().val(valAll)
-
-				//obtener la columna hermana derecha
-				hermano = $(this).next()
-
-				changeStateInput(hermano, valAll, cmb)
 			})
 		}
 	})
@@ -289,12 +278,10 @@
 			col = ""
 			nodo = ""
 			cmbPrecur = '<select class="form-control">\
-                                <option value>Tipo de Precursorado</option>\
-								<option value="2">Auxiliar</option>\
-								<option value="1">Auxiliar (Campañas)</option>\
-								<option value="3">Regular</option>\
-								<option value="4">Especial</option>\
-							<select>'
+							<option value>Privilegios</option>\
+							<option value="1">Superintendente (Anciano)</option>\
+							<option value="2">Siervo Ministerial</option>\
+						 <select>'
 
 			//obtener la filas seleccionadas
 			row = publics.rows('.selected').data()
@@ -317,16 +304,6 @@
 					, Tbau: value[3]
 				, })
 			})
-
-			//obtener todos los nodos de la columna 'Tipo Precursorado' tabla Nombrar
-			col3 = nombrar.column(2).nodes().to$()
-
-			//asignar evento a los select de la columna
-			$(col3.children()).change(function () {
-				hermano = $(this).parent().next()
-				value = $(this).val()
-				changeStateInput(hermano, value, cmb)
-			});
 
 			if ($('#move-left').is(':disabled') && row.length > 0) {
 				$('#move-left').removeAttr('disabled')
@@ -438,7 +415,7 @@
 	$('#save').click(function () {
 		pubs = []
 		cmbNull = 0
-		nroPreNull = 0
+		responNull = 0
 
 		fechaIni = $('div.datepicker > input').val()
 
@@ -449,50 +426,44 @@
 
 			cmb1 = $(value).find('td:eq(2)').children()
 			cmb1.css('border-color', '#ccc')
-			precur = cmb1.val()
+			privilegio = cmb1.val()
 
 			cmb2 = $(value).find('td:eq(3)').children()
 			cmb2.css('border-color', '#ccc')
-			valPrecur = cmb2.val()
+			respon = cmb2.val()
 
-			if (precur == "") {
+			if (privilegio == "") {
 				cmbNull++
 				cmb1.css('border-color', 'red')
 			}
 
-			if (precur == 3 || precur == 4) {
-				if ($.trim(valPrecur) == "" || !/^([0-9])*$/.test(valPrecur)) {
-					nroPreNull++
-					cmb2.css('border-color', 'red')
-				} else {
-					pubs.push({
-						'id': id
-						, 'precur': precur
-						, 'duracion': 0
-						, 'nroPrec': valPrecur
-					})
-				}
-			} else {
-				pubs.push({
-					'id': id
-					, 'precur': precur
-					, 'duracion': valPrecur
-				})
+			if (respon == "") {
+				responNull++
+				cmb2.css('border-color', 'red')
 			}
+
+			pubs.push({
+				'id': id,
+				'privilegio': privilegio,
+				'respon': respon
+			})
 		})
 
-		if (cmbNull > 0 || nroPreNull > 0) {
+		console.log(JSON.stringify(pubs))
+
+		if (cmbNull > 0 || responNull > 0) {
 			$.gritter.add({
-				title: 'Nombrar Publicadores!'
-				, text: 'Algunos Campos Se Encuentran Vacios o Con Caracteres Invalidos'
-				, image: "{% static 'img/error.png' %}"
-				, time: 3000
-			, });
+				title: 'Nombrar Publicadores!',
+				text: 'Algunos Campos Se Encuentran Vacios o Con Caracteres Invalidos',
+				image: "{% static 'img/error.png' %}",
+				time: 3000,
+			})
 		} else {
-			$.post("{% url 'secretario:NombrarPrecur' %}", {
-					'fechaIni': fechaIni
-					, 'pub': JSON.stringify(pubs)
-					, csrfmiddlewaretoken: '{{ csrf_token }}'
+			$.post("{% url 'secretario:nombrarPriv' %}",
+				{
+				  'fechaIni': fechaIni,
+				  'pub': JSON.stringify(pubs),
+				  csrfmiddlewaretoken: '{{ csrf_token }}'
 				})
 				.success(function (res) {
 					res = JSON.parse(res)
