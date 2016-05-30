@@ -24,17 +24,21 @@ class gestion:
                 if i in self.nroKeys:
                     try:
                         int(self.elementos[i])
-                    except(ValueError):
+                    except(ValueError, KeyError):
                         self.error=False
                         break
                 elif i in self.fechaKeys:
                     try:
                         datetime.date(int(self.elementos[i][0:4]), int(self.elementos[i][5:7]), int(self.elementos[i][8:]))
-                    except(ValueError):
+                    except(ValueError, KeyError):
                         self.error=False
                         break
                 else:
-                    if self.elementos[i].strip()=="":
+                    try:
+                        if self.elementos[i].strip()=="":
+                            self.error=False
+                            break
+                    except KeyError:
                         self.error=False
                         break
 
