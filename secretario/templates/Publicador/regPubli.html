@@ -38,6 +38,13 @@
 							</span>
 						</span>
 					</div>
+
+					<div class="clearfix"></div>
+
+					<div class="col-lg-12" style="padding:0px;margin-top:5px;">
+						<label for="fechaBau">Sexo:</label>
+						<p><input id="sexo" type="checkbox" checked></p>
+					</div>
 				</div>
 
 				<div class="clearfix"></div>
@@ -90,16 +97,37 @@
 
 		});
 
+		$(window).resize(function(){
+			div = $('#mainPub')
+			maxwidth = $(window).width()
+			if(maxwidth >= 1200 && maxwidth < 1440 ){
+				div.removeClass('col-lg-6').removeClass('col-lg-offset-3')
+				div.addClass('col-lg-8').addClass('col-lg-offset-2')
+			} else if(maxwidth > 1440){
+				div.removeClass('col-lg-8').removeClass('col-lg-offset-2')
+				div.addClass('col-lg-6').addClass('col-lg-offset-3')
+			}
+		})
+
 		$('#btnSave').click(function(){
-			datP=new Gestion()
-            limpiar=function(){
+			datP = new Gestion()
+            limpiar = function(){
                 datP.Cargar()
             }
+
+			sexo = $('#sexo').bootstrapSwitch('state');
+			if(sexo === true){
+				sexo = 'M'
+			} else {
+				sexo = 'F'
+			}
+
 			datP.getInputs('.form-group')
-            inputs=datP.getDataIn()
-			if (inputs.vacio==0){
-				keys=new Array('nombre', 'apellido', 'telefono', 'direccion', 'email', 'fechaNa', 'fechaBau', 'Encargado')
-				datP.generateJson(keys, "{{ csrf_token }}")
+            inputs = datP.getDataIn()
+
+			if ( inputs.vacio == 0 ){
+				keys = new Array('nombre', 'apellido', 'telefono', 'direccion', 'email', 'fechaNa', 'fechaBau', 'sexo')
+				datP.generateJson(keys, "{{ csrf_token }}", sexo)
 				datP.setPost("{% url 'secretario:publicReg' %}", 'Registro de Publicadores!', limpiar)
 			}
 		})
@@ -116,16 +144,13 @@
 			}
 		})
 
-		$(window).resize(function(){
-			div = $('#mainPub')
-			maxwidth = $(window).width()
-			if(maxwidth >= 1200 && maxwidth < 1440 ){
-				div.removeClass('col-lg-6').removeClass('col-lg-offset-3')
-				div.addClass('col-lg-8').addClass('col-lg-offset-2')
-			} else if(maxwidth > 1440){
-				div.removeClass('col-lg-8').removeClass('col-lg-offset-2')
-				div.addClass('col-lg-6').addClass('col-lg-offset-3')
-			}
-		})
+		$("#sexo").bootstrapSwitch({
+            onText: 'Hombre',
+            offText: 'Mujer',
+            offColor: 'default',
+            state: true,
+			handleWidth: 120,
+        })
+
 	</script>
 {% endblock %}
