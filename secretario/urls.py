@@ -52,6 +52,6 @@ urlpatterns = [
     #urls relacionadas con privilegios
     url(r'^privilegio/consultar$', views.privilegio.consultar, name='privCon'),
     url(r'^privilegio/nombrar$', views.privilegio.Vistanombrar, name='privnombrar'),
-    url(r'^privilegio/consultarnombrados$', views.privilegio.consultarNombrados, name='privconsnombrados')
+    url(r'^privilegio/consultarnombrados$', views.privilegio.consultarNombrados, name='privconsnombrados'),
     url(r'^privnombrar$', views.privilegio.nombrar, name='nombrarpriv'),
 ]
