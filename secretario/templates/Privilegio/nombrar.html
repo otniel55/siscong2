@@ -1,10 +1,544 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "layout.html" %} {% load staticfiles %} {% block contenido %}
 
-</body>
-</html>
+<div class="col-md-12 col-lg-12">
+	<div class="form-panel row">
+		<div class="visible-md visible-lg">
+			<h1 class="text-center titlecolor"><i class="fa fa-angle-right"></i>Nombrar Varones Capacitados</h1>
+		</div>
+		<div class="visible-xs visible-sm">
+			<h3 class="text-center"><i class="fa fa-angle-right"></i>Nombrar Varones Capacitados</h3>
+		</div>
+
+		<div class="style-form">
+			<div class="form-group">
+
+				{% csrf_token %}
+
+				<div class="col-lg-12" style="margin-top: 20px;">
+					<div class="row">
+
+						<div class="col-lg-6 col-md-offset-3">
+							<div class="row">
+
+								<div class="col-lg-4 col-md-offset-1">
+									<div class="form-group">
+										<label for="fechaIni">Fecha de Nombramiento:</label>
+										<div class='input-group date datepicker'>
+											<input type="text" class="form-control" style="font-size:16px;">
+											<span class="input-group-addon">
+													<span class="fa fa-calendar">
+													</span>
+											</span>
+										</div>
+									</div>
+								</div>
+
+								<div style="margin-top:22px;">
+									<div class="col-sm-2 col-md-2 col-lg-2">
+										<button id="move-right" class="btn btn-success btn-block fa fa-arrow-right fa-2x"></button>
+									</div>
+
+									<div class="col-sm-2 col-md-2 col-lg-2">
+										<button id="move-left" class="btn btn-danger btn-block fa fa-arrow-left fa-2x" disabled></button>
+									</div>
+
+									<div class="col-sm-2 col-md-2 col-lg-2">
+										<button id="save" class="btn btn-primary btn-block fa fa-check-square-o fa-2x" disabled></button>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+				<div class="clearfix"></div>
+
+				<div class="col-lg-6" style="margin-top: 40px;">
+					<div class="content-panel">
+						<section id="tabla1">
+
+							<h3 class="text-center titlecolor cabecero">Varones Bautizados</h3>
+
+							<div class="col-lg-6 Nfilter">
+								<input type="text" id="filtro1" class="form-control" placeholder="Buscar...">
+							</div>
+
+							<table id="publics" class="display table table-condensed cf" cellspacing="0" width: "100%">
+								<thead class="cf">
+									<tr>
+										<th style="width:5%;">
+											<input type="checkbox" id="selectAll" />
+										</th>
+										<th class="numeric text-center">Nombre y Apellido</th>
+										<th class="numeric text-center">Edad</th>
+										<th class="numeric text-center">Tiempo Bautizado</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for pubs in pub %}
+									<tr id="{{ pubs.pk }}">
+										<td></td>
+										<td class="numeric text-center" data-title="Nombre y Apellido">
+											{{ pubs.nombre }} {{ pubs.apellido }}
+										</td>
+										<td class="numeric text-center" data-title="Fecha de Bautismo">
+											{{ pubs.edad }}
+										</td>
+										<td class="numeric text-center" data-title="Tiempo Bautizado">
+											{{ pubs.tiempoB }}
+										</td>
+									</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+
+							<div style="height:80px;">
+								<nav class="center-block">
+									<ul id="pager1" class="pagination pager hide">
+										<li>
+											<a href="#" aria-label="P">
+												<span aria-hidden="true">&laquo;</span>
+											</a>
+										</li>
+										<li>
+											<a href="#" aria-label="N">
+												<span aria-hidden="true">&raquo;</span>
+											</a>
+										</li>
+									</ul>
+								</nav>
+							</div>
+						</section>
+					</div>
+				</div>
+
+				<div class="col-lg-6" style="margin-top: 40px;">
+					<div class="content-panel">
+						<section id="tabla2">
+
+							<h3 class="text-center titlecolor cabecero">Publicadores Que Seran Nombrados</h3>
+
+							<div class="col-lg-6 Nfilter">
+								<input type="text" id="filtro2" class="form-control" placeholder="Buscar...">
+							</div>
+
+							<table id="nombrar" class="display table table-condensed cf" cellspacing="0" style="font-size:14px;" width: "100%">
+								<thead class="cf">
+									<tr>
+										<th style="width:5%;">
+											<input type="checkbox" id="selectAll2" />
+										</th>
+										<th class="numeric text-center">Nombre y Apellido</th>
+										<th class="numeric text-center">
+											<div class="btn-group">
+												<button class="btnPrecur dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													Privilegio <span class="fa fa-caret-square-o-down"></span>
+												</button>
+												<ul class="dropdown-menu">
+													<li><a href="#" val="2">Superintendente (Anciano)</a></li>
+													<li><a href="#" val="1">Siervo Ministerial</a></li>
+												</ul>
+											</div>
+										</th>
+										<th class="numeric text-center">Responsabilidad</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+
+							<div style="height:80px;">
+								<nav class="center-block">
+									<ul id="pager2" class="pagination pager hide">
+										<li>
+											<a href="#" aria-label="P">
+												<span aria-hidden="true">&laquo;</span>
+											</a>
+										</li>
+										<li>
+											<a href="#" aria-label="N">
+												<span aria-hidden="true">&raquo;</span>
+											</a>
+										</li>
+									</ul>
+								</nav>
+							</div>
+						</section>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %} {% block scripts %}
+<script>
+	var publics, nombrar, altoT
+
+	var cmb = '<select class="form-control" disabled>\
+                        <option value="1">1 mes</option>\
+                        <option value="2">2 meses</option>\
+                        <option value="3">3 meses</option>\
+                        <option value="0">Indefinido</option>\
+                    <select>'
+
+	$(document).ready(function () {
+
+		tablaConfig = {
+			columnDefs: [{
+				orderable: false
+				, className: 'select-checkbox'
+				, targets: 0
+					        }]
+			, select: {
+				style: 'multi'
+				, selector: 'td:first-child'
+			, }
+			, order: [[1, 'asc']]
+			, "bInfo": false
+			, "oLanguage": {
+				"sInfoEmpty": "La Tabla esta Vacia"
+				, "sZeroRecords": "No se Encontraron Registros"
+			, }
+		}
+
+		//instancia de las tablas
+		publics = $('#publics').DataTable(tablaConfig);
+		nombrar = $('#nombrar').DataTable(tablaConfig);
+
+		//estilisando los filtros
+		$('#publics_length').hide()
+		$('#publics_filter').hide()
+		$('#publics_paginate').hide()
+		$('#filtro1').on('keyup change', function () {
+			$('#publics').dataTable().fnFilter(this.value);
+		});
+
+		$('#nombrar_length').hide()
+		$('#nombrar_filter').hide()
+		$('#nombrar_paginate').hide()
+		$('#filtro2').on('keyup change', function () {
+			$('#nombrar').dataTable().fnFilter(this.value);
+		});
+
+		//asignacion de altura de las tablas
+		reajustarTables()
+
+		//creacion del pager
+		pg1 = createPager(publics, 1)
+
+		if (pg1 == 1) {
+			altoT = $('#tabla1')[0].clientHeight
+		}
+
+	});
+
+	//check para seleccionar todo los elementos de la tabla
+	$('#selectAll').click(function () {
+
+		if (this.checked) {
+			publics.rows().select();
+		} else {
+			publics.rows().deselect();
+		}
+
+	})
+
+	$('#selectAll2').click(function () {
+
+		if (this.checked) {
+			nombrar.rows().select();
+		} else {
+			nombrar.rows().deselect();
+		}
+
+	})
+
+	//lista para seleccionar el precursorado en todo los elementos de la tabla
+	$('.dropdown-menu > li > a').click(function () {
+		if (nombrar.data().length > 0) {
+
+			valAll = $(this).attr('val')
+
+			//obtener todos los nodos de la columna 'Tipo Precursorado' tabla Nombrar
+			col3 = nombrar.column(2).nodes().to$()
+
+			col3.each(function () {
+
+				//obtener los select hijos de la columna
+				$(this).children().val(valAll)
+
+				//obtener la columna hermana derecha
+				hermano = $(this).next()
+
+				changeStateInput(hermano, valAll, cmb)
+			})
+		}
+	})
+
+	$('#nombrar th, #publics th').click(function () {
+		reajustarTables(altoT)
+	})
+
+	//btns para cambiar de tabla
+
+	//cambiar a la tabla Nombrar
+	$('#move-right').click(function () {
+			row = ""
+			col = ""
+			nodo = ""
+			cmbPrecur = '<select class="form-control">\
+                                <option value>Tipo de Precursorado</option>\
+								<option value="2">Auxiliar</option>\
+								<option value="1">Auxiliar (Campañas)</option>\
+								<option value="3">Regular</option>\
+								<option value="4">Especial</option>\
+							<select>'
+
+			//obtener la filas seleccionadas
+			row = publics.rows('.selected').data()
+			publics.rows('.selected').remove().draw()
+
+			//crear las filas en la tabla Nombrar
+			$.each(row, function (key, value) {
+
+				nodo = nombrar.row.add([
+									col
+						            , value[1]
+						            , cmbPrecur
+						            , cmb
+						        , ]).draw().node()
+
+				//asignar atributos a la fila creada
+				$(nodo).attr({
+					id: row[key].DT_RowId
+					, fechaBau: value[2]
+					, Tbau: value[3]
+				, })
+			})
+
+			//obtener todos los nodos de la columna 'Tipo Precursorado' tabla Nombrar
+			col3 = nombrar.column(2).nodes().to$()
+
+			//asignar evento a los select de la columna
+			$(col3.children()).change(function () {
+				hermano = $(this).parent().next()
+				value = $(this).val()
+				changeStateInput(hermano, value, cmb)
+			});
+
+			if ($('#move-left').is(':disabled') && row.length > 0) {
+				$('#move-left').removeAttr('disabled')
+			} else {
+				if (row.length == 0) {
+					$.gritter.add({
+						title: 'Nombrar Publicadores!'
+						, text: 'No Hay Ninguna Fila Seleccionada'
+						, image: "{% static 'img/error.png' %}"
+						, time: 3000
+					, })
+				}
+			}
+
+			if ($('#selectAll').is(':checked'))
+				$('#selectAll').removeProp('checked')
+
+			if (publics.data().length == 0)
+				$(this).prop('disabled', true)
+
+			if ($('div.datepicker > input').val())
+				$('#save').removeProp('disabled')
+
+			reajustarTables()
+			pg1 = createPager(publics, 1)
+			pg2 = createPager(nombrar, 2)
+
+			if (pg2 == 1) {
+				altoT = $('#tabla2')[0].clientHeight
+			} else if (pg1 == 1) {
+				altoT = $('#tabla1')[0].clientHeight
+			} else {
+				altoT = null
+			}
+
+		}) //fin del moveright
+
+	$('#move-left').click(function () {
+			row = ""
+			col = ""
+			nodo = ""
+
+			row = nombrar.rows('.selected').data()
+			rowNode = nombrar.rows('.selected').nodes()
+			nombrar.rows('.selected').remove().draw()
+
+			$.each(row, function (key, value) {
+
+				nodo = publics.row.add([
+									col
+						            , value[1]
+                                    , $(rowNode[key]).attr('fechaBau')
+                                    , $(rowNode[key]).attr('Tbau')
+						        ]).draw().node()
+
+				$(nodo).attr('id', '' + rowNode[key].id).find('td').addClass("numeric text-center")
+			})
+
+			if ($('#selectAll2').is(':checked'))
+				$('#selectAll2').removeProp('checked')
+
+			if ($('#move-right').is(':disabled') && row.length > 0) {
+				$('#move-right').removeProp('disabled')
+			} else {
+				if (row.length == 0) {
+					$.gritter.add({
+						title: 'Nombrar Publicadores!'
+						, text: 'No Hay Ninguna Fila Seleccionada'
+						, image: "{% static 'img/error.png' %}"
+						, time: 3000
+					, })
+				}
+			}
+
+			if (nombrar.data().length == 0) {
+				$(this).prop('disabled', true)
+				$('#save').prop('disabled', true)
+			}
+
+			reajustarTables()
+			pg2 = createPager(nombrar, 2)
+			pg1 = createPager(publics, 1)
+
+			if (pg1 == 1) {
+				altoT = $('#tabla1')[0].clientHeight
+			} else if (pg2 == 1) {
+				altoT = $('#tabla2')[0].clientHeight
+			} else {
+				altoT = null
+			}
+
+		}) //fin del moveleft
+
+	$('span.input-group-addon').click(function () {
+		if (nombrar.data().length > 0)
+			$('#save').removeProp('disabled')
+	})
+
+	$('div.datepicker > input').on('keyup change', function () {
+		if ($(this).val() && nombrar.data().length > 0) {
+			$('#save').removeProp('disabled')
+		} else {
+			$('#save').prop('disabled', true)
+		}
+	});
+
+	//fin de cambiar de tabla
+
+	$('#save').click(function () {
+		pubs = []
+		cmbNull = 0
+		nroPreNull = 0
+
+		fechaIni = $('div.datepicker > input').val()
+
+		rows = nombrar.rows().nodes()
+
+		$.each(rows, function (key, value) {
+			id = $(value).attr('id')
+
+			cmb1 = $(value).find('td:eq(2)').children()
+			cmb1.css('border-color', '#ccc')
+			precur = cmb1.val()
+
+			cmb2 = $(value).find('td:eq(3)').children()
+			cmb2.css('border-color', '#ccc')
+			valPrecur = cmb2.val()
+
+			if (precur == "") {
+				cmbNull++
+				cmb1.css('border-color', 'red')
+			}
+
+			if (precur == 3 || precur == 4) {
+				if ($.trim(valPrecur) == "" || !/^([0-9])*$/.test(valPrecur)) {
+					nroPreNull++
+					cmb2.css('border-color', 'red')
+				} else {
+					pubs.push({
+						'id': id
+						, 'precur': precur
+						, 'duracion': 0
+						, 'nroPrec': valPrecur
+					})
+				}
+			} else {
+				pubs.push({
+					'id': id
+					, 'precur': precur
+					, 'duracion': valPrecur
+				})
+			}
+		})
+
+		if (cmbNull > 0 || nroPreNull > 0) {
+			$.gritter.add({
+				title: 'Nombrar Publicadores!'
+				, text: 'Algunos Campos Se Encuentran Vacios o Con Caracteres Invalidos'
+				, image: "{% static 'img/error.png' %}"
+				, time: 3000
+			, });
+		} else {
+			$.post("{% url 'secretario:NombrarPrecur' %}", {
+					'fechaIni': fechaIni
+					, 'pub': JSON.stringify(pubs)
+					, csrfmiddlewaretoken: '{{ csrf_token }}'
+				})
+				.success(function (res) {
+					res = JSON.parse(res)
+					bien = 0
+					mal = 0
+
+					if (!res.msg) {
+						$.each(res, function (key, value) {
+							if (value.bien == 1) {
+								nombrar.row('#' + value.id).remove().draw()
+								bien++
+							} else {
+								mal++
+							}
+						})
+					} else {
+						bien++
+					}
+
+					if (bien > 0) {
+						$.gritter.add({
+							title: 'Nombrar Publicadores!'
+							, text: 'Precursores Nombrados Con Exito!'
+							, image: "{% static 'img/success.png' %}"
+							, time: 3000
+						, });
+					}
+
+					if (mal > 0) {
+						$.gritter.add({
+							title: 'Nombrar Publicadores!'
+							, text: 'Algunos Precursores No Pudieron Ser Nombrados\n Verifique Sus Datos en la Tabla'
+							, image: "{% static 'img/error.png' %}"
+							, time: 3000
+						, });
+					} else {
+						setTimeout(
+							function () {
+								window.location = "{% url 'secretario:vistaNombrar' %}"
+							}
+							, 3000
+						)
+					}
+
+				})
+		}
+	})
+</script>
+{% endblock %}
