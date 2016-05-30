@@ -5,14 +5,13 @@ import datetime
 from django.http import HttpResponse
 from django.shortcuts import render
 #modulos propios del proyecto
-from ..forms import CrearGrupo, traerGrupo, modalPub, regInforme
+from ..forms import traerGrupo, modalPub, regInforme
 from .siscong import gestion
 #modelos
 from secretario.models import GruposPred, Publicador
 
 def Vista_registrar(request):
-     form = CrearGrupo()
-     return render(request, 'Grupo/regGrupo.html', {'form': form, 'url':1})
+     return render(request, 'Grupo/regGrupo.html', { 'url':1 })
 
 def registrar(request):
      msg={}
