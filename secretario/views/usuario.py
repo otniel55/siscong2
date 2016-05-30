@@ -1,4 +1,4 @@
-#libs propias de python
+#librerias propias de python
 import json
 #modulos de django
 from django.shortcuts import render
