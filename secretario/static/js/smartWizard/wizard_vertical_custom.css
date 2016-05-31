@@ -93,7 +93,9 @@
     position: absolute;
     float: left;
     margin: 0;
-    padding: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 20px;
     font: normal 12px Verdana, Arial, Helvetica, sans-serif;
     color: #5A5655;
     height: 400px !important;
@@ -213,4 +215,10 @@
     left: 49%;
     left: auto;
     width: 0;
+}
+
+.StepTitleCustom {
+	margin-bottom: 20px;
+	text-align: center;
+	color: #201c6f;
 }

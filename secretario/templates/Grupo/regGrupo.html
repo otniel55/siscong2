@@ -20,7 +20,7 @@
 							</select>
 						</div>
 						<div class="col-xs-2" style="padding:0px;padding-left:15px;">
-							<button id="newEnc" class="btn btn-success btn-block fa fa-plus" style="height:34px;"  data-toggle="modal" data-target="#modNewEnc"></button>
+							<button id="newEnc" class="btn btn-success btn-block fa fa-plus" style="height:34px;"  data-toggle="modal" data-target="#modNewPub"></button>
 						</div>
 					</div>
 
@@ -32,7 +32,7 @@
 							</select>
 						</div>
 						<div class="col-xs-2" style="padding:0px;padding-left:15px;">
-							<button id="newAux" class="btn btn-success btn-block fa fa-plus" style="height:34px;"></button>
+							<button id="newAux" class="btn btn-success btn-block fa fa-plus" style="height:34px;" data-toggle="modal" data-target="#modNewPub"></button>
 						</div>
 					</div>
 
@@ -152,7 +152,7 @@
 		</div>
 	</div>
 
-	<div class="modal fade" id="modNewEnc" role="dialog">
+	<div class="modal fade" id="modNewPub" role="dialog">
 		<div class="modal-dialog modal-md">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -175,7 +175,7 @@
 						</li>
 					</ul>
 					<div id="step-1">
-						<h2 class="StepTitle">Registrar Publicador</h2>
+						<h2 class="StepTitleCustom">Registrar Publicador</h2>
 
 						{{ regPub }}
 
@@ -189,39 +189,49 @@
 						</div>
 
 						<label for="fechaBau">Fecha de Bautismo:</label>
-						<div class="col-lg-12 mrg-bottom" style="padding:0px;">
-							<div class='input-group dateBau datepicker2'>
-								<input id="fechaBau" type="text" class="form-control">
-								<span class="input-group-addon">
-									<span class="fa fa-calendar">
-									</span>
-								</span>
-							</div>
-							<span class="btn btn-warning noBau">
-								<span class="fa fa-calendar-times-o">
+						<div class='input-group datepicker2'>
+							<input id="fechaBau" type="text" class="form-control">
+							<span class="input-group-addon">
+								<span class="fa fa-calendar">
 								</span>
 							</span>
 						</div>
 
 						<div class="clearfix"></div>
 
-						<div class="col-lg-12" style="padding:0px;margin-top:5px;">
+						<div class="" style="padding:0px;margin-top:5px;">
 							<label for="fechaBau">Sexo:</label>
 							<p><input id="sexo" type="checkbox" checked></p>
 						</div>
 					</div>
 
 					<div id="step-2">
-						<h2 class="StepTitle">Nombrar Publicador</h2>
-						<select id="privilegio" class="form-control">
+						<h2 class="StepTitleCustom">Nombrar Publicador</h2>
+
+						<label for="privilegio">Privilegios:</label>
+						<select id="privilegio" class="form-control mrg-bottom">
 							<option value>Seleccion un Privilegio</option>
 							<option value="1">Superintendente (Anciano)</option>
 							<option value="2">Siervo Ministerial</option>
 						</select>
+
+						<label for="fechaNa">Fecha de Nombramiento:</label>
+						<div class='input-group date datepicker2 mrg-bottom'>
+							<input id="fechaNom" type="text" class="form-control">
+							<span class="input-group-addon">
+								<span class="fa fa-calendar">
+								</span>
+							</span>
+						</div>
+
+						<label for="respon">Responsabilidad:</label>
+						<input id="respon" type="text" class="form-control">
+
 					</div>
 				</div>
 			</div>
 		</div>
+	</div>
 	</div>
 {% endblock %}
 
@@ -229,8 +239,8 @@
 <script>
 	var publics, nombrar, altoT
 
-	$('#modNewEnc').on('shown.bs.modal', function (e) {
-		$("#step-1").niceScroll({styler:"fb",cursorcolor:"#4ECDC4", cursorwidth: '6', cursorborderradius: '10px', background: '#404040', spacebarenabled:false,  cursorborder: '', zindex: '1000'});
+	$('#modNewPub').on('shown.bs.modal', function (e) {
+		$("#step-1, #step-2").niceScroll({styler:"fb",cursorcolor:"#4ECDC4", cursorwidth: '6', cursorborderradius: '10px', background: '#404040', spacebarenabled:false,  cursorborder: '', zindex: '1000'});
 	})
 
 	$(document).ready(function () {
