@@ -20,7 +20,7 @@
 							</select>
 						</div>
 						<div class="col-xs-2" style="padding:0px;padding-left:15px;">
-							<button id="newEnc" class="btn btn-success btn-block fa fa-plus" style="height:34px;"></button>
+							<button id="newEnc" class="btn btn-success btn-block fa fa-plus" style="height:34px;"  data-toggle="modal" data-target="#modNewEnc"></button>
 						</div>
 					</div>
 
@@ -153,7 +153,7 @@
 	</div>
 
 	<div class="modal fade" id="modNewEnc" role="dialog">
-		<div class="modal-dialog modal-sm">
+		<div class="modal-dialog modal-md">
 			<div class="modal-content">
 				<div class="modal-header">
 				  <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -161,11 +161,64 @@
 				</div>
 
 				<div class="modal-body">
+				<div id="wizard" class="form_wizard wizard_verticle">
+					<ul class="list-unstyled wizard_steps">
+						<li>
+							<a href="#step-1">
+								<span class="step_no">1</span>
+							</a>
+						</li>
+						<li>
+							<a href="#step-2">
+								<span class="step_no">2</span>
+							</a>
+						</li>
+					</ul>
+					<div id="step-1">
+						<h2 class="StepTitle">Registrar Publicador</h2>
 
-				</div>
+						{{ regPub }}
 
-				<div class="modal-footer">
-				  <button id="changePub" type="button" class="btn btn-default">Guardar</button>
+						<label for="fechaNa">Fecha de Nacimiento:</label>
+						<div class='input-group date datepicker2 mrg-bottom'>
+							<input id="fechaNA" type="text" class="form-control">
+							<span class="input-group-addon">
+								<span class="fa fa-calendar">
+								</span>
+							</span>
+						</div>
+
+						<label for="fechaBau">Fecha de Bautismo:</label>
+						<div class="col-lg-12 mrg-bottom" style="padding:0px;">
+							<div class='input-group dateBau datepicker2'>
+								<input id="fechaBau" type="text" class="form-control">
+								<span class="input-group-addon">
+									<span class="fa fa-calendar">
+									</span>
+								</span>
+							</div>
+							<span class="btn btn-warning noBau">
+								<span class="fa fa-calendar-times-o">
+								</span>
+							</span>
+						</div>
+
+						<div class="clearfix"></div>
+
+						<div class="col-lg-12" style="padding:0px;margin-top:5px;">
+							<label for="fechaBau">Sexo:</label>
+							<p><input id="sexo" type="checkbox" checked></p>
+						</div>
+					</div>
+
+					<div id="step-2">
+						<h2 class="StepTitle">Nombrar Publicador</h2>
+						<select id="privilegio" class="form-control">
+							<option value>Seleccion un Privilegio</option>
+							<option value="1">Superintendente (Anciano)</option>
+							<option value="2">Siervo Ministerial</option>
+						</select>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -175,6 +228,10 @@
 {% block scripts %}
 <script>
 	var publics, nombrar, altoT
+
+	$('#modNewEnc').on('shown.bs.modal', function (e) {
+		$("#step-1").niceScroll({styler:"fb",cursorcolor:"#4ECDC4", cursorwidth: '6', cursorborderradius: '10px', background: '#404040', spacebarenabled:false,  cursorborder: '', zindex: '1000'});
+	})
 
 	$(document).ready(function () {
 
@@ -225,6 +282,20 @@
 			altoT = $('#tabla1')[0].clientHeight
 		}
 
+		$("#sexo").bootstrapSwitch({
+            onText: 'Hombre',
+            offText: 'Mujer',
+            offColor: 'default',
+            state: true,
+			handleWidth: 120,
+        })
+
+		$('#wizard').smartWizard({
+			transitionEffect: 'slide',
+			labelNext:'Siguiente',
+			labelPrevious:'Anterior',
+			labelFinish:'Finalizar',
+		});
 	});
 
 	//check para seleccionar todo los elementos de la tabla

@@ -26,6 +26,7 @@
     <link href="{% static 'js/bootstrap-switch/bootstrap-switch.css' %}" rel="stylesheet" />
     <link href="{% static 'js/gritter/css/jquery.gritter.css' %}" rel="stylesheet" type="text/css" />
     <link href="{% static 'js/icheck/flat/green.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'js/smartWizard/wizard_vertical_custom.css' %}" rel="stylesheet" type="text/css" />
 
 	<!--Plantilla styles -->
 	<link rel="stylesheet" type="text/css" href="{% static 'css/table-responsive.css' %}" />
@@ -200,9 +201,14 @@
 
     <!-- libreria para graficos -->
     <script src="{% static 'js/Chart.min.js' %}"></script>
+
 	<!-- librerias para el PDF -->
 	<script src="{% static 'js/pdfmake/pdfmake.min.js' %}"></script>
 	<script src="{% static 'js/pdfmake/vfs_fonts.js' %}"></script>
+
+    <!-- librerias para el jquery smartWizard -->
+    <script src="{% static 'js/smartWizard/jquery.smartWizard.js' %}"></script>
+
     {% block scripts %} {% endblock %}
 
 </body>
