@@ -18,6 +18,8 @@ def registrar(request):
      hoy=datetime.date.today()
      vFechas=['fechaNa']
      validar=gestion(request.POST,[],vFechas)
+     validar.ignore=['active']
+     validar.validar()
      if not validar.error:
           validar.ignore.append('email')
           validar.ignore.append('fechaBau')
@@ -38,7 +40,7 @@ def registrar(request):
                     except(KeyError, Publicador.DoesNotExist):
                          p=Publicador(nombre=_nombre, apellido=_apellido, telefono=_telefono, direccion=_direccion,email=_email, fechaBau=_fechaBau, fechaNa=_fechaNa, sexo=_sexo)
                          p.save()
-                         msg={'msg':"Publicador Registrado con exito", 'on':1}
+                         msg={'msg':"Publicador Registrado con exito", 'on':1, 'id':p.pk}
                     else:
                          msg={ 'msg': "Error! Este publicador ya esta registrado."}
                else:

@@ -4,6 +4,7 @@ import datetime
 #modulos de django
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.db.models import Q
 #modulos propios del proyecto
 from ..forms import traerGrupo, modalPub, regInforme, regPub, CrearGrupo
 from .siscong import *
@@ -13,35 +14,101 @@ from secretario.models import GruposPred, Publicador
 def Vista_registrar(request):
      hoy=datetime.date.today()
      pub = regPub()
-     idGrupos=[]
+     idGrupos=arrayIdGrup()
      pubAux=[]
-     for i in GruposPred.objects.all():
-          idGrupos.append(i.pk)
      pubSinGrupo=Publicador.objects.exclude(grupo__IDgrupo__in=idGrupos)
      for i in pubSinGrupo:
-          if getEdad(i.fechaNa, hoy)>17:
+          if getEdad(i.fechaNa, hoy)>17 and i.fechaBau[0]!="N":
                pubAux.append(i)
      pubsEncargado=pubSinGrupo.filter(privilegiopub__status=True)
      return render(request, 'Grupo/regGrupo.html', { 'url':1, 'regPub': pub, 'all':pubSinGrupo, 'encargados':pubsEncargado, 'aux':pubAux})
 
 def registrar(request):
+     validaciones=True
+     cont=0
+     hoy=datetime.date.today()
      msg={}
-     validar=gestion(request.POST)
+     nums=['IDgrupo', 'encargado', 'auxiliar']
+     validar=gestion(request.POST, nums, ignorar=['pubs'])
      validar.validar()
      if not validar.error:
-          datosG=validar.trimUpper()
-          _encargado=datosG['encargado']
-          _auxiliar=datosG['auxiliar']
+          idGrupo=int(request.POST['IDgrupo'])
+          enc=int(request.POST['encargado'])
+          aux=int(request.POST['auxiliar'])
+          pubs=json.loads(request.POST['pubs'])
           try:
-               verificar = GruposPred.objects.get(encargado=_encargado)
+               GruposPred.objects.get(pk=idGrupo)
           except(KeyError, GruposPred.DoesNotExist):
-               grupo=GruposPred(encargado=_encargado, auxiliar=_auxiliar)
-               grupo.save()
-               msg={'msg':"Grupo Registrado con exito", 'on':1}
+               try:
+                    encargado=Publicador.objects.get(pk=enc)
+               except(KeyError, Publicador.DoesNotExist):
+                    msg={'msg':'El Encargado no existe'}
+                    validaciones=False
+               else:
+                    try:
+                         Publicador.objects.get(pk=enc, privilegiopub__status=True)
+                    except:
+                         msg={'msg':'Error, El encargado no tiene privilegios'}
+                         validaciones=False
+                    else:
+                         if not verificarExist(enc):
+                              if not verificarAsignacion(enc):
+                                   try:
+                                        auxiliar=Publicador.objects.get(pk=aux)
+                                   except(KeyError, Publicador.DoesNotExist):
+                                        msg={'msg':"Error el auxiliar no existe"}
+                                        validaciones=False
+                                   else:
+                                        if aux!=enc:
+                                             if getEdad(auxiliar.fechaNa, hoy)>17 and auxiliar.sexo=="M" and auxiliar.fechaBau[0]!="N":
+                                                  if not verificarExist(aux):
+                                                       if not verificarAsignacion(aux):
+                                                            g=GruposPred(IDgrupo=idGrupo, encargado=encargado, auxiliar=auxiliar)
+                                                            g.save()
+                                                            encargado.grupo.add(g)
+                                                            auxiliar.grupo.add(g)
+                                                            for i in pubs:
+                                                                 try:
+                                                                      p=Publicador.objects.get(pk=int(i['id']))
+                                                                 except (KeyError, Publicador.DoesNotExist):
+                                                                      msg[cont]={'id': i['id'], 'bien':0}
+                                                                      validaciones=False
+                                                                 else:
+                                                                      if not p.pk in [enc, aux]:
+                                                                           if not verificarExist(p.pk):
+                                                                                p.grupo.add(g)
+                                                                                msg[cont]={'id': i['id'], 'bien':1}
+                                                                           else:
+                                                                                msg[cont]={'id': i['id'], 'bien':0}
+                                                                                validaciones=False
+                                                                      else:
+                                                                            msg[cont]={'id': i['id'], 'bien':1}
+                                                                 cont+=1
+                                                       else:
+                                                            msg={'msg':"Error el auxiliar tiene responsabilidades en otro grupo"}
+                                                            validaciones=False
+                                                  else:
+                                                       msg={'msg':"Error, el auxiliar esta en otro grupo"}
+                                                       validaciones=False
+                                             else:
+                                                  msg={'msg':"Error el auxiliar debe ser varon, mayor de edad y estar bautizado"}
+                                                  validaciones=False
+                                        else:
+                                             msg={'msg':"Error el encargado no puede ser el auxiliar"}
+                                             validaciones=False
+                              else:
+                                   msg={'msg':'Error, el encargado ya tiene responsabilidades en otro grupo'}
+                                   validaciones=False
+                         else:
+                              msg={'msg':'Error, Este encargado está en otro grupo'}
+                              validaciones=False
           else:
-               msg = {'msg': "Este encargado se encuentra en otro grupo"}
+               msg={'msg':'Hay otro grupo con ese numero, por favor intente con otro'}
+               validaciones=False
      else:
           msg=validar.mensaje
+     if validaciones:
+          msg={'msg':"Grupo creado con exito"}
      return  HttpResponse(json.dumps(msg))
 
 def vistaConsultar(request):
@@ -107,3 +174,26 @@ def modificar(request):
      else:
           msg=validar.mensaje
      return HttpResponse(json.dumps(msg))
+
+#metodos reutilizables
+def arrayIdGrup():
+     id=[]
+     for i in GruposPred.objects.all():
+          id.append(i.pk)
+     return id
+
+def verificarExist(id):
+     p=Publicador.objects.filter(pk=id, grupo__IDgrupo__in=arrayIdGrup())
+     if len(p)>0:
+          exist=True
+     else:
+          exist=False
+     return exist
+
+def verificarAsignacion(id):
+     grupos=GruposPred.objects.filter(Q(encargado=id)|Q(auxiliar=id))
+     if len(grupos)>0:
+          exist=True
+     else:
+          exist=False
+     return exist
