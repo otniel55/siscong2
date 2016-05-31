@@ -15,8 +15,8 @@ class GruposPred(models.Model):
         on_delete = models.CASCADE,
 		related_name='pubauxiliar'
     )
-	def __int__(self):
-		return self.IDgrupo
+	def __str__(self):
+		return str(self.IDgrupo)+". "+self.encargado.nombre+" "+self.encargado.apellido
 
 class Precursor(models.Model):
 	IDprecursor = models.AutoField(primary_key=True)
@@ -47,7 +47,7 @@ class Publicador(models.Model):
 	grupo = models.ManyToManyField(GruposPred)
 	sexo = models.CharField(max_length=10)
 	def __str__(self):
-		return self.nombre
+		return self.nombre+" "+self.apellido
 	
 class Informe(models.Model):
 	Idinf = models.AutoField(primary_key=True)

@@ -1,18 +1,8 @@
-
 from django import forms
 from secretario.models import *
 
-class CrearGrupo(forms.ModelForm):
-	class Meta:
-		model = GruposPred
-		fields = ['encargado', 'auxiliar']
-		widgets = {
-            'encargado': forms.TextInput(attrs={'class': 'form-control mrg-bottom'}),
-            'auxiliar': forms.TextInput(attrs={'class': 'form-control mrg-bottom'})
-        }
-
 class traerGrupo(forms.Form):
-	Encargado = forms.ModelChoiceField(queryset = GruposPred.objects.all(), 
+	Encargado = forms.ModelChoiceField(queryset = GruposPred.objects.all().order_by("IDgrupo"),
 										empty_label="--SELECCIONE UN ENCARGADO--",
 										widget=forms.Select(attrs={'class': 'form-control'})
 									)

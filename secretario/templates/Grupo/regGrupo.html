@@ -520,9 +520,9 @@
 		input = obj.getDataIn()
 
 		if(input.vacio == 0){
-			keys = new Array('IDgrupo', 'encargado', 'auxiliar', 'pubs')
+			key = new Array('IDgrupo', 'encargado', 'auxiliar', 'pubs')
 
-			obj.generateJson(keys, '{{ csrf_token }}', pubs)
+			obj.generateJson(key, '{{ csrf_token }}', JSON.stringify(pubs))
 
 			obj.setPost("{% url 'secretario:grupos_registrar' %}", 'Registro de Grupos!', result)
 		}

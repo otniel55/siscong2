@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.db.models import Q
 #modulos propios del proyecto
-from ..forms import traerGrupo, modalPub, regInforme, regPub, CrearGrupo
+from ..forms import traerGrupo, modalPub, regInforme, regPub
 from .siscong import *
 #modelos
 from secretario.models import GruposPred, Publicador
@@ -139,8 +139,10 @@ def consultar(request,idGrupo):
           datos={"msg":"Este grupo no esta registrado"}
      else:
           request.session['conGrupoId']=idGrupo
-          p = Publicador.objects.filter(FKgrupo=g.pk)
-          formDatGrupo = CrearGrupo(instance=g)
+          p = Publicador.objects.filter(grupo__IDgrupo=g.pk)
+          enc=g.encargado.pk
+          aux=g.auxiliar.pk
+          
           formPub = modalPub()
           modalGrupo = traerGrupo()
           modalInfo = regInforme()
