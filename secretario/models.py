@@ -15,8 +15,8 @@ class GruposPred(models.Model):
         on_delete = models.CASCADE,
 		related_name='pubauxiliar'
     )
-	def __str__(self):
-		return self.encargado
+	def __int__(self):
+		return self.IDgrupo
 
 class Precursor(models.Model):
 	IDprecursor = models.AutoField(primary_key=True)

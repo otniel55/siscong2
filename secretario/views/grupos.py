@@ -5,14 +5,24 @@ import datetime
 from django.http import HttpResponse
 from django.shortcuts import render
 #modulos propios del proyecto
-from ..forms import traerGrupo, modalPub, regInforme, regPub
-from .siscong import gestion
+from ..forms import traerGrupo, modalPub, regInforme, regPub, CrearGrupo
+from .siscong import *
 #modelos
 from secretario.models import GruposPred, Publicador
 
 def Vista_registrar(request):
-	pub = regPub()
-	return render(request, 'Grupo/regGrupo.html', { 'url':1, 'regPub': pub })
+     hoy=datetime.date.today()
+     pub = regPub()
+     idGrupos=[]
+     pubAux=[]
+     for i in GruposPred.objects.all():
+          idGrupos.append(i.pk)
+     pubSinGrupo=Publicador.objects.exclude(grupo__IDgrupo__in=idGrupos)
+     for i in pubSinGrupo:
+          if getEdad(i.fechaNa, hoy)>17:
+               pubAux.append(i)
+     pubsEncargado=pubSinGrupo.filter(privilegiopub__status=True)
+     return render(request, 'Grupo/regGrupo.html', { 'url':1, 'regPub': pub, 'all':pubSinGrupo, 'encargados':pubsEncargado, 'aux':pubAux})
 
 def registrar(request):
      msg={}
