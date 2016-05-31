@@ -17,15 +17,17 @@ function SmartWizard(target, options) {
     this.curStepIdx   = options.selected;
     this.steps        = $(target).children("ul").children("li").children("a"); // Get all anchors
     this.contentWidth = 0;
-    //this.msgBox = $('<div class="msgBox"><div class="content"></div><a href="#" class="close">X</a></div>');
+    this.msgBox = $('<div class="msgBox"><div class="content"></div><a href="#" class="close">X</a></div>');
     this.elmStepContainer = $('<div></div>').addClass("stepContainer");
-    //this.loader = $('<div>Loading</div>').addClass("loader");
+    this.loader = $('<div>Loading</div>').addClass("loader");
     this.buttons = {
         next : $('<a>'+options.labelNext+'</a>').attr("href","#").addClass("btn btn-primary"),
         previous : $('<a>'+options.labelPrevious+'</a>').attr("href","#").addClass("btn btn-success"),
         finish  : $('<a>'+options.labelFinish+'</a>').attr("href","#").addClass("btn btn-default")
     };
 
+	$(this.msgBox).hide()
+	$(this.loader).hide()
     /*
      * Private functions
      */

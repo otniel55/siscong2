@@ -451,7 +451,11 @@
 			})
 		})
 
-		console.log(JSON.stringify(pubs))
+		console.log( {
+				  'fechaIni': fechaIni,
+				  'pub': JSON.stringify(pubs),
+				  csrfmiddlewaretoken: '{{ csrf_token }}'
+				})
 
 		if (cmbNull > 0 || responNull > 0) {
 			$.gritter.add({
