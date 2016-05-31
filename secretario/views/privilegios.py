@@ -49,7 +49,7 @@ def nombrar(request):
                 else:
                     if pub.fechaBau[0]!="N":
                         try:
-                            pPriv=Publicador.objects.get(pk=p['id'], privilegiopub__status=True)
+                            pPriv=pub.filter(privilegiopub__status=True)
                         except(KeyError, Publicador.DoesNotExist):
                             if getEdad(pub.fechaNa,hoy) >= priv.edadMin:
                                 fechaBau=datetime.date(int(pub.fechaBau[0:4]), int(pub.fechaBau[5:7]), int(pub.fechaBau[8:]))
