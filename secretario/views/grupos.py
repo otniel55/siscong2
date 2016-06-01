@@ -207,6 +207,6 @@ def grupoExist(request):
      try:
           GruposPred.objects.get(pk=int(g))
      except(KeyError, GruposPred.DoesNotExist):
-          return json.dumps({'on':1})
+          return HttpResponse(json.dumps({'on':1}))
      else:
-          return json.dumps({'on':0})
+          return HttpResponse(json.dumps({'on':0}))
