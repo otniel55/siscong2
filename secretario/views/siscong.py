@@ -3,7 +3,7 @@ import datetime
 #modulos de django
 from django.db.models import Q
 #modulos propios del proyecto
-from secretario.models import PubPrecursor, Informe
+from secretario.models import PubPrecursor, Informe, GruposPred
 
 class gestion:
     elementos={}
@@ -199,3 +199,9 @@ def arraymeses(year):
                year-=1
           meses.append([year,mes])
      return meses
+    
+def arrayIdGrup():
+     id=[]
+     for i in GruposPred.objects.all():
+          id.append(i.pk)
+     return id

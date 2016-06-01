@@ -217,17 +217,29 @@ def verTarjetaPub(request):
      return render(request, 'Publicador/verTarjetaPub.html', {'form': cGrupo, 'years':years, 'url':2})
 
 def conPubG(request):
+     datos={}
      cont=0
-     pubs={}
-     grupo=request.POST['g']
-     try:
-          g=GruposPred.objects.get(pk=grupo)
-     except:
-          datos={'on':1, 'msg':"Error grupo no existe"}
-     else:
-          p=Publicador.objects.filter(FKgrupo=g)
+     grupo=int(request.POST['id'])
+     if grupo==0:
+          p=Publicador.objects.exclude(grupo__IDgrupo__in=arrayIdGrup())
           if len(p)>0:
-               datos={'p':arrayObjectToDict(p,['fechaNa','email','telefono','_state','FKgrupo','direccion','fechaBau'])}
+               for i in p:
+                    datos[cont]={'pk':i.pk, 'nombre':i.nombre, 'apellido':i.apellido, 'direccion':i.direccion}
+                    cont+=1
           else:
-               datos={'on':1, 'msg':'Este grupo no tiene ningun publcador'}
+               datos={'on':1, 'msg':'No hay publicadores sin grupo'}
+     else:
+          try:
+               g=GruposPred.objects.get(pk=grupo)
+          except:
+               datos={'on':1, 'msg':"Error grupo no existe"}
+          else:
+               p=Publicador.objects.filter(grupo__IDgrupo=grupo)
+               if len(p)>0:
+                    for i in p:
+                         datos[cont]={'pk':i.pk, 'nombre':i.nombre, 'apellido':i.apellido, 'direccion':i.direccion}
+                         cont+=1
+               else:
+                    datos={'on':1, 'msg':'Este grupo no tiene ningun publcador'}
+     print(datos)
      return HttpResponse(json.dumps(datos))

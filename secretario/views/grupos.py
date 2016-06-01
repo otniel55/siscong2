@@ -223,12 +223,6 @@ def modificar(request):
      return HttpResponse(json.dumps(msg))
 
 #metodos reutilizables
-def arrayIdGrup():
-     id=[]
-     for i in GruposPred.objects.all():
-          id.append(i.pk)
-     return id
-
 def verificarExist(id):
      p=Publicador.objects.filter(pk=id, grupo__IDgrupo__in=arrayIdGrup())
      if len(p)>0:
