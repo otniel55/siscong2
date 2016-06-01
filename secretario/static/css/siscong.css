@@ -219,12 +219,30 @@ label[for="line"] {
 }
 
 .tGrupoClm1, .tGrupoClm2, .tGrupoClm3, .tGrupoClm4 {
+	width: 20%;
 	text-align: center;
 }
 
 .tGrupoClm5, .tGrupoClm6 {
 	text-align: center;
 	width: 10%;
+}
+
+#grupo td{
+	max-width: 150px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+#responsables {
+	margin-top: 15px;
+}
+
+.tGrupoStatus {
+	border: 1px solid gray;
+	border-radius: 15px;
+	background-color: aqua;
 }
 
 .table-Font {
@@ -450,14 +468,4 @@ label[for="line"] {
 		height: 20px;
 		color: #fff;
 	}
-}
-
-#responsables {
-	margin-top: 15px;
-}
-
-#tGrupoStatus {
-	border: 1px solid gray;
-	border-radius: 15px;
-	background-color: aqua;
 }
