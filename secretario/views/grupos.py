@@ -155,8 +155,46 @@ def consultar(request,idGrupo):
 
 
 def vistaModificar(request, id):
-     
-     return render(request, "Grupo/editGrupo.html")
+     try:
+          g=GruposPred.objects.get(pk=int(id))
+     except(KeyError, GruposPred.DoesNotExist):
+          return render(request, "page404.html")
+     else:
+          hoy=datetime.date.today()
+          encs={}
+          data={}
+          id=g.pk
+          enc=g.encargado.pk
+          aux=g.auxiliar.pk
+          grupos=GruposPred.objects.exclude(pk=id)
+          groups={}
+          cont=0
+          for i in grupos:
+               groups[cont]={'value':i.pk, 'text':str(i)}
+               cont+=1
+          groups=groups.values()
+          encargados=Publicador.objects.filter(privilegiopub__status=True)
+          cont=0
+          for i in encargados:
+               if not verificarAsignacion(i.pk, True, id) and i.pk!=aux:
+                    encs[cont]={'value':i.pk, 'text':i.nombre+" "+i.apellido}
+                    if i.pk==enc:
+                         encs[cont]['selected']=1
+                    cont+=1
+          encs=encs.values()
+          auxiliares=Publicador.objects.filter(sexo="M")
+          auxs={}
+          cont=0
+          for i in auxiliares:
+               if i.fechaBau[0]!="N" and getEdad(i.fechaNa, hoy)>17 and not verificarAsignacion(i.pk, True, id) and i.pk!=enc:
+                    auxs[cont]={'value':i.pk, 'text':i.nombre+" "+i.apellido}
+                    if i.pk==aux:
+                         auxs[cont]['selected']=1
+                    cont+=1
+          auxs=auxs.values()
+          publicadores=Publicador.objects.filter(grupo__IDgrupo=g.pk).exclude(pk__in=[enc, aux])
+          data={'id':id, 'cmbEnc':encs, 'cmbAux':auxs, 'pubs':publicadores, 'cmbGrupo':groups}
+          return render(request, "Grupo/editGrupo.html", data)
 
 def modificar(request):
      validar=gestion(request.POST)
@@ -198,8 +236,10 @@ def verificarExist(id):
           exist=False
      return exist
 
-def verificarAsignacion(id):
+def verificarAsignacion(id, excluir=False, gPk=0):
      grupos=GruposPred.objects.filter(Q(encargado=id)|Q(auxiliar=id))
+     if excluir:
+          grupos=grupos.exclude(IDgrupo=gPk)
      if len(grupos)>0:
           exist=True
      else:
