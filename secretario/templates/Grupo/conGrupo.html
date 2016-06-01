@@ -38,10 +38,24 @@
 			encargado = $("#id_Encargado").val()
 			datpub = $("#datpub")
 
-            if( encargado != "" ){
-                url="../../"+encargado+"/datos_grupo/"
-                obj = new Gestion()
-                obj.ejecutarLoad(url, datpub)
+            if( encargado ){
+				$.post("{% url 'secretario:validarGrupo' %}", { 'id': encargado, csrfmiddlewaretoken: '{{ csrf_token }}' })
+				.success(function(res){
+
+					res = JSON.parse(res)
+
+					console.log(res)
+
+					if( res.on == 0 ){
+
+						url = "../../"+encargado+"/datos_grupo/"
+						obj = new Gestion()
+						obj.ejecutarLoad(url, datpub)
+
+					} else {
+						window.location = "{% url 'secretario:404' %}"
+					}
+				})
             } else {
                 $.gritter.add({
                     title: 'Consultar Grupos!',
@@ -50,7 +64,7 @@
                     time: 3000,
                 });
             }
-		});
+		})
 
 		{% if onPub == 1 %}
 			$(document).ready(function(){

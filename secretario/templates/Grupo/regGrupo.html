@@ -9,7 +9,7 @@
 				<div class="form-group">
 					<div class="col-xs-12 col-md-2">
 						<label for="idgrupo">Numero de Grupo:</label>
-						<input type="number" id="idgrupo" class="form-control mrg-bottom">
+						<input type="number" min="1" id="idgrupo" class="form-control mrg-bottom">
 					</div>
 
 					<div class="col-xs-12 col-md-3">
@@ -482,8 +482,8 @@
 
 			if (bien > 0) {
 				$.gritter.add({
-					title: 'Nombrar Publicadores!'
-					, text: 'Precursores Nombrados Con Exito!'
+					title: 'Creacion de Grupos!'
+					, text: 'Grupo Creado con Exito!'
 					, image: "{% static 'img/success.png' %}"
 					, time: 3000
 				, });
@@ -491,8 +491,8 @@
 
 			if (mal > 0) {
 				$.gritter.add({
-					title: 'Nombrar Publicadores!'
-					, text: 'Algunos Precursores No Pudieron Ser Nombrados\n Verifique Sus Datos en la Tabla'
+					title: 'Creacion de Grupos!'
+					, text: 'No se pudo crear el grupo, porfavor intentelo nuevamente'
 					, image: "{% static 'img/error.png' %}"
 					, time: 3000
 				, });
@@ -524,7 +524,7 @@
 
 			obj.generateJson(key, '{{ csrf_token }}', JSON.stringify(pubs))
 
-			obj.setPost("{% url 'secretario:grupos_registrar' %}", 'Registro de Grupos!', result)
+			obj.setPost("{% url 'secretario:grupos_registrar' %}", 0, result)
 		}
 	})
 </script>

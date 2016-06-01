@@ -219,13 +219,15 @@ label[for="line"] {
 }
 
 .tGrupoClm1 {
-	width: 70%;
+/*	width: 70%;*/
 }
-.tGrupoClm2 {
-	width: 20%;
+
+.tGrupoClm5, .tGrupoClm6 {
+	width: 8%;
 }
+
 .table-Font {
-	font-size: 16px;
+	font-size: 14px;
 }
 
 .materialPicker {
@@ -302,6 +304,15 @@ label[for="line"] {
 
 .tConPubCol5 {
 	width:8%;
+}
+
+.sp-title {
+	color: darkcyan;
+	font-size: 20px;
+}
+
+.sp-content {
+	color: black;
 }
 
 /* Media Queries*/
@@ -388,9 +399,6 @@ label[for="line"] {
 		.tGrupoClm2 {
 			width: auto;
 		}
-		.table-Font {
-			font-size: 14px;
-		}
 		.tConPubCol1, .tConPubCol2, .tConPubCol3, .tConPubCol4, .tConPubCol5 {
 			width:auto;
 		}
@@ -412,7 +420,7 @@ label[for="line"] {
 		width: auto;
 	}
 	.table-Font {
-		font-size: 14px;
+		font-size: 12px;
 	}
 
 	#mainPub {
@@ -442,9 +450,3 @@ label[for="line"] {
 		color: #fff;
 	}
 }
-
-
-
-
-
-

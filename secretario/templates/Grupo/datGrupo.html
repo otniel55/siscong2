@@ -1,250 +1,242 @@
-{% if msg %}
-<div> </div>
-<script>
-	console.log("{{msg}}")
-</script>
-{% else %}
-	<div class="row">
 
-		<h3 class="text-center titlecolor">Informacion del Grupo</h3>
+<div class="row">
 
-		{% csrf_token %}
+	<h3 class="text-center titlecolor">Informacion del Grupo</h3>
 
-		<div id="formGrupo" class="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-md-offset-3 col-lg-offset-4">
-			{{ form }}
-		</div>
+	{% csrf_token %}
 
-		<div class="clearfix"></div>
+	<div id="responsables" class="col-xs-12 col-sm-12 col-md-6 col-md-offset-3">
+		<span class="text-center sp-title"><strong>Encargado:</strong>
+			<span class="sp-content"> {{ enc }} </span>
+		</span>
 
-		<div class="col-xs-12 col-sm-6 col-md-4 col-lg-2 col-sm-offset-3 col-md-offset-4 col-lg-offset-5" style="margin-top:30px;">
-			<button id="btnMod" class="btn btn-success btn-block">Modificar</button>
-		</div>
-
-		<div class="clearfix"></div>
-
-		<div id="pubs" class="col-xs-12 col-md-10 col-lg-6 col-md-offset-1 col-lg-offset-3">
-			<div class="content-panel">
-
-				<h3 class="text-center tableTitle hidden-xs">Publicadores del Grupo # {{ num }}</h3>
-				<h4 class="text-center tableTitle visible-xs">Publicadores del Grupo # {{ num }}</h4>
-
-				<section id="no-more-tables">
-					<table class="table table-striped table-condensed cf table-Font">
-						<thead class="cf">
-							<tr>
-								<th class="text-center tGrupoClm1">Nombre y Apellido</th>
-								<th class="tGrupoClm2"></th>
-							</tr>
-						</thead>
-						<tbody>
-						{% for pub in publicadores %}
-							<tr>
-								<td class="tGrupoClm1" data-title="Nombre:">
-									<a href="{% url 'secretario:tarjeta' 1 pub.pk y %}">{{ pub.nombre|upper }} {{ pub.apellido|upper }}</a>
-								</td>
-								<td class="tGrupoClm2" id="{{ pub.pk }}">
-									<button class="btn btn-danger fa fa-trash" data-toggle="modal" data-target="#pubGroup"></button>
-
-									<button class="btn btn-info fa fa-plus" data-toggle="modal" data-target="#informe" style="margin-left:20px;"></button>
-								</td>
-							</tr>
-						{% endfor %}
-						</tbody>
-					</table>
-				</section>
-			</div>
-		</div>
+		<span class="text-center sp-title"><strong>Auxiliar:</strong>
+			<span class="sp-content"> {{ aux }} </span>
+		</span>
 	</div>
 
+	<div class="clearfix"></div>
 
-	<div class="modal fade" id="informe" role="dialog">
-		<div class="modal-dialog modal-md">
-			<div class="modal-content">
-				<div class="modal-header">
-				  <button id="closeInf" type="button" class="close" data-dismiss="modal">&times;</button>
-				  <h4 class="modal-title">Registrar Informe</h4>
-				</div>
+	<div id="pubs" class="col-xs-12 col-md-10 col-lg-6 col-md-offset-1 col-lg-offset-3">
+		<div class="content-panel">
 
-				<div class="modal-body">
+			<h3 class="text-center tableTitle hidden-xs">Publicadores del Grupo # {{ num }}</h3>
+			<h4 class="text-center tableTitle visible-xs">Publicadores del Grupo # {{ num }}</h4>
 
-					{{ modalInfo }}
+			<section id="no-more-tables">
+				<table class="table table-striped table-condensed cf table-Font">
+					<thead class="cf">
+						<tr>
+							<th class="text-center tGrupoClm1">Nombre y Apellido</th>
+							<th class="text-center tGrupoClm2">Direccion</th>
+							<th class="text-center tGrupoClm3">Telefono</th>
+							<th class="text-center tGrupoClm4">E-mail</th>
+							<th class="tGrupoClm5">Estado</th>
+							<th class="tGrupoClm6"></th>
+						</tr>
+					</thead>
+					<tbody>
+					{% for pub in pubs %}
+						<tr>
+							<td class="tGrupoClm1" data-title="Nombre:">
+								<a href="{% url 'secretario:tarjeta' 1 pub.id y %}">{{ pub.nombre }} {{ pub.apellido }} </a>
+							</td>
 
-					<label for="fechaInfo">Fecha del Informe:</label>
-					<div class='input-group date datepicker'>
-						<input id="fechaInfo" type="text" class="form-control">
-						<span class="input-group-addon">
-							<span class="fa fa-calendar">
-							</span>
+							<td class="tGrupoClm2" data-title="Direccion:">
+								{{ pub.direccion }}
+							</td>
+
+							<td class="tGrupoClm3" data-title="Telefono:">
+								{{ pub.telefono }}
+							</td>
+
+							<td class="tGrupoClm4" data-title="E-mail:">
+								{{ pub.email }}
+							</td>
+
+							<td class="tGrupoClm5" data-title="Estado">
+								{{ pub.status}}
+							</td>
+
+							<td class="tGrupoClm6" id="{{ pub.pk }}">
+								<button class="btn btn-info fa fa-plus" data-toggle="modal" data-target="#informe" style="margin-left:20px;"></button>
+							</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</section>
+		</div>
+	</div>
+</div>
+
+
+<div class="modal fade" id="informe" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+			  <button id="closeInf" type="button" class="close" data-dismiss="modal">&times;</button>
+			  <h4 class="modal-title">Registrar Informe</h4>
+			</div>
+
+			<div class="modal-body">
+
+				{{ modalInfo }}
+
+				<label for="fechaInfo">Fecha del Informe:</label>
+				<div class='input-group date datepicker'>
+					<input id="fechaInfo" type="text" class="form-control">
+					<span class="input-group-addon">
+						<span class="fa fa-calendar">
 						</span>
-					</div>
-
-					<hr>
-					<label for="horasCon">Horas por Consecion:</label>
-					<input id="horasCon" type="number" class="form-control" min="0">
+					</span>
 				</div>
 
-				<div class="modal-footer">
-					<button id="sinAct" type="button" class="btn btn-warning">Sin Actividad</button>
-					<button id="regInf" type="button" class="btn btn-primary">Registrar</button>
-				</div>
+				<hr>
+				<label for="horasCon">Horas por Consecion:</label>
+				<input id="horasCon" type="number" class="form-control" min="0">
+			</div>
+
+			<div class="modal-footer">
+				<button id="sinAct" type="button" class="btn btn-warning">Sin Actividad</button>
+				<button id="regInf" type="button" class="btn btn-primary">Registrar</button>
 			</div>
 		</div>
 	</div>
+</div>
 
-	<div class="modal fade" id="pubGroup" role="dialog">
-		<div class="modal-dialog modal-sm">
-			<div class="modal-content">
-				<div class="modal-header">
-				  <button type="button" class="close" data-dismiss="modal">&times;</button>
-				  <h4 class="modal-title">Cambiar de Grupo</h4>
-				</div>
+<script>
 
-				<div class="modal-body">
-					{{ modalPub }}
-				    {{ modalGrupo }}
-				</div>
+	var id
 
-				<div class="modal-footer">
-				  <button id="changePub" type="button" class="btn btn-default">Cambiar</button>
-				</div>
-			</div>
-		</div>
-	</div>
-
-
-	<script>
-
-		var id
-
-        $(document).ready(function() {
-			$( ".datepicker" ).datetimepicker({
-				format: 'MM-YYYY',
-				widgetPositioning: {
-					horizontal: 'right',
-					vertical: 'auto'
-				},
-				maxDate: 'now'
-			})
-
-			maxwidth = $(window).width()
-			if(maxwidth >= 1200 && maxwidth < 1440 ){
-				$('#pubs').removeClass('col-lg-6').removeClass('col-lg-offset-3')
-				$('#pubs').addClass('col-lg-8').addClass('col-lg-offset-2')
-
-				$('#formGrupo').removeClass('col-lg-4').removeClass('col-lg-offset-4')
-				$('#formGrupo').addClass('col-lg-6').addClass('col-lg-offset-3')
-
-				$('#btnMod').parent().removeClass('col-lg-2').removeClass('col-lg-offset-5')
-				$('#btnMod').parent().addClass('col-lg-4').addClass('col-lg-offset-4')
-			}
-		});
-
-		$(window).resize(function(){
-			maxwidth = $(window).width()
-			if(maxwidth >= 1200 && maxwidth < 1440 ){
-				$('#pubs').removeClass('col-lg-6').removeClass('col-lg-offset-3')
-				$('#pubs').addClass('col-lg-8').addClass('col-lg-offset-2')
-
-				$('#formGrupo').removeClass('col-lg-4').removeClass('col-lg-offset-4')
-				$('#formGrupo').addClass('col-lg-6').addClass('col-lg-offset-3')
-
-				$('#btnMod').parent().removeClass('col-lg-2').removeClass('col-lg-offset-5')
-				$('#btnMod').parent().addClass('col-lg-4').addClass('col-lg-offset-4')
-			} else if(maxwidth > 1440){
-				$('#pubs').removeClass('col-lg-8').removeClass('col-lg-offset-2')
-				$('#pubs').addClass('col-lg-6').addClass('col-lg-offset-3')
-
-				$('#formGrupo').addClass('col-lg-4').addClass('col-lg-offset-4')
-				$('#formGrupo').removeClass('col-lg-6').removeClass('col-lg-offset-3')
-
-				$('#btnMod').parent().addClass('col-lg-2').addClass('col-lg-offset-5')
-				$('#btnMod').parent().removeClass('col-lg-4').removeClass('col-lg-offset-4')
-			}
+	$(document).ready(function() {
+		$( ".datepicker" ).datetimepicker({
+			format: 'MM-YYYY',
+			widgetPositioning: {
+				horizontal: 'right',
+				vertical: 'auto'
+			},
+			maxDate: 'now'
 		})
 
-        $("#btnMod").click(function(){
-			c = function(res){ $("#btnCon").click() }
-			datG = new Gestion()
-            datG.getInputs('#formGrupo')
-            input=datG.getDataIn()
-            if(input.vacio == 0){
-                keys = new Array('enc', 'aux')
-				datG.generateJson(keys, '{{ csrf_token }}')
-                datG.setPost("{% url 'secretario:modGrup' %}", 'Modificar Grupos!', c)
-            }
+		maxwidth = $(window).width()
+		if(maxwidth >= 1200 && maxwidth < 1440 ){
+			$('#pubs').removeClass('col-lg-6').removeClass('col-lg-offset-3')
+			$('#pubs').addClass('col-lg-8').addClass('col-lg-offset-2')
+
+			$('#formGrupo').removeClass('col-lg-4').removeClass('col-lg-offset-4')
+			$('#formGrupo').addClass('col-lg-6').addClass('col-lg-offset-3')
+
+			$('#btnMod').parent().removeClass('col-lg-2').removeClass('col-lg-offset-5')
+			$('#btnMod').parent().addClass('col-lg-4').addClass('col-lg-offset-4')
+		}
+	});
+
+	$(window).resize(function(){
+		maxwidth = $(window).width()
+		if(maxwidth >= 1200 && maxwidth < 1440 ){
+			$('#pubs').removeClass('col-lg-6').removeClass('col-lg-offset-3')
+			$('#pubs').addClass('col-lg-8').addClass('col-lg-offset-2')
+
+			$('#formGrupo').removeClass('col-lg-4').removeClass('col-lg-offset-4')
+			$('#formGrupo').addClass('col-lg-6').addClass('col-lg-offset-3')
+
+			$('#btnMod').parent().removeClass('col-lg-2').removeClass('col-lg-offset-5')
+			$('#btnMod').parent().addClass('col-lg-4').addClass('col-lg-offset-4')
+		} else if(maxwidth > 1440){
+			$('#pubs').removeClass('col-lg-8').removeClass('col-lg-offset-2')
+			$('#pubs').addClass('col-lg-6').addClass('col-lg-offset-3')
+
+			$('#formGrupo').addClass('col-lg-4').addClass('col-lg-offset-4')
+			$('#formGrupo').removeClass('col-lg-6').removeClass('col-lg-offset-3')
+
+			$('#btnMod').parent().addClass('col-lg-2').addClass('col-lg-offset-5')
+			$('#btnMod').parent().removeClass('col-lg-4').removeClass('col-lg-offset-4')
+		}
+	})
+
+	$("#btnMod").click(function(){
+		c = function(res){ $("#btnCon").click() }
+		datG = new Gestion()
+		datG.getInputs('#formGrupo')
+		input=datG.getDataIn()
+		if(input.vacio == 0){
+			keys = new Array('enc', 'aux')
+			datG.generateJson(keys, '{{ csrf_token }}')
+			datG.setPost("{% url 'secretario:modGrup' %}", 'Modificar Grupos!', c)
+		}
+	})
+
+	$("td > button:nth-child(1)").click(function(){
+		id=0
+		id = this.parentNode.id
+
+		$.post("{% url 'secretario:conPub' %}", { 'id': id, csrfmiddlewaretoken: '{{ csrf_token }}' },
+		function(r){
+			res = JSON.parse(r)
+
+			$('.modal-body > #id_Encargado')
+				.find('option[value="'+res['pub'].grupo+'"]')
+				.prop('selected', true)
+
+			$('#id_nombre').val( res['pub'].nombre.toUpperCase() )
+			$('#id_apellido').val( res['pub'].apellido.toUpperCase() )
 		})
+	})
 
-		$("td > button:nth-child(1)").click(function(){
-			id=0
-			id = this.parentNode.id
+	$("td > button:nth-child(2)").click(function(){
+		id = 0
+		id = this.parentNode.id
+		informe = new Gestion()
+		informe.getInputs('#informe')
+		informe.Cargar()
+	})
 
-			$.post("{% url 'secretario:conPub' %}", { 'id': id, csrfmiddlewaretoken: '{{ csrf_token }}' },
-			function(r){
-				res = JSON.parse(r)
+	$("#changePub").click(function(){
+		f = function(res){
+			row = $('#'+id).parents('tr')
+			row.fadeOut()
+		}
+		cambioG = new Gestion()
+		cambioG.getInputs('#pubGroup', 2)
+		cmb = cambioG.getDataIn()
 
-				$('.modal-body > #id_Encargado')
-                    .find('option[value="'+res['pub'].grupo+'"]')
-                    .prop('selected', true)
+		if (cmb.vacio==0){
+			keys=new Array('grupo', 'id')
+			cambioG.generateJson(keys, '{{ csrf_token }}', id)
+			cambioG.setPost("{% url 'secretario:cambiarPub' %}", 'Cambio de grupo!', f)
+			$('#pubGroup').modal('hide')
+		}
+	})
 
-				$('#id_nombre').val( res['pub'].nombre.toUpperCase() )
-				$('#id_apellido').val( res['pub'].apellido.toUpperCase() )
-			})
-		})
+	$("#regInf").click(function(){
+		close = function(res){
+			$("#closeInf").click()
+			datInf.Cargar()
+		}
 
-		$("td > button:nth-child(2)").click(function(){
-			id = 0
-			id = this.parentNode.id
-			informe = new Gestion()
-			informe.getInputs('#informe')
-			informe.Cargar()
-		})
+		if ( $("#id_observacion").val().trim() == "" ){
+			$("#id_observacion").val("n/t")
+		}
 
-		$("#changePub").click(function(){
-			f = function(res){
-                row = $('#'+id).parents('tr')
-                row.fadeOut()
-			}
-			cambioG = new Gestion()
-			cambioG.getInputs('#pubGroup', 2)
-            cmb = cambioG.getDataIn()
+		if ( $("#horasCon").val().trim() == "" ){
+			$("#horasCon").val("0")
+		}
 
-			if (cmb.vacio==0){
-				keys=new Array('grupo', 'id')
-				cambioG.generateJson(keys, '{{ csrf_token }}', id)
-				cambioG.setPost("{% url 'secretario:cambiarPub' %}", 'Cambio de grupo!', f)
-                $('#pubGroup').modal('hide')
-			}
-		})
+		datInf = new Gestion()
+		datInf.getInputs('#informe')
+		input = datInf.getDataIn()
 
-		$("#regInf").click(function(){
-			close = function(res){
-                $("#closeInf").click()
-                datInf.Cargar()
-            }
+		if ( input.vacio == 0 ){
+			keys = new Array('horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'obs','fecha','horasCons', 'publicador')
+			datInf.generateJson(keys, '{{ csrf_token }}', id)
+			datInf.setPost("{% url 'secretario:regInf' %}", 'Regitro de informe!', close)
+		}
+	})
 
-            if ( $("#id_observacion").val().trim() == "" ){
-            	$("#id_observacion").val("n/t")
-            }
-
-            if ( $("#horasCon").val().trim() == "" ){
-            	$("#horasCon").val("0")
-            }
-
-			datInf = new Gestion()
-			datInf.getInputs('#informe')
-            input = datInf.getDataIn()
-
-			if ( input.vacio == 0 ){
-				keys = new Array('horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'obs','fecha','horasCons', 'publicador')
-				datInf.generateJson(keys, '{{ csrf_token }}', id)
-				datInf.setPost("{% url 'secretario:regInf' %}", 'Regitro de informe!', close)
-			}
-		})
-
-		$('#sinAct').click(function(){
-			ini = new Gestion()
-            ini.getInputs('#informe', [0,4])
-            ini.Cargar('0')
-		})
-	</script>
-{% endif %}
+	$('#sinAct').click(function(){
+		ini = new Gestion()
+		ini.getInputs('#informe', [0,4])
+		ini.Cargar('0')
+	})
+</script>
