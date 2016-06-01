@@ -218,12 +218,13 @@ label[for="line"] {
 	width:10%;
 }
 
-.tGrupoClm1 {
-/*	width: 70%;*/
+.tGrupoClm1, .tGrupoClm2, .tGrupoClm3, .tGrupoClm4 {
+	text-align: center;
 }
 
 .tGrupoClm5, .tGrupoClm6 {
-	width: 8%;
+	text-align: center;
+	width: 10%;
 }
 
 .table-Font {
@@ -449,4 +450,14 @@ label[for="line"] {
 		height: 20px;
 		color: #fff;
 	}
+}
+
+#responsables {
+	margin-top: 15px;
+}
+
+#tGrupoStatus {
+	border: 1px solid gray;
+	border-radius: 15px;
+	background-color: aqua;
 }

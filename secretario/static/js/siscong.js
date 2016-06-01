@@ -182,7 +182,6 @@
 						image: '',
 						sticky: false,
 						time: 3000,
-						class_name: ''
 					});
 
 					if ( fn && res.on == 1 ){
