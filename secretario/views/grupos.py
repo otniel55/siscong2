@@ -149,10 +149,14 @@ def consultar(request,idGrupo):
                            'telefono':i.telefono, 'email':i.email, 'direccion':i.direccion}
                cont+=1
           pubs=pubs.values()
-          modalInfo = regInforme()
           y=str(datetime.date.today().year-1)+""+str(datetime.date.today().year)
-          datos = {'pubs': pubs, 'num': g.pk, 'modalInfo': modalInfo, 'y':y, 'url':1, 'enc':enc, 'aux':aux}
+          datos = {'pubs': pubs, 'num': g.pk, 'y':y, 'url':1, 'enc':enc, 'aux':aux}
      return render(request, 'Grupo/datGrupo.html',datos)
+
+
+def vistaModificar(request, id):
+     
+     return render(request, "Grupo/editGrupo.html")
 
 def modificar(request):
      validar=gestion(request.POST)
