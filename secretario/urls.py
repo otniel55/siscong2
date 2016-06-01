@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^(?P<idGrupo>[0-9]+)/grupoPublicador/$', views.grupos.conGrupoofPubs, name='conGrupoofPubs'),
     url(r'^(?P<idGrupo>[0-9]+)/datos_grupo/$', views.grupos.consultar, name='datGrupo'),
     url(r'^modGrup/$', views.grupos.modificar, name='modGrup'),
+    url(r'^validarGrupo/$', views.grupos.grupoExist, name='validarGrupo'),
     #url relacionadas con publicadores
     url(r'^regPubli/$', views.publicador.vistaRegistrar, name='regPubli'),
     url(r'^publicreg/$', views.publicador.registrar, name='publicReg'),

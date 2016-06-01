@@ -2,7 +2,7 @@
 import json
 import datetime
 #modulos de django
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.db.models import Q
 #modulos propios del proyecto
@@ -133,6 +133,8 @@ def conGrupoofPubs(request, idGrupo):
      return render(request, 'Grupo/conGrupo.html', {'form': cGrupo, 'onPub': 1, 'url':1 })
 
 def consultar(request,idGrupo):
+     pubs={}
+     cont=0
      try:
           g = GruposPred.objects.get(pk=idGrupo)
      except(KeyError, GruposPred.DoesNotExist):
@@ -140,16 +142,16 @@ def consultar(request,idGrupo):
      else:
           request.session['conGrupoId']=idGrupo
           p = Publicador.objects.filter(grupo__IDgrupo=g.pk)
-          enc=g.encargado.pk
-          aux=g.auxiliar.pk
-          
-          formPub = modalPub()
-          modalGrupo = traerGrupo()
+          enc=str(g.encargado.nombre)+" "+str(g.encargado.apellido)
+          aux=str(g.auxiliar.nombre)+" "+str(g.auxiliar.apellido)
+          for i in p:
+               pubs[cont]={'id':i.pk, 'nombre':i.nombre, 'apellido':i.apellido, 'status': 1,
+                           'telefono':i.telefono, 'email':i.email, 'direccion':i.direccion}
+               cont+=1
+          pubs=pubs.values()
           modalInfo = regInforme()
           y=str(datetime.date.today().year-1)+""+str(datetime.date.today().year)
-          datos = {'form': formDatGrupo, 'publicadores': p, 'num': g.pk, 'modalPub': formPub,
-                 'modalGrupo': modalGrupo, 'modalInfo': modalInfo, 'y':y, 'url':1,
-                 }
+          datos = {'publicadores': p, 'num': g.pk, 'modalInfo': modalInfo, 'y':y, 'url':1, 'enc':enc, 'aux':aux}
      return render(request, 'Grupo/datGrupo.html',datos)
 
 def modificar(request):
@@ -199,3 +201,12 @@ def verificarAsignacion(id):
      else:
           exist=False
      return exist
+
+def grupoExist(request):
+     g=request.POST['id']
+     try:
+          GruposPred.objects.get(pk=int(g))
+     except(KeyError, GruposPred.DoesNotExist):
+          return json.dumps({'on':1})
+     else:
+          return json.dumps({'on':0})
