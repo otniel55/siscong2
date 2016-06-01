@@ -5,6 +5,7 @@ from . import views
 app_name="secretario"
 urlpatterns = [
     url(r'^$', views.index, name='index'),
+    url(r'^404/$', views.error404, name='404'),
     #urls relacionada con grupos
 	url(r'^grupos/registrar/$', views.grupos.Vista_registrar, name='registrarGrupo'),
     url(r'^registrar/grupos/$', views.grupos.registrar, name='grupos_registrar'),

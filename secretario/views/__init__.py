@@ -12,3 +12,6 @@ from .privilegios import *
 
 def index(request):
      return render(request, 'layout.html', {'url':0})
+
+def error404(request):
+     return render(request, 'page404.html')
