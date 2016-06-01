@@ -18,7 +18,7 @@ def Vista_registrar(request):
      pubAux=[]
      pubSinGrupo=Publicador.objects.exclude(grupo__IDgrupo__in=idGrupos)
      for i in pubSinGrupo:
-          if getEdad(i.fechaNa, hoy)>17 and i.fechaBau[0]!="N":
+          if getEdad(i.fechaNa, hoy)>17 and i.fechaBau[0]!="N" and i.sexo=="M":
                pubAux.append(i)
      pubsEncargado=pubSinGrupo.filter(privilegiopub__status=True)
      return render(request, 'Grupo/regGrupo.html', { 'url':1, 'regPub': pub, 'all':pubSinGrupo, 'encargados':pubsEncargado, 'aux':pubAux})
@@ -193,7 +193,8 @@ def vistaModificar(request, id):
                     cont+=1
           auxs=auxs.values()
           publicadores=Publicador.objects.filter(grupo__IDgrupo=g.pk).exclude(pk__in=[enc, aux])
-          data={'id':id, 'cmbEnc':encs, 'cmbAux':auxs, 'pubs':publicadores, 'cmbGrupo':groups}
+          sinGrupo=Publicador.objects.exclude(grupo__IDgrupo__in=arrayIdGrup())
+          data={'id':id, 'cmbEnc':encs, 'cmbAux':auxs, 'pubs':publicadores, 'cmbGrupo':groups, 'sinG':sinGrupo}
           return render(request, "Grupo/editGrupo.html", data)
 
 def modificar(request):
