@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'^modGrup/$', views.grupos.modificar, name='modGrup'),
     url(r'^validarGrupo/$', views.grupos.grupoExist, name='validarGrupo'),
     url(r'^grupo/modificar/(?P<id>[0-9]+)$', views.grupos.vistaModificar, name='editGrupo'),
+    url(r'^deleteG/$', views.grupos.eliminar, name='deleteG'),
     #url relacionadas con publicadores
     url(r'^regPubli/$', views.publicador.vistaRegistrar, name='regPubli'),
     url(r'^publicreg/$', views.publicador.registrar, name='publicReg'),

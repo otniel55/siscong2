@@ -222,6 +222,18 @@ def modificar(request):
           msg=validar.mensaje
      return HttpResponse(json.dumps(msg))
 
+def eliminar(request):
+     datos={}
+     id=int(request.POST['id'])
+     try:
+          g=GruposPred.objects.get(pk=id)
+     except(KeyError, GruposPred.DoesNotExist):
+          datos={'msg':"Error, este grupo existe", 'on':1}
+     else:
+          g.delete()
+          datos={'msg':"Grupo eliminado con exito", 'on':1}
+     return HttpResponse(json.dumps(datos))
+
 #metodos reutilizables
 def verificarExist(id):
      p=Publicador.objects.filter(pk=id, grupo__IDgrupo__in=arrayIdGrup())
