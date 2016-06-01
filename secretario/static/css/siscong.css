@@ -334,6 +334,13 @@ label[for="line"] {
 	color: black;
 }
 
+.pTitle {
+	font: bold 20px 'arial';
+	font-weight: 400;
+	color: darkcyan;
+	margin-bottom: 8px;
+}
+
 /* Media Queries*/
 @media (min-width: 1680px){
 	#btnCon {
