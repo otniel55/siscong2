@@ -151,7 +151,7 @@ def consultar(request,idGrupo):
           pubs=pubs.values()
           modalInfo = regInforme()
           y=str(datetime.date.today().year-1)+""+str(datetime.date.today().year)
-          datos = {'publicadores': p, 'num': g.pk, 'modalInfo': modalInfo, 'y':y, 'url':1, 'enc':enc, 'aux':aux}
+          datos = {'pubs': pubs, 'num': g.pk, 'modalInfo': modalInfo, 'y':y, 'url':1, 'enc':enc, 'aux':aux}
      return render(request, 'Grupo/datGrupo.html',datos)
 
 def modificar(request):
