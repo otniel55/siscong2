@@ -198,30 +198,121 @@ def vistaModificar(request, id):
           return render(request, "Grupo/editGrupo.html", data)
 
 def modificar(request):
-     validar=gestion(request.POST)
+     pasar=False
+     msg={}
+     nums=['IDgrupo', 'enc', 'aux']
+     validar=gestion(request.POST, nums, ignorar=['pubs'])
      validar.validar()
      if not validar.error:
-          datosG=validar.trimUpper()
-          _encargado=datosG['enc']
-          _auxiliar=datosG['aux']
+          idG=int(request.POST['IDgrupo'])
+          enc=int(request.POST['enc'])
+          aux=int(request.POST['aux'])
           try:
-               _pk=request.session['conGrupoId']
-          except(KeyError):
-               msg={'msg':'Seleccione un grupo.'}
+               g=GruposPred.objects.get(pk=idG)
+          except(KeyError, GruposPred.DoesNotExist):
+               msg={'msg':"Este grupo no existe"}
           else:
                try:
-                    g=GruposPred.objects.get(pk=_pk)
+                    encargado=Publicador.objects.get(pk=enc)
                except(KeyError, GruposPred.DoesNotExist):
-                    msg={'msg':'Grupo no existe'}
+                    msg={'msg':"Error, Encargado no existe"}
                else:
-                    g.encargado=_encargado
-                    g.auxiliar=_auxiliar
-                    g.save()
-                    msg={'msg':'Grupo modificado con exito', 'on':1}
+                    if enc!=g.encargado.pk:
+                         try:
+                              Publicador.objects.get(pk=enc, privilegiopub__status=True)
+                         except(KeyError, Publicador.DoesNotExist):
+                              msg={'msg':"Error, el encargao no tiene privilegios"}
+                              pasar=False
+                         else:
+                              resp=addToGroup(enc, idG, False, True)
+                              if resp[0]:
+                                   pasar=True
+                              else:
+                                   pasar=False
+                                   msg=resp[1]
+                    else:
+                         pasar=True
+                    if pasar:
+                         pasar=False
+                         try:
+                              auxiliar=Publicador.objects.get(pk=aux)
+                         except:
+                              msg={'msg':"Error, el auxiliar no existe"}
+                         else:
+                              if aux!=g.auxiliar.pk:
+                                   hoy=datetime.date.today()
+                                   if getEdad(auxiliar.fechaNa, hoy)>17 and auxiliar.sexo=="M" and auxiliar.fechaBau[0]!="N":
+                                        resp=addToGroup(aux, idG, True)
+                                        if resp[0]:
+                                             pasar=True
+                                        else:
+                                             pasar=False
+                                             msg=resp[1]
+                                   else:
+                                        pasar=False
+                                        msg={'msg':"Error, el auxiliar debe ser mayor de edad, estar bautizado y ser de sexo masculino"}
+                              else:
+                                   pasar=True
+                              if pasar:
+                                   cont=0
+                                   pubs=json.loads(request.POST['pubs'])
+                                   for i in pubs:
+                                        if not int(i['id']) in [enc, aux]:
+                                             resp=addToGroup(int(i['id']), idG)
+                                             if resp[0]:
+                                                  msg[cont]={'id': i['id'], 'bien':1}
+                                             else:
+                                                  msg[cont]={'id': i['id'], 'bien':0}
+                                                  pasar=False
+                                        else:
+                                             msg[cont]={'id': i['id'], 'bien':1}
+                                        cont+=1
      else:
           msg=validar.mensaje
+     if pasar:
+          msg={'msg':"Datos modificados exitosamente"}
      return HttpResponse(json.dumps(msg))
 
+def addToGroup(pub, grupo, nombrarA=False, nombrarE=False):
+     resp=[True, {}]
+     try:
+          g=GruposPred.objects.get(pk=grupo)
+     except(KeyError, GruposPred.DoesNotExist):
+          resp=[False, {'msg':"Error, Grupo no existe"}]
+     else:
+          try:
+               p=Publicador.objects.get(pk=pub)
+          except(KeyError, Publicador.DoesNotExist):
+               resp=[False, {'msg':"Error, Publicador no existe"}]
+          else:
+               if not verificarAsignacion(pub):
+                    if len(p.grupo.values())==1 and p.grupo.values()[0]['IDgrupo']==grupo and (nombrarA or nombrarE):
+                         if nombrarA:
+                              g.auxiliar=p
+                         else:
+                              g.encargado=p
+                         g.save()
+                    elif not verificarExist(pub):
+                         p.grupo.add(g)
+                         if nombrarA:
+                              g.auxiliar=p
+                              g.save()
+                         elif nombrarE:
+                              g.encargado=p
+                              g.save()
+                    else:
+                         p.grupo.clear()
+                         p.grupo.add(g)
+                         if nombrarA:
+                              g.auxiliar=p
+                              g.save()
+                         elif nombrarE:
+                              g.encargado=p
+                              g.save()
+               else:
+                    resp=[False, {'msg':"Error, Este publicador tiene responsabilidades en otro grupo"}]
+     return resp
+     
 def eliminar(request):
      datos={}
      id=int(request.POST['id'])

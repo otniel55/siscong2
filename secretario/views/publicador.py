@@ -241,5 +241,4 @@ def conPubG(request):
                          cont+=1
                else:
                     datos={'on':1, 'msg':'Este grupo no tiene ningun publcador'}
-     print(datos)
      return HttpResponse(json.dumps(datos))
