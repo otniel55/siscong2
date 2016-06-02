@@ -149,6 +149,7 @@
                     this._datosIn.Data.push({ 'value' : adicional })
                 } else {
                     $.each(adicional, function(key, value){
+						console.log(value)
                         this._datosIn.Data.push({ 'value' : value })
                     })
                 }

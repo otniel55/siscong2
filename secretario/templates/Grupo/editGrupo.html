@@ -136,7 +136,7 @@
 							</thead>
 							<tbody>
 							{% for pub in pubs %}
-								<tr id="{{ pubs.pk }}">
+								<tr id="{{ pub.pk }}">
 									<td></td>
 									<td class="numeric text-center" data-title="Nombre y Apellido">
 										{{ pub.nombre }} {{ pub.apellido }}
@@ -280,10 +280,11 @@
 	$('#move-right').click(function () {
 			row = ""
 			col = ""
-			nodo = ""
+			nodo = rowNode = ""
 
 			//obtener la filas seleccionadas
 			row = publics.rows('.selected').data()
+			rowNode = publics.rows('.selected').nodes()
 			publics.rows('.selected').remove().draw()
 
 			//crear las filas en la tabla Nombrar
@@ -296,7 +297,11 @@
 								]).draw().node()
 
 				//asignar atributos a la fila creada
-				$(nodo).attr('id', row[key].DT_RowId ).find('td').addClass("numeric text-center")
+				$(nodo).attr('id', rowNode[key].id ).find('td').addClass("numeric text-center")
+
+				if ( $('#otherGroup').is(':visible') && $('#otherGroup').val().trim() != "" ){
+					$(nodo).attr('idGrupo', $('#otherGroup').val() )
+				}
 			})
 
 			if ($('#move-left').is(':disabled') && row.length > 0) {
@@ -335,7 +340,7 @@
 	$('#move-left').click(function () {
 			row = ""
 			col = ""
-			nodo = ""
+			nodo = rowNode = ""
 
 			row = nombrar.rows('.selected').data()
 			rowNode = nombrar.rows('.selected').nodes()
@@ -391,25 +396,59 @@
 
 
 	getPub =  function(res){
+				publics.rows().remove().draw()
+				pubsActual = nombrar.rows().nodes()
+
 				col = ""
-				publics.rows().remove()
 
 				$.each(res, function (key, pub) {
-					nombre = pub.nombre + " " + pub.apellido
-					nodo =  publics.row.add([
-										col,
-										nombre,
-										pub.direccion,
-									]).draw().node()
+					on = 0
 
-					$(nodo).attr('id', '' + pub.pk ).find('td').addClass("numeric text-center")
+					$.each(pubsActual, function(key2, nodo){
+						/*console.log( $(nodo).attr('id') )
+						console.log( pub.pk )*/
+						if( $(nodo).attr('id') == pub.pk ){
+							console.warn('el pub ya esta en la tabla nombrar')
+							on = 1
+						}
+					})
+
+					if(on == 0){
+						nombre = pub.nombre + " " + pub.apellido
+						nodo =  publics.row.add([
+											col,
+											nombre,
+											pub.direccion
+										]).draw().node()
+
+						$(nodo).attr('id', '' + pub.pk ).find('td').addClass("numeric text-center")
+					}
 				})
+
+				if ( $('#move-right').is(':disabled') && publics.data().length > 0) {
+					$('#move-right').removeAttr('disabled')
+				} else if ( !$('#move-right').is(':disabled') && publics.data().length == 0 ){
+					$('#move-right').attr('disabled', true)
+				}
+
+				reajustarTables()
+				pg1 = createPager(publics, 1)
+				pg2 = createPager(nombrar, 2)
+
+				if (pg2 == 1) {
+					altoT = $('#tabla2')[0].clientHeight
+				} else if (pg1 == 1) {
+					altoT = $('#tabla1')[0].clientHeight
+				} else {
+					altoT = null
+				}
 			}
 
 	$('#changeGrupo').click(function(){
 		if(	$(this).hasClass('btn-success') ){
 			$(this).removeClass('btn-success').addClass('btn-default')
 			$('#otherGroup').parent().show('slide', 1000)
+			$('#otherGroup').find(':first-child').prop('selected', true)
 		} else {
 			$(this).removeClass('btn-default').addClass('btn-success')
 			$('#otherGroup').parent().hide('slide', 1000)
@@ -466,8 +505,8 @@
 
 			if (bien > 0) {
 				$.gritter.add({
-					title: 'Creacion de Grupos!'
-					, text: 'Grupo Creado con Exito!'
+					title: 'Editar de Grupos!'
+					, text: 'Grupo modificado con Exito!'
 					, image: "{% static 'img/success.png' %}"
 					, time: 3000
 				, });
@@ -475,41 +514,66 @@
 
 			if (mal > 0) {
 				$.gritter.add({
-					title: 'Creacion de Grupos!'
-					, text: 'No se pudo crear el grupo, porfavor intentelo nuevamente'
+					title: 'Editar de Grupos!'
+					, text: 'No se pudo modificar el grupo'
 					, image: "{% static 'img/error.png' %}"
 					, time: 3000
 				, });
 			} else {
 				setTimeout(
 					function () {
-						window.location = "{% url 'secretario:registrarGrupo' %}"
+						window.location = "{% url 'secretario:editGrupo' id %}"
 					}
 					, 3000
 				)
 			}
 		}
-		pubs = []
+
+		pubsActual = []
+		pubsCon = []
 
 		rows = nombrar.rows().nodes()
+		nro = parseInt( $('#nroGrupo').html().trim() )
 
 		$.each(rows, function (key, value) {
-			pubs.push({
-				'id': $(value).attr('id')
+			pubsActual.push({
+				'idPub': $(value).attr('id')
 			})
 		})
 
+		$.each(rows, function (key, value) {
+			if ( $(value).attr('idGrupo') ){
+				pubsCon .push({
+					'idGrupoCon': $(value).attr('idGrupo'),
+					'idPub': $(value).attr('id')
+				})
+			}
+		})
+
+		console.log( pubsActual )
+		console.log( pubsCon )
+
 		obj = new Gestion()
-		obj.getInputs('.form-group')
+		obj.getInputs('.form-group:eq(0)')
 		input = obj.getDataIn()
 
+		console.log( input )
+
 		if(input.vacio == 0){
-			key = new Array('IDgrupo', 'encargado', 'auxiliar', 'pubs')
-
-			obj.generateJson(key, '{{ csrf_token }}', JSON.stringify(pubs))
-
-			obj.setPost("{% url 'secretario:grupos_registrar' %}", 0, result)
+			key = new Array('enc', 'aux', 'IDgrupo', 'pubsActual', 'pubsCon')
+			grupoPubs = new Array(nro, JSON.stringify(pubsActual), JSON.stringify(pubsCon))
+			x = obj.generateJson(key, '{{ csrf_token }}', grupoPubs)
+			console.log(x)
+//			obj.setPost("{% url 'secretario:grupos_registrar' %}", 0, result)
 		}
 	})
+
+	/*{ 'idGrupo': id,
+		'enc': idEnc,
+		'aux': idAux,
+		'pubsActual': {'idPub': idPub },
+		'idGrupoCon': id2,
+		'pubsCon': {'idPub2': idPub2 }
+	}*/
 </script>
 {% endblock %}
