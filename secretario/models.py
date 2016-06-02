@@ -79,6 +79,8 @@ class PubPrecursor(models.Model):
 	mesIni = models.IntegerField()
 	yearIni=models.IntegerField()
 	status=models.BooleanField()
+	def __str__(self):
+		return self.FKpub
 
 class nroPrec(models.Model):
 	FKpub = models.ForeignKey(
@@ -101,6 +103,8 @@ class privilegioPub(models.Model):
 	responsabilidad=models.CharField("Responsabilidad", max_length=200)
 	status = models.BooleanField()
 	fechaFin=models.CharField(max_length=200)
+	def __str__(self):
+		return self.FKpub
 
 class horasCon(models.Model):
 	FKinf=models.ForeignKey(

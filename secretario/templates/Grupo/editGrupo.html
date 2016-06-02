@@ -9,7 +9,7 @@
 			<div class="form-group">
 				<div class="col-xs-12 col-md-2">
 					<p class="text-center pTitle">Numero de Grupo:</p>
-					<p class="text-center" style="font-size:24px;color:black;"> {{ id }} </p>
+					<p id="nroGrupo" class="text-center" style="font-size:24px;color:black;"> {{ id }} </p>
 				</div>
 
 				<div class="col-xs-12 col-md-3">
@@ -433,6 +433,17 @@
 			obj.generateJson(keys, '{{ csrf_token }}')
 			obj.setPost("{% url 'secretario:conPubG' %}", 0, getPub)
 		}
+	})
+
+	$('#deleteGroup').click(function(){
+
+		nro = parseInt( $('#nroGrupo').html().trim() )
+
+		$.post("{% url 'secretario:deleteG' %}", {'id': nro, csrfmiddlewaretoken: '{{ csrf_token }}' })
+		.success(function(res){
+			res = JSON.parse(res)
+			console.log(res)
+		})
 	})
 
 	$('#save').click(function () {
