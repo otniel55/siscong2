@@ -234,7 +234,7 @@ def conPubG(request):
           except:
                datos={'on':1, 'msg':"Error grupo no existe"}
           else:
-               p=Publicador.objects.filter(grupo__IDgrupo=grupo)
+               p=Publicador.objects.filter(grupo__IDgrupo=grupo).exclude(IDpub__in=[g.encargado.pk, g.auxiliar.pk])
                if len(p)>0:
                     for i in p:
                          datos[cont]={'pk':i.pk, 'nombre':i.nombre, 'apellido':i.apellido, 'direccion':i.direccion}
