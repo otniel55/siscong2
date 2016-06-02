@@ -389,10 +389,50 @@
 
 	//fin de cambiar de tabla
 
+
+	getPub =  function(res){
+				col = ""
+				publics.rows().remove()
+
+				$.each(res, function (key, pub) {
+					nombre = pub.nombre + " " + pub.apellido
+					nodo =  publics.row.add([
+										col,
+										nombre,
+										pub.direccion,
+									]).draw().node()
+
+					$(nodo).attr('id', '' + pub.pk ).find('td').addClass("numeric text-center")
+				})
+			}
+
 	$('#changeGrupo').click(function(){
-		$('#deleteGroup').animate( { "left": "100px"  }, 500, function(){
+		if(	$(this).hasClass('btn-success') ){
+			$(this).removeClass('btn-success').addClass('btn-default')
 			$('#otherGroup').parent().show('slide', 1000)
-		})
+		} else {
+			$(this).removeClass('btn-default').addClass('btn-success')
+			$('#otherGroup').parent().hide('slide', 1000)
+			$.post("{% url 'secretario:conPubG' %}", {'id': 0, csrfmiddlewaretoken: '{{ csrf_token }}' })
+			.success(function(res){
+				res = JSON.parse(res)
+				getPub(res)
+			})
+		}
+	})
+
+	$('#otherGroup').change(function(){
+		id = this.value
+
+		obj = new Gestion()
+		obj.getInputs('.form-group:eq(1)')
+		vacio = obj.getDataIn()
+
+		if( vacio.vacio == 0){
+			keys = new Array('id')
+			obj.generateJson(keys, '{{ csrf_token }}')
+			obj.setPost("{% url 'secretario:conPubG' %}", 0, getPub)
+		}
 	})
 
 	$('#save').click(function () {
