@@ -262,7 +262,7 @@ def modificar(request):
                                    pubs=json.loads(request.POST['pubs'])
                                    for i in pubs:
                                         if not int(i['id']) in [enc, aux]:
-                                             resp=addToGroup(int(i['id']), idG)
+                                             resp=addToGroup(int(i['id']), int(i['idG']))
                                              if resp[0]:
                                                   msg[cont]={'id': i['id'], 'bien':1}
                                              else:
@@ -288,41 +288,44 @@ def verificarPriv(id):
 def addToGroup(pub, grupo, nombrarA=False, nombrarE=False):
      resp=[True, {}]
      try:
-          g=GruposPred.objects.get(pk=grupo)
-     except(KeyError, GruposPred.DoesNotExist):
-          resp=[False, {'msg':"Error, Grupo no existe"}]
+          p=Publicador.objects.get(pk=pub)
+     except(KeyError, Publicador.DoesNotExist):
+          resp=[False, {'msg':"Error, Publicador no existe"}]
      else:
-          try:
-               p=Publicador.objects.get(pk=pub)
-          except(KeyError, Publicador.DoesNotExist):
-               resp=[False, {'msg':"Error, Publicador no existe"}]
-          else:
-               if not verificarAsignacion(pub):
-                    if len(p.grupo.values())==1 and p.grupo.values()[0]['IDgrupo']==grupo and (nombrarA or nombrarE):
-                         if nombrarA:
-                              g.auxiliar=p
-                         else:
-                              g.encargado=p
-                         g.save()
-                    elif not verificarExist(pub):
-                         p.grupo.add(g)
-                         if nombrarA:
-                              g.auxiliar=p
-                              g.save()
-                         elif nombrarE:
-                              g.encargado=p
-                              g.save()
-                    else:
-                         p.grupo.clear()
-                         p.grupo.add(g)
-                         if nombrarA:
-                              g.auxiliar=p
-                              g.save()
-                         elif nombrarE:
-                              g.encargado=p
-                              g.save()
+          if grupo!=0:
+               try:
+                    g=GruposPred.objects.get(pk=grupo)
+               except(KeyError, GruposPred.DoesNotExist):
+                    resp=[False, {'msg':"Error, Grupo no existe"}]
                else:
-                    resp=[False, {'msg':"Error, Este publicador tiene responsabilidades en otro grupo"}]
+                    if not verificarAsignacion(pub):
+                         if len(p.grupo.values())==1 and p.grupo.values()[0]['IDgrupo']==grupo and (nombrarA or nombrarE):
+                              if nombrarA:
+                                   g.auxiliar=p
+                              else:
+                                   g.encargado=p
+                              g.save()
+                         elif not verificarExist(pub):
+                              p.grupo.add(g)
+                              if nombrarA:
+                                   g.auxiliar=p
+                                   g.save()
+                              elif nombrarE:
+                                   g.encargado=p
+                                   g.save()
+                         else:
+                              p.grupo.clear()
+                              p.grupo.add(g)
+                              if nombrarA:
+                                   g.auxiliar=p
+                                   g.save()
+                              elif nombrarE:
+                                   g.encargado=p
+                                   g.save()
+                    else:
+                         resp=[False, {'msg':"Error, Este publicador tiene responsabilidades en otro grupo"}]
+          else:
+               p.grupo.clear()
      return resp
      
 def eliminar(request):
