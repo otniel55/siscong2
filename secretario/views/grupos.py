@@ -189,6 +189,8 @@ def vistaModificar(request, id):
           for i in auxiliares:
                if i.fechaBau[0]!="N" and getEdad(i.fechaNa, hoy)>17 and not verificarAsignacion(i.pk, True, id) and i.pk!=enc:
                     auxs[cont]={'value':i.pk, 'text':i.nombre+" "+i.apellido}
+                    if verificarPriv(i.pk):
+                         aux[cont]['priv']=1
                     if i.pk==aux:
                          auxs[cont]['selected']=1
                          aux[cont]['direccion']=i.direccion
@@ -216,7 +218,7 @@ def modificar(request):
           else:
                try:
                     encargado=Publicador.objects.get(pk=enc)
-               except(KeyError, GruposPred.DoesNotExist):
+               except(KeyError, Publicador.DoesNotExist):
                     msg={'msg':"Error, Encargado no existe"}
                else:
                     if enc!=g.encargado.pk:
@@ -274,6 +276,14 @@ def modificar(request):
      if pasar:
           msg={'msg':"Datos modificados exitosamente"}
      return HttpResponse(json.dumps(msg))
+
+def verificarPriv(id):
+     try:
+          Publicador.objects.get(pk=id, privilegiopub__status=True)
+     except(KeyError, Publicador.DoesNotExist):
+          return False
+     else:
+          return True
 
 def addToGroup(pub, grupo, nombrarA=False, nombrarE=False):
      resp=[True, {}]
