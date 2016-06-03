@@ -43,7 +43,7 @@
 				<div class="col-lg-4" style="margin-top:22px;">
 					<div class="row">
 						<div class="col-sm-3 col-md-3 col-lg-3 col-md-offset-2">
-							<button id="move-right" class="btn btn-success btn-block fa fa-arrow-right fa-2x"></button>
+							<button id="move-right" class="btn btn-success btn-block fa fa-arrow-right fa-2x" disabled></button>
 						</div>
 
 						<div class="col-sm-3 col-md-3 col-lg-3">
@@ -51,7 +51,7 @@
 						</div>
 
 						<div class="col-sm-3 col-md-3 col-lg-3">
-							<button id="save" class="btn btn-primary btn-block fa fa-check-square-o fa-2x" disabled></button>
+							<button id="save" class="btn btn-primary btn-block fa fa-check-square-o fa-2x"></button>
 						</div>
 					</div>
 				</div>
@@ -186,13 +186,38 @@
 				</div>
 
 				<div class="col-md-2">
-					<button id="deleteGroup" class="btn btn-danger btn-block">Eliminar Grupo</button>
+					<button class="btn btn-danger btn-block" data-toggle="modal" data-target="#mdDelGroup">Eliminar Grupo</button>
 				</div>
 			</div>
 
 			<div class="clearfix" style="margin-bottom:30px;"></div>
 		</div>
 	</div>
+
+<div class="modal fade" id="mdDelGroup" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header" style="background-color: #9d1818;">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Eliminar Grupo</h4>
+			</div>
+
+			<div class="modal-body">
+				<h4 class="text-center">¿Desea Eliminar el Grupo {{ id }} ?</h4>
+			</div>
+
+			<div class="modal-footer">
+                <div class="col-xs-6">
+                    <button id="deleteGroup" class="btn btn-danger" data-dismiss="modal">SI</button>
+                </div>
+			    <div class="col-xs-1">
+                    <button class="btn btn-info" data-dismiss="modal">NO</button>
+                </div>
+			</div>
+		</div>
+	</div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
@@ -247,7 +272,16 @@
 		if (pg1 == 1) {
 			altoT = $('#tabla1')[0].clientHeight
 		}
-	});
+
+		//habilitar panel
+		if ( publics.data().length > 0 ) {
+			$('#move-right').removeAttr('disabled')
+		}
+
+		if ( nombrar.data().length > 0 ) {
+			$('#move-left').removeAttr('disabled')
+		}
+	})
 
 	//check para seleccionar todo los elementos de la tabla
 	$('#selectAll').click(function () {
@@ -275,8 +309,6 @@
 	})
 
 	//btns para cambiar de tabla
-
-	//cambiar a la tabla Nombrar
 	$('#move-right').click(function () {
 			row = ""
 			col = ""
@@ -391,39 +423,43 @@
 				altoT = null
 			}
 		}) //fin del moveleft
-
 	//fin de cambiar de tabla
 
-
+	/* funcion para verificar los pubs que fueron agregados al grupo actual
+	   y no volver a mostralos */
 	getPub =  function(res){
 				publics.rows().remove().draw()
 				pubsActual = nombrar.rows().nodes()
 
 				col = ""
 
-				$.each(res, function (key, pub) {
-					on = 0
+				if( !res.on ){
+					$.each(res, function (key, pub) {
+						on = 0
 
-					$.each(pubsActual, function(key2, nodo){
-						/*console.log( $(nodo).attr('id') )
-						console.log( pub.pk )*/
-						if( $(nodo).attr('id') == pub.pk ){
-							console.warn('el pub ya esta en la tabla nombrar')
-							on = 1
+						$.each(pubsActual, function(key2, nodo){
+							/*console.log( $(nodo).attr('id') )
+							console.log( pub.pk )*/
+							if( $(nodo).attr('id') == pub.pk ){
+								console.warn('el pub ya esta en la tabla nombrar')
+								on = 1
+							}
+						})
+
+						if(on == 0){
+							nombre = pub.nombre + " " + pub.apellido
+							nodo =  publics.row.add([
+												col,
+												nombre,
+												pub.direccion
+											]).draw().node()
+
+							$(nodo).attr('id', '' + pub.pk ).find('td').addClass("numeric text-center")
 						}
 					})
-
-					if(on == 0){
-						nombre = pub.nombre + " " + pub.apellido
-						nodo =  publics.row.add([
-											col,
-											nombre,
-											pub.direccion
-										]).draw().node()
-
-						$(nodo).attr('id', '' + pub.pk ).find('td').addClass("numeric text-center")
-					}
-				})
+				} else {
+					console.warn( res )
+				}
 
 				if ( $('#move-right').is(':disabled') && publics.data().length > 0) {
 					$('#move-right').removeAttr('disabled')
@@ -446,17 +482,23 @@
 
 	$('#changeGrupo').click(function(){
 		if(	$(this).hasClass('btn-success') ){
+
 			$(this).removeClass('btn-success').addClass('btn-default')
 			$('#otherGroup').parent().show('slide', 1000)
 			$('#otherGroup').find(':first-child').prop('selected', true)
+			$("#otherGroup").css('border-color', '#ccc')
+
 		} else {
+
 			$(this).removeClass('btn-default').addClass('btn-success')
 			$('#otherGroup').parent().hide('slide', 1000)
+
 			$.post("{% url 'secretario:conPubG' %}", {'id': 0, csrfmiddlewaretoken: '{{ csrf_token }}' })
 			.success(function(res){
 				res = JSON.parse(res)
 				getPub(res)
 			})
+
 		}
 	})
 
@@ -467,10 +509,13 @@
 		obj.getInputs('.form-group:eq(1)')
 		vacio = obj.getDataIn()
 
-		if( vacio.vacio == 0){
+		if( vacio.vacio == 0 ){
 			keys = new Array('id')
 			obj.generateJson(keys, '{{ csrf_token }}')
 			obj.setPost("{% url 'secretario:conPubG' %}", 0, getPub)
+		} else {
+			$('#move-right').attr('disabled', true)
+			publics.rows().remove().draw()
 		}
 	})
 
@@ -481,7 +526,18 @@
 		$.post("{% url 'secretario:deleteG' %}", {'id': nro, csrfmiddlewaretoken: '{{ csrf_token }}' })
 		.success(function(res){
 			res = JSON.parse(res)
-			console.log(res)
+			$.gritter.add({
+				title: 'Editar de Grupos!',
+				text: 'Se ha Eliminado el Grupo {{ id }} correctamente',
+				image: "{% static 'img/success.png' %}",
+				time: 3000,
+			})
+
+			setTimeout(
+				function () {
+					window.location = "{% url 'secretario:conGrupo' %}"
+				}, 1500
+			)
 		})
 	})
 
@@ -522,7 +578,7 @@
 			} else {
 				setTimeout(
 					function () {
-						window.location = "{% url 'secretario:editGrupo' id %}"
+						window.location = "{% url 'secretario:conGrupoofPubs' id %}"
 					}
 					, 3000
 				)
