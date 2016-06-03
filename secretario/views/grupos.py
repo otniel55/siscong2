@@ -180,6 +180,7 @@ def vistaModificar(request, id):
                     encs[cont]={'value':i.pk, 'text':i.nombre+" "+i.apellido}
                     if i.pk==enc:
                          encs[cont]['selected']=1
+                         encs[cont]['direccion']=i.direccion
                     cont+=1
           encs=encs.values()
           auxiliares=Publicador.objects.filter(sexo="M")
@@ -190,6 +191,7 @@ def vistaModificar(request, id):
                     auxs[cont]={'value':i.pk, 'text':i.nombre+" "+i.apellido}
                     if i.pk==aux:
                          auxs[cont]['selected']=1
+                         aux[cont]['direccion']=i.direccion
                     cont+=1
           auxs=auxs.values()
           publicadores=Publicador.objects.filter(grupo__IDgrupo=g.pk).exclude(pk__in=[enc, aux])
