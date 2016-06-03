@@ -529,51 +529,37 @@
 			}
 		}
 
-		pubsActual = []
-		pubsCon = []
+		pubs = []
 
 		rows = nombrar.rows().nodes()
-		nro = parseInt( $('#nroGrupo').html().trim() )
+		nro = $('#nroGrupo').html().trim()
 
 		$.each(rows, function (key, value) {
-			pubsActual.push({
-				'idPub': $(value).attr('id')
+			pubs.push({
+				'id': $(value).attr('id')
 			})
 		})
 
-		$.each(rows, function (key, value) {
+		/*$.each(rows, function (key, value) {
 			if ( $(value).attr('idGrupo') ){
 				pubsCon .push({
 					'idGrupoCon': $(value).attr('idGrupo'),
 					'idPub': $(value).attr('id')
 				})
 			}
-		})
-
-		console.log( pubsActual )
-		console.log( pubsCon )
+		})*/
 
 		obj = new Gestion()
 		obj.getInputs('.form-group:eq(0)')
 		input = obj.getDataIn()
 
-		console.log( input )
-
 		if(input.vacio == 0){
-			key = new Array('enc', 'aux', 'IDgrupo', 'pubsActual', 'pubsCon')
-			grupoPubs = new Array(nro, JSON.stringify(pubsActual), JSON.stringify(pubsCon))
+			key = new Array('enc', 'aux', 'IDgrupo', 'pubs')
+			grupoPubs = new Array(nro, JSON.stringify(pubs) )
 			x = obj.generateJson(key, '{{ csrf_token }}', grupoPubs)
 			console.log(x)
-//			obj.setPost("{% url 'secretario:grupos_registrar' %}", 0, result)
+			obj.setPost("{% url 'secretario:modGrup' %}", 0, result)
 		}
 	})
-
-	/*{ 'idGrupo': id,
-		'enc': idEnc,
-		'aux': idAux,
-		'pubsActual': {'idPub': idPub },
-		'idGrupoCon': id2,
-		'pubsCon': {'idPub2': idPub2 }
-	}*/
 </script>
 {% endblock %}

@@ -148,10 +148,11 @@
                 if ( !Array.isArray(adicional) ){
                     this._datosIn.Data.push({ 'value' : adicional })
                 } else {
+					datosIn = this._datosIn
                     $.each(adicional, function(key, value){
-						console.log(value)
-                        this._datosIn.Data.push({ 'value' : value })
+                        datosIn.Data.push({ 'value' : value })
                     })
+					this._datosIn = datosIn
                 }
             }
 
