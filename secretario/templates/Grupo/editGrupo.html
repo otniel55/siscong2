@@ -1,201 +1,200 @@
 {% extends "layout.html" %} {% load staticfiles %} {% block contenido %}
 
 
-	<div id="mainGrupo" class="col-lg-12">
-		<div class="form-panel row">
-			<h3 class="text-center titlecolor"><i class="fa fa-angle-right"></i>Editar Grupo de Predicación</h3>
+<div id="mainGrupo" class="col-lg-12">
+	<div class="form-panel row">
+		<h3 class="text-center titlecolor"><i class="fa fa-angle-right"></i>Editar Grupo de Predicación</h3>
 
-			{% csrf_token %}
-			<div class="form-group">
-				<div class="col-xs-12 col-md-2">
-					<p class="text-center pTitle">Numero de Grupo:</p>
-					<p id="nroGrupo" class="text-center" style="font-size:24px;color:black;"> {{ id }} </p>
-				</div>
+		{% csrf_token %}
+		<div class="form-group">
+			<div class="col-xs-12 col-md-2">
+				<p class="text-center pTitle">Numero de Grupo:</p>
+				<p id="nroGrupo" class="text-center" style="font-size:24px;color:black;"> {{ id }} </p>
+			</div>
 
-				<div class="col-xs-12 col-md-3">
-					<label for="enc">Encargado:</label>
-					<select id="enc" class="form-control mrg-bottom">
-						<option value="">Seleccione un Encargado</option>
-						{% for enc in cmbEnc %}
-							{% if enc.selected == 1 %}
-								<option value="{{ enc.value }}" data-adress="{{ enc.direccion }}" selected>
-								{{ enc.text }}</option>
-							{% else %}
-								<option value="{{ enc.value }}">{{ enc.text }}</option>
-							{% endif %}
-						{% endfor %}
-					</select>
-				</div>
+			<div class="col-xs-12 col-md-3">
+				<label for="enc">Encargado:</label>
+				<select id="enc" class="form-control mrg-bottom">
+					<option value="">Seleccione un Encargado</option>
+					{% for enc in cmbEnc %}
+						{% if enc.selected == 1 %}
+							<option value="{{ enc.value }}" data-priv="1" data-adress="{{ enc.direccion }}" selected> {{ enc.text }} </option>
+						{% else %}
+							<option value="{{ enc.value }}" data-priv="1">{{ enc.text }}</option>
+						{% endif %}
+					{% endfor %}
+				</select>
+			</div>
 
-				<div class="col-xs-12 col-md-3">
-					<label for="aux">Auxiliar:</label>
-					<select id="aux" class="form-control mrg-bottom">
-						<option value="">Seleccione un Auxiliar</option>
-						{% for aux in cmbAux %}
-							{% if aux.selected == 1 %}
-								<option value="{{ aux.value }}" {% if aux.priv == 1 %} data-priv="1" {% endif %}
-								data-adress="{{ aux.direccion }}" selected>{{ aux.text }}</option>
-							{% else %}
-								<option value="{{ aux.value }}" {% if aux.priv == 1 %} data-priv="1" {% endif %}>
-								{{ aux.text }}</option>
-							{% endif %}
-						{% endfor %}
-					</select>
-				</div>
+			<div class="col-xs-12 col-md-3">
+				<label for="aux">Auxiliar:</label>
+				<select id="aux" class="form-control mrg-bottom">
+					<option value="">Seleccione un Auxiliar</option>
+					{% for aux in cmbAux %}
+						{% if aux.selected == 1 %}
+							<option value="{{ aux.value }}" {% if aux.priv == 1 %} data-priv="1" {% endif %}
+							data-adress="{{ aux.direccion }}" selected>{{ aux.text }}</option>
+						{% else %}
+							<option value="{{ aux.value }}" {% if aux.priv == 1 %} data-priv="1" {% endif %}>
+							{{ aux.text }}</option>
+						{% endif %}
+					{% endfor %}
+				</select>
+			</div>
 
-				<div class="col-lg-4" style="margin-top:22px;">
-					<div class="row">
-						<div class="col-sm-3 col-md-3 col-lg-3 col-md-offset-2">
-							<button id="move-right" class="btn btn-success btn-block fa fa-arrow-right fa-2x" disabled></button>
-						</div>
+			<div class="col-lg-4" style="margin-top:22px;">
+				<div class="row">
+					<div class="col-sm-3 col-md-3 col-lg-3 col-md-offset-2">
+						<button id="move-right" class="btn btn-success btn-block fa fa-arrow-right fa-2x" disabled></button>
+					</div>
 
-						<div class="col-sm-3 col-md-3 col-lg-3">
-							<button id="move-left" class="btn btn-danger btn-block fa fa-arrow-left fa-2x" disabled></button>
-						</div>
+					<div class="col-sm-3 col-md-3 col-lg-3">
+						<button id="move-left" class="btn btn-danger btn-block fa fa-arrow-left fa-2x" disabled></button>
+					</div>
 
-						<div class="col-sm-3 col-md-3 col-lg-3">
-							<button id="save" class="btn btn-primary btn-block fa fa-check-square-o fa-2x"></button>
-						</div>
+					<div class="col-sm-3 col-md-3 col-lg-3">
+						<button id="save" class="btn btn-primary btn-block fa fa-floppy-o fa-2x"></button>
 					</div>
 				</div>
 			</div>
-
-			<div class="clearfix"></div>
-
-			<div class="col-lg-6" style="margin-top: 40px;">
-				<div class="content-panel">
-					<section id="tabla1">
-
-						<h3 class="text-center titlecolor cabecero">Publicadores sin Grupo</h3>
-
-						<div class="col-lg-6 Nfilter">
-							<input type="text" id="filtro1" class="form-control" placeholder="Buscar...">
-						</div>
-
-						<table id="publics" class="display table table-condensed cf" cellspacing="0" style="font-size:14px;" width:"100%">
-							<thead class="cf">
-								<tr>
-									<th style="width:5%;">
-										<input type="checkbox" id="selectAll" />
-									</th>
-									<th class="numeric text-center">Nombre y Apellido</th>
-									<th class="numeric text-center">Direccion</th>
-								</tr>
-							</thead>
-							<tbody>
-							{% for pubs in sinG %}
-								<tr id="{{ pubs.pk }}">
-									<td></td>
-									<td class="numeric text-center" data-title="Nombre y Apellido">
-										{{ pubs.nombre }} {{ pubs.apellido }}
-									</td>
-									<td class="numeric text-center" data-title="Direccion">
-										{{ pubs.direccion}}
-									</td>
-								</tr>
-							{% endfor %}
-							</tbody>
-						</table>
-
-						<div style="height:80px;">
-							<nav class="center-block">
-							  <ul id="pager1" class="pagination pager hide" >
-								<li>
-								  <a href="#" aria-label="P">
-									<span aria-hidden="true">&laquo;</span>
-								  </a>
-								</li>
-								<li>
-								  <a href="#" aria-label="N">
-									<span aria-hidden="true">&raquo;</span>
-								  </a>
-								</li>
-							  </ul>
-							</nav>
-						</div>
-					</section>
-				</div>
-			</div>
-
-			<div class="col-lg-6" style="margin-top: 40px;">
-				<div class="content-panel">
-					<section id="tabla2">
-
-					   <h3 class="text-center titlecolor cabecero">Publicadores del Grupo</h3>
-
-						<div class="col-lg-6 Nfilter">
-							<input type="text" id="filtro2" class="form-control" placeholder="Buscar...">
-						</div>
-
-						<table id="nombrar" class="display table table-condensed cf" cellspacing="0" style="font-size:14px;" width:"100%">
-							<thead class="cf">
-								<tr>
-									<th style="width:5%;">
-										<input type="checkbox" id="selectAll2" />
-									</th>
-									<th class="numeric text-center">Nombre y Apellido</th>
-									<th class="numeric text-center">Direccion</th>
-								</tr>
-							</thead>
-							<tbody>
-							{% for pub in pubs %}
-								<tr id="{{ pub.pk }}">
-									<td></td>
-									<td class="numeric text-center" data-title="Nombre y Apellido">
-										{{ pub.nombre }} {{ pub.apellido }}
-									</td>
-									<td class="numeric text-center" data-title="Direccion">
-										{{ pub.direccion}}
-									</td>
-								</tr>
-							{% endfor %}
-							</tbody>
-						</table>
-
-						<div style="height:80px;">
-							<nav class="center-block">
-							  <ul id="pager2" class="pagination pager hide">
-								<li>
-								  <a href="#" aria-label="P">
-									<span aria-hidden="true">&laquo;</span>
-								  </a>
-								</li>
-								<li>
-								  <a href="#" aria-label="N">
-									<span aria-hidden="true">&raquo;</span>
-								  </a>
-								</li>
-							  </ul>
-							</nav>
-						</div>
-					</section>
-				</div>
-			</div>
-
-			<div class="clearfix"></div>
-
-			<div class="form-group" style="margin-top:40px;">
-				<div class="col-md-2">
-					<button id="changeGrupo" class="btn btn-success btn-block">Cambiar a otro Grupo</button>
-				</div>
-
-				<div class="col-md-3" style="display:none;">
-					<select id="otherGroup" class="form-control mrg-bottom">
-						<option value="">Seleccione un Encargado</option>
-						{% for enc in cmbGrupo %}
-								<option value="{{ enc.value }}">{{ enc.text }}</option>
-						{% endfor %}
-					</select>
-				</div>
-
-				<div class="col-md-2">
-					<button class="btn btn-danger btn-block" data-toggle="modal" data-target="#mdDelGroup">Eliminar Grupo</button>
-				</div>
-			</div>
-
-			<div class="clearfix" style="margin-bottom:30px;"></div>
 		</div>
+
+		<div class="clearfix"></div>
+
+		<div class="col-lg-6" style="margin-top: 40px;">
+			<div class="content-panel">
+				<section id="tabla1">
+
+					<h3 class="text-center titlecolor cabecero">Publicadores sin Grupo</h3>
+
+					<div class="col-lg-6 Nfilter">
+						<input type="text" id="filtro1" class="form-control" placeholder="Buscar...">
+					</div>
+
+					<table id="publics" class="display table table-condensed cf" cellspacing="0" style="font-size:14px;" width:"100%">
+						<thead class="cf">
+							<tr>
+								<th style="width:5%;">
+									<input type="checkbox" id="selectAll" />
+								</th>
+								<th class="numeric text-center">Nombre y Apellido</th>
+								<th class="numeric text-center">Direccion</th>
+							</tr>
+						</thead>
+						<tbody>
+						{% for pubs in sinG %}
+							<tr id="{{ pubs.pk }}">
+								<td></td>
+								<td class="numeric text-center" data-title="Nombre y Apellido">
+									{{ pubs.nombre }} {{ pubs.apellido }}
+								</td>
+								<td class="numeric text-center" data-title="Direccion">
+									{{ pubs.direccion}}
+								</td>
+							</tr>
+						{% endfor %}
+						</tbody>
+					</table>
+
+					<div style="height:80px;">
+						<nav class="center-block">
+						  <ul id="pager1" class="pagination pager hide" >
+							<li>
+							  <a href="#" aria-label="P">
+								<span aria-hidden="true">&laquo;</span>
+							  </a>
+							</li>
+							<li>
+							  <a href="#" aria-label="N">
+								<span aria-hidden="true">&raquo;</span>
+							  </a>
+							</li>
+						  </ul>
+						</nav>
+					</div>
+				</section>
+			</div>
+		</div>
+
+		<div class="col-lg-6" style="margin-top: 40px;">
+			<div class="content-panel">
+				<section id="tabla2">
+
+				   <h3 class="text-center titlecolor cabecero">Publicadores del Grupo</h3>
+
+					<div class="col-lg-6 Nfilter">
+						<input type="text" id="filtro2" class="form-control" placeholder="Buscar...">
+					</div>
+
+					<table id="nombrar" class="display table table-condensed cf" cellspacing="0" style="font-size:14px;" width:"100%">
+						<thead class="cf">
+							<tr>
+								<th style="width:5%;">
+									<input type="checkbox" id="selectAll2" />
+								</th>
+								<th class="numeric text-center">Nombre y Apellido</th>
+								<th class="numeric text-center">Direccion</th>
+							</tr>
+						</thead>
+						<tbody>
+						{% for pub in pubs %}
+							<tr id="{{ pub.pk }}">
+								<td></td>
+								<td class="numeric text-center" data-title="Nombre y Apellido">
+									{{ pub.nombre }} {{ pub.apellido }}
+								</td>
+								<td class="numeric text-center" data-title="Direccion">
+									{{ pub.direccion}}
+								</td>
+							</tr>
+						{% endfor %}
+						</tbody>
+					</table>
+
+					<div style="height:80px;">
+						<nav class="center-block">
+						  <ul id="pager2" class="pagination pager hide">
+							<li>
+							  <a href="#" aria-label="P">
+								<span aria-hidden="true">&laquo;</span>
+							  </a>
+							</li>
+							<li>
+							  <a href="#" aria-label="N">
+								<span aria-hidden="true">&raquo;</span>
+							  </a>
+							</li>
+						  </ul>
+						</nav>
+					</div>
+				</section>
+			</div>
+		</div>
+
+		<div class="clearfix"></div>
+
+		<div class="form-group" style="margin-top:40px;">
+			<div class="col-md-2">
+				<button id="changeGrupo" class="btn btn-success btn-block">Cambiar a otro Grupo</button>
+			</div>
+
+			<div class="col-md-3" style="display:none;">
+				<select id="otherGroup" class="form-control mrg-bottom">
+					<option value="">Seleccione un Encargado</option>
+					{% for enc in cmbGrupo %}
+							<option value="{{ enc.value }}">{{ enc.text }}</option>
+					{% endfor %}
+				</select>
+			</div>
+
+			<div class="col-md-2">
+				<button class="btn btn-danger btn-block" data-toggle="modal" data-target="#mdDelGroup">Eliminar Grupo</button>
+			</div>
+		</div>
+
+		<div class="clearfix" style="margin-bottom:30px;"></div>
 	</div>
+</div>
 
 <div class="modal fade" id="mdDelGroup" role="dialog">
 	<div class="modal-dialog modal-sm">
@@ -230,6 +229,9 @@
 	var idAux = $("#aux").val()
 
 	$(document).ready(function () {
+
+		reorder( $("#enc") )
+		reorder( $("#aux") )
 
 		tablaConfig = {
 			columnDefs: [{
@@ -289,20 +291,116 @@
 	})
 
 	//controladores de combos
-	$("#aux").change(function(){
-		aux = $(this)
+	function reorder(cmb){
+		selected = cmb.val()
+		cmb.each(function() {
+		    $(this).html($('option[value!=""]', $(this)).sort(function(a, b) {
+		        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1
+		    }))
+		})
+		cmb.val(selected).prop('selected', true)
+	}
 
-		if( aux.val() != idAux ){
-			nodo = $('#aux option[value="'+idAux+'"]')
-			newRow = nombrar.row.add([
+	function compararOptions(select1, select2, priv){
+		options1 = select1.find('option[value!=""]')
+		options2 = select2.find('option[value!=""]')
+
+		$.each(options1, function(key, nodo1){
+			exist = 0
+
+			$.each(options2, function(key2, nodo2){
+				if(nodo1.value == nodo2.value){
+					exist++
+
+					if( $(nodo1).is(':selected') )
+						$(nodo2).detach()
+				}
+			})
+
+			if(exist == 0){
+
+				node = nodo1.cloneNode(true)
+
+				if( $(node).is(':selected') )
+					$(node).removeAttr('selected')
+
+				if( priv ){
+					if( $(node).attr('data-priv') ){
+						select2.append( node )
+					}
+				} else {
+					select2.append( node )
+				}
+
+			}
+		})
+
+		reorder(select1)
+		reorder(select2)
+	}
+
+	function addEncAux(table, id, cmbNow, cmb2){
+
+		fila = table.row( "#"+id )
+
+		if( cmbNow.val() != id && cmb2.val() != id && fila.length == 0 ){
+
+			nodo = $('#'+cmbNow.attr('id')+' option[value="'+id+'"]')
+
+			newRow = table.row.add([
 								"",
 								$(nodo).html(),
 								$(nodo).attr('data-adress'),
 							]).draw().node()
 			$(newRow).attr('id', '' + $(nodo).val() ).find('td').addClass("text-center")
-		} else {
-			nombrar.row( "#"+idAux+"" ).remove().draw()
+
+		} else if( cmbNow.val() == id && fila.length > 0 ){
+			fila.remove().draw()
 		}
+
+		reajustarTables()
+		pg1 = createPager(publics, 1)
+		pg2 = createPager(nombrar, 2)
+
+		if (pg2 == 1) {
+			altoT = $('#tabla2')[0].clientHeight
+		} else if (pg1 == 1) {
+			altoT = $('#tabla1')[0].clientHeight
+		} else {
+			altoT = null
+		}
+	}
+
+	$('#enc').change(function(){
+		enc = $(this)
+		aux = $('#aux')
+
+		if( this.value != "" ){
+			compararOptions(enc, aux)
+		} else {
+			compararOptions(enc, aux)
+		}
+
+		enc.find('option[selected]').removeAttr('selected')
+
+		addEncAux(nombrar, idAux, enc, aux)
+		addEncAux(nombrar, idEnc, enc, aux)
+	})
+
+	$("#aux").change(function(){
+		aux = $(this)
+		enc = $('#enc')
+
+		if( this.value != "" ){
+			compararOptions(aux, enc, 1)
+		} else {
+			compararOptions(aux, enc, 1)
+		}
+
+		aux.find('option[selected]').removeAttr('selected')
+
+		addEncAux(nombrar, idAux, aux, enc)
+		addEncAux(nombrar, idEnc, aux, enc)
 	})
 
 	//check para seleccionar todo los elementos de la tabla
@@ -331,6 +429,8 @@
 	})
 
 	//btns para cambiar de tabla
+	var newGroup = []
+
 	$('#move-right').click(function () {
 			row = ""
 			col = ""
@@ -353,9 +453,6 @@
 				//asignar atributos a la fila creada
 				$(nodo).attr('id', rowNode[key].id ).find('td').addClass("numeric text-center")
 
-				if ( $('#otherGroup').is(':visible') && $('#otherGroup').val().trim() != "" ){
-					$(nodo).attr('idGrupo', $('#otherGroup').val() )
-				}
 			})
 
 			if ($('#move-left').is(':disabled') && row.length > 0) {
@@ -400,7 +497,6 @@
 			rowNode = nombrar.rows('.selected').nodes()
 			nombrar.rows('.selected').remove().draw()
 
-			console.log(row)
 			$.each(row, function (key, value) {
 
 				nodo =  publics.row.add([
@@ -410,6 +506,12 @@
 								]).draw().node()
 
 				$(nodo).attr('id', '' + rowNode[key].id ).find('td').addClass("numeric text-center")
+
+				if ( $('#otherGroup').is(':visible') && $('#otherGroup').val().trim() != "" ){
+					newGroup.push({'idPub': rowNode[key].id, 'idGrupo': $('#otherGroup').val() })
+				} else {
+					newGroup.push({'idPub': rowNode[key].id, 'idGrupo': '0' })
+				}
 			})
 
 			if ($('#selectAll2').is(':checked'))
@@ -445,6 +547,7 @@
 				altoT = null
 			}
 		}) //fin del moveleft
+
 	//fin de cambiar de tabla
 
 	/* controlador para el llenado de tablas */
@@ -619,20 +722,19 @@
 		rows = nombrar.rows().nodes()
 		nro = $('#nroGrupo').html().trim()
 
-		$.each(rows, function (key, value) {
+		$.each(rows, function (key, row) {
 			pubs.push({
-				'id': $(value).attr('id')
+				'id': $(row).attr('id'),
+				'idG': nro,
 			})
 		})
 
-		/*$.each(rows, function (key, value) {
-			if ( $(value).attr('idGrupo') ){
-				pubsCon .push({
-					'idGrupoCon': $(value).attr('idGrupo'),
-					'idPub': $(value).attr('id')
-				})
-			}
-		})*/
+		$.each(newGroup, function (key, pub) {
+			pubs.push({
+				'id': pub.idPub,
+				'idG': pub.idGrupo,
+			})
+		})
 
 		obj = new Gestion()
 		obj.getInputs('.form-group:eq(0)')
