@@ -190,10 +190,10 @@ def vistaModificar(request, id):
                if i.fechaBau[0]!="N" and getEdad(i.fechaNa, hoy)>17 and not verificarAsignacion(i.pk, True, id) and i.pk!=enc:
                     auxs[cont]={'value':i.pk, 'text':i.nombre+" "+i.apellido}
                     if verificarPriv(i.pk):
-                         aux[cont]['priv']=1
+                         auxs[cont]['priv']=1
                     if i.pk==aux:
                          auxs[cont]['selected']=1
-                         aux[cont]['direccion']=i.direccion
+                         auxs[cont]['direccion']=i.direccion
                     cont+=1
           auxs=auxs.values()
           publicadores=Publicador.objects.filter(grupo__IDgrupo=g.pk).exclude(pk__in=[enc, aux])

@@ -30,7 +30,7 @@
 					<div class="col-xs-12 col-md-3">
 						<label for="aux">Auxiliar:</label>
 						<div class="col-xs-10" style="padding:0px;">
-							<select id="enc" class="form-control mrg-bottom">
+							<select id="aux" class="form-control mrg-bottom">
 								<option value="">Seleccione un Auxiliar</option>
 								{% for pub in aux %}
 									<option value="{{ pub.pk }}">{{ pub.nombre }} {{ pub.apellido }}</option>
@@ -348,8 +348,6 @@
 	})
 
 	//btns para cambiar de tabla
-
-	//cambiar a la tabla Nombrar
 	$('#move-right').click(function () {
 			row = ""
 			col = ""
@@ -460,8 +458,34 @@
 			}
 		}) //fin del moveleft
 
-	//fin de cambiar de tabla
+	$('#enc').change(function(){
+		aux = $('#aux')
 
+		if( this.value != "" ){
+			option = aux.find('[value="'+this.value+'"]')
+
+			if(option.length > 0){
+				$(option).detach()
+			}
+		} else {
+			encOptions = $(this).find('option[value!=""]')
+			auxOptions = aux.find('option[value!=""]')
+
+			$.each(encOptions, function(key, nodo1){
+				exist = 0
+				$.each(auxOptions, function(key2, nodo2){
+					if(nodo1.value == nodo2.value)
+						exist++
+				})
+
+				if(exist == 0){
+					aux.append( nodo1.cloneNode(true) )
+				}
+			})
+		}
+	})
+
+	//fin de cambiar de tabla
 	$('#save').click(function () {
 		result = function (res) {
 			bien = 0

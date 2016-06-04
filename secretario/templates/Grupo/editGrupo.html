@@ -18,7 +18,8 @@
 						<option value="">Seleccione un Encargado</option>
 						{% for enc in cmbEnc %}
 							{% if enc.selected == 1 %}
-								<option value="{{ enc.value }}" selected>{{ enc.text }}</option>
+								<option value="{{ enc.value }}" data-adress="{{ enc.direccion }}" selected>
+								{{ enc.text }}</option>
 							{% else %}
 								<option value="{{ enc.value }}">{{ enc.text }}</option>
 							{% endif %}
@@ -28,13 +29,15 @@
 
 				<div class="col-xs-12 col-md-3">
 					<label for="aux">Auxiliar:</label>
-					<select id="enc" class="form-control mrg-bottom">
+					<select id="aux" class="form-control mrg-bottom">
 						<option value="">Seleccione un Auxiliar</option>
 						{% for aux in cmbAux %}
 							{% if aux.selected == 1 %}
-								<option value="{{ aux.value }}" selected>{{ aux.text }}</option>
+								<option value="{{ aux.value }}" {% if aux.priv == 1 %} data-priv="1" {% endif %}
+								data-adress="{{ aux.direccion }}" selected>{{ aux.text }}</option>
 							{% else %}
-								<option value="{{ aux.value }}">{{ aux.text }}</option>
+								<option value="{{ aux.value }}" {% if aux.priv == 1 %} data-priv="1" {% endif %}>
+								{{ aux.text }}</option>
 							{% endif %}
 						{% endfor %}
 					</select>
@@ -223,6 +226,8 @@
 {% block scripts %}
 <script>
 	var publics, nombrar, altoT
+	var idEnc = $("#enc").val()
+	var idAux = $("#aux").val()
 
 	$(document).ready(function () {
 
@@ -280,6 +285,23 @@
 
 		if ( nombrar.data().length > 0 ) {
 			$('#move-left').removeAttr('disabled')
+		}
+	})
+
+	//controladores de combos
+	$("#aux").change(function(){
+		aux = $(this)
+
+		if( aux.val() != idAux ){
+			nodo = $('#aux option[value="'+idAux+'"]')
+			newRow = nombrar.row.add([
+								"",
+								$(nodo).html(),
+								$(nodo).attr('data-adress'),
+							]).draw().node()
+			$(newRow).attr('id', '' + $(nodo).val() ).find('td').addClass("text-center")
+		} else {
+			nombrar.row( "#"+idAux+"" ).remove().draw()
 		}
 	})
 
@@ -425,13 +447,18 @@
 		}) //fin del moveleft
 	//fin de cambiar de tabla
 
-	/* funcion para verificar los pubs que fueron agregados al grupo actual
-	   y no volver a mostralos */
+	/* controlador para el llenado de tablas */
 	getPub =  function(res){
 				publics.rows().remove().draw()
 				pubsActual = nombrar.rows().nodes()
 
 				col = ""
+
+				if( $('#otherGroup').parent().is(':visible') ){
+					$('#tabla1 h3').html('Publicadores del Grupo '+ $('#otherGroup').val() )
+				} else {
+					$('#tabla1 h3').html('Publicadores sin Grupo')
+				}
 
 				if( !res.on ){
 					$.each(res, function (key, pub) {
@@ -480,6 +507,7 @@
 				}
 			}
 
+	//combo para consultar grupos
 	$('#changeGrupo').click(function(){
 		if(	$(this).hasClass('btn-success') ){
 
@@ -491,14 +519,13 @@
 		} else {
 
 			$(this).removeClass('btn-default').addClass('btn-success')
-			$('#otherGroup').parent().hide('slide', 1000)
-
-			$.post("{% url 'secretario:conPubG' %}", {'id': 0, csrfmiddlewaretoken: '{{ csrf_token }}' })
-			.success(function(res){
-				res = JSON.parse(res)
-				getPub(res)
+			$('#otherGroup').parent().hide('slide', 1000, function(){
+				$.post("{% url 'secretario:conPubG' %}", {'id': 0, csrfmiddlewaretoken: '{{ csrf_token }}' })
+				.success(function(res){
+					res = JSON.parse(res)
+					getPub(res)
+				})
 			})
-
 		}
 	})
 
@@ -516,9 +543,11 @@
 		} else {
 			$('#move-right').attr('disabled', true)
 			publics.rows().remove().draw()
+			$('#tabla1 h3').html('Publicadores')
 		}
 	})
 
+	//btn para eliminar grupo
 	$('#deleteGroup').click(function(){
 
 		nro = parseInt( $('#nroGrupo').html().trim() )
