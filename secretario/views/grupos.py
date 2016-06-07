@@ -145,7 +145,12 @@ def consultar(request,idGrupo):
           enc=str(g.encargado.nombre)+" "+str(g.encargado.apellido)
           aux=str(g.auxiliar.nombre)+" "+str(g.auxiliar.apellido)
           for i in p:
-               pubs[cont]={'id':i.pk, 'nombre':i.nombre, 'apellido':i.apellido, 'status': 1,
+               inf=Informe.objects.filter(FKpub=i.pk).order_by("-year", "-mes")
+               if len(inf)>0:
+                    status=obtenerStatus(inf[0].mes, inf[0].year, i.pk)[0]
+               else:
+                    status=3
+               pubs[cont]={'id':i.pk, 'nombre':i.nombre, 'apellido':i.apellido,'status': status,
                            'telefono':i.telefono, 'email':i.email, 'direccion':i.direccion}
                cont+=1
           pubs=pubs.values()

@@ -77,12 +77,39 @@ def bajaAuto():
                     i.status=False
                     i.save()
 
-def obtenerStatus(mes, year):
+def obtenerStatus(mes, year, pk):
+     promInf=[]
      hoy=datetime.date.today()
      meses=getDiferenciaMes(mes,year,hoy.month,hoy.year)
      if meses<1:
           meses=0
           status=0
+          inf=Informe.objects.filter(FKpub=pk).order_by("-year", "-mes")
+          mesi=inf[0].mes
+          yeari=inf[0].year
+          print("what's up?")
+          mesi-=1
+          if mesi==0:
+              mesi=12
+              yeari-=1
+          informes=Informe.objects.filter(mes=mesi, year=yeari)
+          if len(informes)>0:
+              for infs in informes:
+                  add=True
+                  pre=PubPrecursor.objects.filter(FKpub=infs.FKpub.pk).order_by("-yearIni", "-mesIni")
+                  if len(pre)>0:
+                      if pre[0].duracion==0:
+                          add=False
+                      else:
+                          fechaF=getFechaFin(pre[0].mesIni,pre[0].yearIni,pre[0].duracion)
+                          diferencia=getDiferenciaMes(fechaF[0],fechaF[1],mesi,yeari)
+                          if diferencia<0:
+                              add=False
+                  if add:
+                      promInf.append(infs.minutos)
+              if len(promInf)>0:
+                  if prom(promInf)>inf[0].minutos:
+                      status=4
      elif meses>0 and meses<7:
           status=1
      else:
