@@ -136,7 +136,11 @@ def consultarTodos(request):
                status=3
                intervalo="Este publicador nunca ha informado"
                fecha="Nulo"
-          pubs[cont]={'nombre':i.nombre, 'apellido':i.apellido, 'fechaBau':i.fechaBau, 'edad':getEdad(i.fechaNa, hoy), 'FKgrupo':i.FKgrupo, 'id':i.pk, 'g':i.FKgrupo.pk, 'status': status, 'intervalo': intervalo, 'fecha':fecha}
+          pubs[cont]={'nombre':i.nombre, 'apellido':i.apellido, 'fechaBau':i.fechaBau, 'edad':getEdad(i.fechaNa, hoy), 'id':i.pk, 'status': status, 'intervalo': intervalo, 'fecha':fecha}
+          if len(i.grupo.values())>0:
+               pubs[cont]['FKgrupo']=GruposPred.objects.get(pk=i.grupo.values()[0]['IDgrupo'])
+          else:
+               pubs[cont]['FKgrupo']=0
           cont=cont+1
      pubs=pubs.values()
      return render(request, 'Publicador/conPubs.html',{'pub':pubs,'msg':msg, 'url':2})
@@ -152,11 +156,10 @@ def consultar(request, idpub):
           pg='Publicador/regPubli.html'
           request.session['pub']=idpub
           formPub = regPub(instance=p)
-          cmbGrupo = traerGrupo(initial={'Encargado': p.FKgrupo.pk})
           mes=p.fechaNa.month
           day=p.fechaNa.day
           fechaNa=str(p.fechaNa.year)+"-"+addZero(p.fechaNa.month)+"-"+addZero(p.fechaNa.day)
-          data={'form': formPub, 'form2':cmbGrupo, 'on': 1, 'url':2, 'fechaNa':fechaNa, 'fechaBau':p.fechaBau}
+          data={'form': formPub, 'on': 1, 'url':2, 'fechaNa':fechaNa, 'fechaBau':p.fechaBau, 'sexo':p.sexo}
      return render(request, pg, data)
 
 def modificar(request):

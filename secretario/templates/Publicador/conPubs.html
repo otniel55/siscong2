@@ -217,9 +217,15 @@
 										<td class="text-center bau tConPubCol3" data-title="Fecha de Bautismo:">
 											{{ x.fechaBau }}
 										</td>
-										<td class="text-center tConPubCol4" data-title="Grupo:">
-											<a href="{% url 'secretario:conGrupoofPubs' x.g %}">{{ x.FKgrupo }}</a>
-										</td>
+										{% if not x.FKgrupo == 0 %}
+                                                                                    <td class="text-center tConPubCol4" data-title="Grupo:">
+                                                                                            <a href="{% url 'secretario:conGrupoofPubs' x.FKgrupo.IDgrupo %}">{{ x.FKgrupo }}</a>
+                                                                                    </td>
+                                                                                {% else %}
+                                                                                    <td class="text-center tConPubCol4" data-title="Grupo:">
+                                                                                        Sin grupo
+                                                                                    </td>
+                                                                                {% endif %}
 										{% if x.status == 0 %}
 											<td class="estado tConPubCol5" id="{{x.id}}" data-title="Estado" style="background-color: #09B20F;" >
 
