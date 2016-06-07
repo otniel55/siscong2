@@ -93,7 +93,7 @@
                 vacio = true
             } else {
                 if ( $(this).is('[type="number"]') ){
-                    if( !/^[0-9]+(\.[0-9]{0,2})?$/.test( $(this).val() ) ){
+                    if( !/^[0-9]+(\.([0-5]{1})([0-9]{1})?)?$/.test( $(this).val() ) ){
                         vacio = true
                     }
                 }
@@ -212,6 +212,16 @@
 }
 
 	//funciones del sistema
+	function showMsg(titulo, msg, img){
+		$.gritter.add({
+			title: titulo,
+			text: msg,
+			image: img,
+			sticky: false,
+			time: 3000,
+		});
+	}
+
     function createPager(tabla, nro){
 
         filas = tabla.data().length

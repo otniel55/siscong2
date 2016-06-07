@@ -314,14 +314,18 @@ def addToGroup(pub, grupo, nombrarA=False, nombrarE=False):
                                    g.encargado=p
                                    g.save()
                          else:
-                              p.grupo.clear()
-                              p.grupo.add(g)
-                              if nombrarA:
-                                   g.auxiliar=p
-                                   g.save()
-                              elif nombrarE:
-                                   g.encargado=p
-                                   g.save()
+                              grupoP=p.grupo.values()
+                              if len(Publicador.objects.filter(grupo__IDgrupo=grupoP[0]['IDgrupo']).exclude(pk__in=[grupoP[0]['encargado_id'] , grupoP[0]['auxiliar_id']]))>1:
+                                   p.grupo.clear()
+                                   p.grupo.add(g)
+                                   if nombrarA:
+                                        g.auxiliar=p
+                                        g.save()
+                                   elif nombrarE:
+                                        g.encargado=p
+                                        g.save()
+                              else:
+                                   resp=[False, {'msg':"Error, El grupo no puede quedar vacio"}]
                     else:
                          resp=[False, {'msg':"Error, Este publicador tiene responsabilidades en otro grupo"}]
           else:

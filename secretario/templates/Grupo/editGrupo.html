@@ -178,8 +178,8 @@
 				<button id="changeGrupo" class="btn btn-success btn-block">Cambiar a otro Grupo</button>
 			</div>
 
-			<div class="col-md-3" style="display:none;">
-				<select id="otherGroup" class="form-control mrg-bottom">
+			<div id="otherGroupP" style="width:0px;float:left;">
+				<select id="otherGroup" class="form-control mrg-bottom" style="display:none;margin-bottom:0px;">
 					<option value="">Seleccione un Encargado</option>
 					{% for enc in cmbGrupo %}
 							<option value="{{ enc.value }}">{{ enc.text }}</option>
@@ -235,19 +235,19 @@
 
 		tablaConfig = {
 			columnDefs: [{
-				orderable: false
-				, className: 'select-checkbox'
-				, targets: 0
-					        }]
-			, select: {
-				style: 'multi'
-				, selector: 'td:first-child'
-			, }
-			, order: [[1, 'asc']]
-			, "bInfo": false
-			, "oLanguage": {
-				"sInfoEmpty": "La Tabla esta Vacia"
-				, "sZeroRecords": "No se Encontraron Registros"
+				orderable: false,
+				className: 'select-checkbox',
+				targets: 0
+			}],
+			select: {
+				style: 'multi',
+				selector: 'td:first-child',
+			},
+			order: [[1, 'asc']],
+			"bInfo": false,
+			"oLanguage": {
+				"sInfoEmpty": "La Tabla se Encuentra Vacia",
+				"sZeroRecords": "No se Encontraron Registros"
 			, }
 		}
 
@@ -443,6 +443,7 @@
 
 			//crear las filas en la tabla Nombrar
 			$.each(row, function (key, value) {
+				remove = ""
 
 				nodo =  nombrar.row.add([
 									col,
@@ -452,6 +453,15 @@
 
 				//asignar atributos a la fila creada
 				$(nodo).attr('id', rowNode[key].id ).find('td').addClass("numeric text-center")
+
+				$.each(newGroup, function(key2, pub2){
+					if( pub2.idPub == rowNode[key].id )
+						remove = key2
+
+				})
+
+				if( (remove === 0 && remove !== "") || remove )
+					newGroup.splice(remove, 1)
 
 			})
 
@@ -508,10 +518,20 @@
 				$(nodo).attr('id', '' + rowNode[key].id ).find('td').addClass("numeric text-center")
 
 				if ( $('#otherGroup').is(':visible') && $('#otherGroup').val().trim() != "" ){
-					newGroup.push({'idPub': rowNode[key].id, 'idGrupo': $('#otherGroup').val() })
+					newGroup.push({'idPub': rowNode[key].id,
+								   'idGrupo': $('#otherGroup').val(),
+								   'nombre': value[1],
+								   'adress': value[2],
+								  })
 				} else {
-					newGroup.push({'idPub': rowNode[key].id, 'idGrupo': '0' })
+					newGroup.push({'idPub': rowNode[key].id,
+								   'idGrupo': '0',
+								   'nombre': value[1],
+								   'adress': value[2],
+								  })
 				}
+
+				console.log(newGroup)
 			})
 
 			if ($('#selectAll2').is(':checked'))
@@ -557,7 +577,7 @@
 
 				col = ""
 
-				if( $('#otherGroup').parent().is(':visible') ){
+				if( $('#otherGroup').is(':visible') ){
 					$('#tabla1 h3').html('Publicadores del Grupo '+ $('#otherGroup').val() )
 				} else {
 					$('#tabla1 h3').html('Publicadores sin Grupo')
@@ -568,10 +588,15 @@
 						on = 0
 
 						$.each(pubsActual, function(key2, nodo){
-							/*console.log( $(nodo).attr('id') )
-							console.log( pub.pk )*/
 							if( $(nodo).attr('id') == pub.pk ){
-								console.warn('el pub ya esta en la tabla nombrar')
+//								console.warn('el pub ya esta en la tabla nombrar')
+								on = 1
+							}
+						})
+
+						$.each(newGroup, function(key2, pub2){
+							if( pub2.idPub == pub.pk ){
+//								console.warn('el pub:'+ pub2.nombre +' se encuentra en el Grupo: '+pub2.idGrupo)
 								on = 1
 							}
 						})
@@ -589,6 +614,31 @@
 					})
 				} else {
 					console.warn( res )
+				}
+
+				if( newGroup ){
+					$.each(newGroup, function(key, pub){
+						on = 0
+
+						if( pub.idGrupo == '0' && $('#otherGroup').is(':hidden') ){
+							on = 1
+						}
+
+						if( pub.idGrupo != '0' && $('#otherGroup').is(':visible') ){
+							if( pub.idGrupo == $('#otherGroup').val() )
+								on = 1
+						}
+
+						if(on == 1){
+							nodo =  publics.row.add([
+												col,
+												pub.nombre,
+												pub.adress
+											]).draw().node()
+
+							$(nodo).attr('id', '' + pub.idPub ).find('td').addClass("numeric text-center")
+						}
+					})
 				}
 
 				if ( $('#move-right').is(':disabled') && publics.data().length > 0) {
@@ -615,20 +665,42 @@
 		if(	$(this).hasClass('btn-success') ){
 
 			$(this).removeClass('btn-success').addClass('btn-default')
-			$('#otherGroup').parent().show('slide', 1000)
+			$('#otherGroup').show()
+			$('#otherGroupP').animate({
+				width: '25%'
+			}, 1000)
+
 			$('#otherGroup').find(':first-child').prop('selected', true)
 			$("#otherGroup").css('border-color', '#ccc')
 
 		} else {
+			if( publics.data().length > 0){
+				$(this).removeClass('btn-default').addClass('btn-success')
+				$('#tabla1').parent().css('border', 'none')
 
-			$(this).removeClass('btn-default').addClass('btn-success')
-			$('#otherGroup').parent().hide('slide', 1000, function(){
-				$.post("{% url 'secretario:conPubG' %}", {'id': 0, csrfmiddlewaretoken: '{{ csrf_token }}' })
-				.success(function(res){
-					res = JSON.parse(res)
-					getPub(res)
+				$('#otherGroupP').animate({
+					width: '0%'
+				}, 1000, function(){
+
+					$('#otherGroup').hide()
+
+					$.post("{% url 'secretario:conPubG' %}", {'id': 0, csrfmiddlewaretoken: '{{ csrf_token }}' })
+					.success(function(res){
+						res = JSON.parse(res)
+						getPub(res)
+					})
 				})
-			})
+			} else {
+				$('#tabla1').parent().css({
+					'border' : 'solid',
+					'border-color': '#d90000'
+				})
+
+				titulo = "Editar Grupos!"
+				msg = "Error! los grupos de predicacion deben contener al menos 1 publicador"
+				img = "{% static 'img/error.png' %}"
+				showMsg(titulo, msg, img)
+			}
 		}
 	})
 
