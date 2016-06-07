@@ -278,18 +278,18 @@ def historiaPrec(request, year):
                                              data[cont] = {'fecha': datetime.date(f[0], f[1], 15), 'horasI':0, 'horasA':acum, 'horasRes':horasT-acum, 'obj':0, 'horastot':horasT}
                                    else:
                                         if request.session['precur'] in (1,2):
-                                             if inf.horas>=f[2]:
+                                             if inf.minutos>=f[2]:
                                                   obj=1
                                              else:
                                                   obj=0
-                                             data[cont]={'fecha':datetime.date(f[0],f[1],15), 'horasR':f[2], 'horasI':inf.horas, 'obj':obj}
+                                             data[cont]={'fecha':datetime.date(f[0],f[1],15), 'horasR':f[2], 'horasI':inf.minutos, 'obj':obj}
                                         else:
-                                             acum+=inf.horas
+                                             acum+=inf.minutos
                                              if acum>=f[2]*(cont):
                                                   obj=1
                                              else:
                                                   obj=0
-                                             data[cont]={'fecha':datetime.date(f[0],f[1],15), 'horasI':inf.horas, 'horasA':acum, 'horasRes':horasT-acum, 'obj':obj, 'horasto':horasT}
+                                             data[cont]={'fecha':datetime.date(f[0],f[1],15), 'horasI':inf.minutos, 'horasA':acum, 'horasRes':horasT-acum, 'obj':obj, 'horasto':horasT}
                                    cont=cont+1
                          else:
                               precursor=Precursor.objects.get(pk=request.session['precur'])

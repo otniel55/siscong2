@@ -37,9 +37,9 @@ class regPub(forms.ModelForm):
 class regInforme(forms.ModelForm):
     class Meta:
         model = Informe
-        fields = ['horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'observacion']
+        fields = ['minutos', 'publicaciones', 'videos', 'revisitas', 'estudios', 'observacion']
         widgets = {
-            'horas': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number', 'min':'0'}),
+            'minutos': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number', 'min':'0'}),
             'publicaciones': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number', 'min':'0'}),
             'videos': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number', 'min':'0'}),
             'revisitas': forms.TextInput(attrs={'class': 'form-control mrg-bottom', 'type':'number', 'min':'0'}),

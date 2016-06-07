@@ -160,7 +160,7 @@ def recorrerArrayMeses(array, idPub):
                              'revisitas':"", 'estudios':"", 'videos':"", "obs":""
                              }
                else:
-                    data[cont]={'mes':stringMeses[j[1]-1], 'horas':inf.horas, 'publicaciones':inf.publicaciones,
+                    data[cont]={'mes':stringMeses[j[1]-1], 'horas':inf.minutos, 'publicaciones':inf.publicaciones,
                              'revisitas':inf.revisitas, 'estudios':inf.estudios, 'videos':inf.videos, 'obs':inf.observacion
                              }
                     if primerInf.mes==j[1] and primerInf.year==j[0]:

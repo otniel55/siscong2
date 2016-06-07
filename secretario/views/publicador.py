@@ -128,9 +128,9 @@ def consultarTodos(request):
                                         if diferencia<0:
                                              add=False
                               if add:
-                                   promInf.append(infs.horas)
+                                   promInf.append(infs.minutos)
                          if len(promInf)>0:
-                              if prom(promInf)>inf[0].horas:
+                              if prom(promInf)>inf[0].minutos:
                                    status=4
           else:
                status=3

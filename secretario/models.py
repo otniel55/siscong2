@@ -51,7 +51,7 @@ class Publicador(models.Model):
 	
 class Informe(models.Model):
 	Idinf = models.AutoField(primary_key=True)
-	horas = models.IntegerField()
+	minutos = models.IntegerField()
 	publicaciones = models.IntegerField()
 	videos = models.IntegerField()
 	revisitas = models.IntegerField()

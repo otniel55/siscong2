@@ -33,7 +33,7 @@ def registrar(request):
                     if len(inf)==0:
                          if _horas=="0" and _publicaciones=="0" and _videos=="0" and _revisitas=="0" and _estudios=="0" and _obs=="n/t":
                               _obs="Informo, pero no tuvo actividad"
-                         p.informe_set.create(horas=_horas, publicaciones=_publicaciones, videos=_videos, revisitas=_revisitas, estudios=_estudios, mes=int(_fecha[0:2]), year=int(_fecha[3:]), observacion=_obs)
+                         p.informe_set.create(minutos=_horas, publicaciones=_publicaciones, videos=_videos, revisitas=_revisitas, estudios=_estudios, mes=int(_fecha[0:2]), year=int(_fecha[3:]), observacion=_obs)
                          msg={'msg':'Informe Registrado con exito', 'on':1}
                          if _horasCon>0:
                               informe=Informe.objects.filter(FKpub=p.pk, mes=int(_fecha[0:2]), year=int(_fecha[3:]))
@@ -114,10 +114,10 @@ def modificar(request):
      except(KeyError):
           msg={"msg":"no existe un informe que haya sido registrado en esa fecha"}
      else:
-          if inf.horas==horas and inf.revisitas==revisitas and inf.estudios==estudios and inf.publicaciones==publicaciones and inf.videos==videos:
+          if inf.minutos==horas and inf.revisitas==revisitas and inf.estudios==estudios and inf.publicaciones==publicaciones and inf.videos==videos:
                msg={"msg":"Usted no ha realizado ningun cambio"}
           else:
-               inf.horas=horas
+               inf.minutos=horas
                inf.revisitas=revisitas
                inf.estudios=estudios
                inf.publicaciones=publicaciones
