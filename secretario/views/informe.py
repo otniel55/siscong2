@@ -1,6 +1,7 @@
 #libs propios de python
 import datetime
 import json
+import re
 #modulos de django
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -11,8 +12,8 @@ from secretario.models import Publicador, Informe
 
 def registrar(request):
      hoy=datetime.date.today()
-     nums=['horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'publicador', 'horasCons']
-     validar=gestion(request.POST,nums)
+     nums=['publicaciones', 'videos', 'revisitas', 'estudios', 'publicador', 'horasCons']
+     validar=gestion(request.POST,nums, ignorar='horas')
      if not validar.error:
           _horas = request.POST['horas']
           _publicaciones = request.POST['publicaciones']
@@ -23,39 +24,44 @@ def registrar(request):
           _pub=request.POST['publicador']
           _obs=request.POST['obs']
           _horasCon=int(request.POST['horasCons'])
-          if getDiferenciaMes(int(_fecha[0:2]), int(_fecha[3:]),hoy.month, hoy.year)>-2:
-               try:
-                    p=Publicador.objects.get(pk=_pub)
-               except(KeyError, Publicador.DoesNotExist):
-                    msg={'msg':'Publicador no existe'}
-               else:
-                    inf=Informe.objects.filter(mes=int(_fecha[0:2]), year=int(_fecha[3:]),FKpub=_pub)
-                    if len(inf)==0:
-                         if _horas=="0" and _publicaciones=="0" and _videos=="0" and _revisitas=="0" and _estudios=="0" and _obs=="n/t":
-                              _obs="Informo, pero no tuvo actividad"
-                         p.informe_set.create(minutos=_horas, publicaciones=_publicaciones, videos=_videos, revisitas=_revisitas, estudios=_estudios, mes=int(_fecha[0:2]), year=int(_fecha[3:]), observacion=_obs)
-                         msg={'msg':'Informe Registrado con exito', 'on':1}
-                         if _horasCon>0:
-                              informe=Informe.objects.filter(FKpub=p.pk, mes=int(_fecha[0:2]), year=int(_fecha[3:]))
-                              precurs=PubPrecursor.objects.filter(FKpub=p.pk, FKprecursor__in=[3,4]).order_by("-yearIni", "-mesIni")
-                              if len(precurs)>0:
-                                   for prec in precurs:
-                                        if precursorActivo(prec, int(_fecha[0:2]), int(_fecha[3:])):
-                                             if _horasCon>100:
-                                                  informe[0].delete()
-                                                  msg={'msg':"Error las horas de consesion NO deben ser mayores a 100"}
-                                             else:
-                                                  informe[0].horascon_set.create(horas=_horasCon)
-                                        else:
-                                             informe[0].delete()
-                                             msg={'msg':"Error esta persona no realizo precursorado en esta fecha"}
-                              else:
-                                   informe.delete()
-                                   msg={'msg':"Error esta persona nunca realizo un precursorado regular o especial"}
+          _hour=convertHoursToMinutes(_horas)
+          if _hour[0]:
+               if getDiferenciaMes(int(_fecha[0:2]), int(_fecha[3:]),hoy.month, hoy.year)>-2:
+                    try:
+                         p=Publicador.objects.get(pk=_pub)
+                    except(KeyError, Publicador.DoesNotExist):
+                         msg={'msg':'Publicador no existe'}
                     else:
-                         msg={'msg':'Error informe ya existe'}
+                         inf=Informe.objects.filter(mes=int(_fecha[0:2]), year=int(_fecha[3:]),FKpub=_pub)
+                         if len(inf)==0:
+                              if _horas!="0" and _publicaciones!="0" and _videos!="0" and _revisitas!="0" and _estudios!="0":
+                                   p.informe_set.create(minutos=_hour[1], publicaciones=_publicaciones, videos=_videos, revisitas=_revisitas, estudios=_estudios, mes=int(_fecha[0:2]), year=int(_fecha[3:]), observacion=_obs)
+                                   msg={'msg':'Informe Registrado con exito', 'on':1}
+                                   if _horasCon>0:
+                                        informe=Informe.objects.filter(FKpub=p.pk, mes=int(_fecha[0:2]), year=int(_fecha[3:]))
+                                        precurs=PubPrecursor.objects.filter(FKpub=p.pk, FKprecursor__in=[3,4]).order_by("-yearIni", "-mesIni")
+                                        if len(precurs)>0:
+                                             for prec in precurs:
+                                                  if precursorActivo(prec, int(_fecha[0:2]), int(_fecha[3:])):
+                                                       if _horasCon>100:
+                                                            informe[0].delete()
+                                                            msg={'msg':"Error las horas de consesion NO deben ser mayores a 100"}
+                                                       else:
+                                                            informe[0].horascon_set.create(horas=_horasCon)
+                                                  else:
+                                                       informe[0].delete()
+                                                       msg={'msg':"Error esta persona no realizo precursorado en esta fecha"}
+                                        else:
+                                             informe.delete()
+                                             msg={'msg':"Error esta persona nunca realizo un precursorado regular o especial"}
+                              else:
+                                   msg={'msg':"Error, Informe vacio"}
+                         else:
+                              msg={'msg':'Error informe ya existe'}
+               else:
+                    msg={'msg':"No puede introducir un informe del futuro"}
           else:
-               msg={'msg':"No puede introducir un informe del futuro"}
+               msg=_hour[2]
      else:
           msg=validar.mensaje
      return HttpResponse(json.dumps(msg))
@@ -126,5 +132,25 @@ def modificar(request):
                msg={"msg":"Datos del informe modificados con exito"}
      HttpResponse(json.dumps(msg))
 
+#metodos reutilizables
 def convertToDate(mes):
      return datetime.date(2016,mes[0],4)
+
+def convertHoursToMinutes(hora):
+     hour=0
+     minutos=0
+     hora=str(hora)
+     patron=re.compile('^[0-9]+(\.([0-5]{1})([0-9]{1})?)?$')
+     verificar=patron.search(hora)
+     try:
+          verificar.group()
+     except AttributeError:
+          return [False ,{'msg':'Formato de horas no valido'}]
+     else:
+          hour=int(hora[:hora.find(".")])
+          if hora.find(".")>-1:
+               minutos=int(hora[hora.find(".")+1:])
+          minutos=(hour*60)+minutos
+          return [True, minutos]
+          
+          
