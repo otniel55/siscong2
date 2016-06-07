@@ -184,10 +184,9 @@ def vistaModificar(request, id):
           cont=0
           for i in encargados:
                if not verificarAsignacion(i.pk, True, id) and i.pk!=aux:
-                    encs[cont]={'value':i.pk, 'text':i.nombre+" "+i.apellido}
+                    encs[cont]={'value':i.pk, 'text':i.nombre+" "+i.apellido, 'direccion':i.direccion}
                     if i.pk==enc:
                          encs[cont]['selected']=1
-                         encs[cont]['direccion']=i.direccion
                     cont+=1
           encs=encs.values()
           auxiliares=Publicador.objects.filter(sexo="M")
@@ -195,12 +194,11 @@ def vistaModificar(request, id):
           cont=0
           for i in auxiliares:
                if i.fechaBau[0]!="N" and getEdad(i.fechaNa, hoy)>17 and not verificarAsignacion(i.pk, True, id) and i.pk!=enc:
-                    auxs[cont]={'value':i.pk, 'text':i.nombre+" "+i.apellido}
+                    auxs[cont]={'value':i.pk, 'text':i.nombre+" "+i.apellido, 'direccion':i.direccion}
                     if verificarPriv(i.pk):
                          auxs[cont]['priv']=1
                     if i.pk==aux:
                          auxs[cont]['selected']=1
-                         auxs[cont]['direccion']=i.direccion
                     cont+=1
           auxs=auxs.values()
           publicadores=Publicador.objects.filter(grupo__IDgrupo=g.pk).exclude(pk__in=[enc, aux])
