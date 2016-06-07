@@ -61,7 +61,18 @@
 							</td>
 
 							<td class="tGrupoClm5" data-title="Estado">
-								<div class="tGrupoStatus">{{ pub.status }}</div>
+								<div class="tGrupoStatus" style = "background-color:
+									{% if pub.status == 0 %}
+										#09B20F
+									{% elif pub.status == 1 %}
+										#FFAD33
+									{% elif pub.status == 2 %}
+										#B30000
+									{% elif pub.status == 3 %}
+										#009999
+									{% else %}
+										#B6B6B6
+									{% endif %};"></div>
 							</td>
 
 							<td class="tGrupoClm6" id="{{ pub.id }}">
@@ -75,7 +86,6 @@
 		</div>
 	</div>
 </div>
-
 
 <div class="modal fade" id="informe" role="dialog">
 	<div class="modal-dialog modal-sm">

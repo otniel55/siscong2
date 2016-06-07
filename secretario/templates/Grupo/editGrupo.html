@@ -339,15 +339,15 @@
 		reorder(select2)
 	}
 
-	function addEncAux(table, id, cmbNow, cmb2){
+	function addEncAux(id, cmbNow, cmb2){
 
-		fila = table.row( "#"+id )
+		fila = nombrar.row( "#"+id )
 
 		if( cmbNow.val() != id && cmb2.val() != id && fila.length == 0 ){
 
 			nodo = $('#'+cmbNow.attr('id')+' option[value="'+id+'"]')
 
-			newRow = table.row.add([
+			newRow = nombrar.row.add([
 								"",
 								$(nodo).html(),
 								$(nodo).attr('data-adress'),
@@ -371,6 +371,38 @@
 		}
 	}
 
+    function delEncAux(id, cmbNow, cmb2){
+        var remove = ""
+
+        if( cmbNow.val() == id || cmb2.val() == id ){
+            fila = publics.row( "#"+id )
+            if( fila.length > 0 ){
+                fila.remove().draw()
+
+                reajustarTables()
+                pg1 = createPager(publics, 1)
+                pg2 = createPager(nombrar, 2)
+
+                if (pg2 == 1) {
+                    altoT = $('#tabla2')[0].clientHeight
+                } else if (pg1 == 1) {
+                    altoT = $('#tabla1')[0].clientHeight
+                } else {
+                    altoT = null
+                }
+            }
+
+            $.each(newGroup, function(key, pub){
+                if( pub.idPub == id)
+                    remove = key
+            })
+
+            if( (remove === 0 && remove !== "") || remove )
+                newGroup.splice(remove, 1)
+
+        }
+    }
+
 	$('#enc').change(function(){
 		enc = $(this)
 		aux = $('#aux')
@@ -383,8 +415,10 @@
 
 		enc.find('option[selected]').removeAttr('selected')
 
-		addEncAux(nombrar, idAux, enc, aux)
-		addEncAux(nombrar, idEnc, enc, aux)
+		addEncAux(idAux, enc, aux)
+		addEncAux(idEnc, enc, aux)
+        delEncAux(idAux, enc, aux)
+        delEncAux(idEnc, enc, aux)
 	})
 
 	$("#aux").change(function(){
@@ -399,8 +433,10 @@
 
 		aux.find('option[selected]').removeAttr('selected')
 
-		addEncAux(nombrar, idAux, aux, enc)
-		addEncAux(nombrar, idEnc, aux, enc)
+		addEncAux(idAux, aux, enc)
+		addEncAux(idEnc, aux, enc)
+        delEncAux(idAux, aux, enc)
+        delEncAux(idEnc, aux, enc)
 	})
 
 	//check para seleccionar todo los elementos de la tabla
