@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from .siscong import gestion
 
 def vistaRegistro(request):
+     sesionGrupo(request)
      return render(request, 'usuReg.html')
 
 def registrar(request):

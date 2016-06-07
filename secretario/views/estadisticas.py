@@ -9,6 +9,7 @@ from .siscong import *
 from secretario.models import Publicador, Informe
 
 def verEstadisticas(request):
+    sesionGrupo(request)
     return render(request, "Informe/estadisticas.html", {})
 
 def estGlobal(request):

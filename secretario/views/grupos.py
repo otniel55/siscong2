@@ -12,6 +12,7 @@ from .siscong import *
 from secretario.models import GruposPred, Publicador
 
 def Vista_registrar(request):
+     sesionGrupo(request)
      hoy=datetime.date.today()
      pub = regPub()
      idGrupos=arrayIdGrup()
@@ -160,6 +161,7 @@ def consultar(request,idGrupo):
 
 
 def vistaModificar(request, id):
+     sesionGrupo(request)
      try:
           g=GruposPred.objects.get(pk=int(id))
      except(KeyError, GruposPred.DoesNotExist):

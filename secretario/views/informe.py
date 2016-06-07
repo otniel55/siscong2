@@ -92,7 +92,7 @@ def tarjeta(request, vista, idPub, y):
                datos={'vacio':1, 'url':2}
           if vista == '1':
                pagina = 'Informe/conTarjetaGrupoPub.html'
-               request.session['idgrupo'] = p.FKgrupo.pk
+               request.session['idgrupo'] = p.grupo.values()[0]['IDgrupo']
           else:
                pagina = 'Informe/tarjetaPub.html'
 

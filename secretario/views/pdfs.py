@@ -10,6 +10,7 @@ from .siscong import *
 from secretario.models import Publicador, Informe
 
 def vistaPdfPub(request):
+     sesionGrupo(request)
      cGrupo = traerGrupo()
      return render(request, "Informe/pdfTarPub.html", {'form':cGrupo})
 

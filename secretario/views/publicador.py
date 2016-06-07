@@ -10,6 +10,7 @@ from .siscong import *
 from secretario.models import GruposPred, Publicador, Informe
 
 def vistaRegistrar(request):
+     sesionGrupo(request)
      formPub = regPub()
      cmbGrupo = traerGrupo()
      return render(request, 'Publicador/regPubli.html', {'form': formPub, 'form2': cmbGrupo, 'url':2})
@@ -87,6 +88,7 @@ def cambiarPub(request):
      return HttpResponse(json.dumps(msg))
 
 def consultarTodos(request):
+     sesionGrupo(request)
      hoy=datetime.date.today()
      bajaAuto()
      promInf=[]
@@ -121,6 +123,7 @@ def consultarTodos(request):
      return render(request, 'Publicador/conPubs.html',{'pub':pubs,'msg':msg, 'url':2})
 
 def consultar(request, idpub):
+     sesionGrupo(request)
      fechaNa=""
      data={}
      try:
@@ -184,6 +187,7 @@ def modificar(request):
      return HttpResponse(json.dumps({'msg':msg}))
 
 def verTarjetaPub(request):
+     sesionGrupo(request)
      years=[]
      cont=0
      yearHoy=datetime.date.today().year

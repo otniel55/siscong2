@@ -12,6 +12,7 @@ def consultar(request):
     return render(request, "Privilegio/consultar.html")
 
 def Vistanombrar(request):
+    sesionGrupo(request)
     hoy=datetime.date.today()
     data={}
     cont=0
@@ -25,6 +26,7 @@ def Vistanombrar(request):
     return render(request, "Privilegio/nombrar.html", {'data':data})
 
 def consultarNombrados(request):
+    sesionGrupo(request)
     return render(request, "Privilegio/consNombrados.html")
 
 def nombrar(request):

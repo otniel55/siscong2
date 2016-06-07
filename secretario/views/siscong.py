@@ -4,7 +4,6 @@ import datetime
 from django.db.models import Q
 #modulos propios del proyecto
 from secretario.models import PubPrecursor, Informe, GruposPred
-
 class gestion:
     elementos={}
     nroKeys=[]
@@ -232,3 +231,10 @@ def arrayIdGrup():
      for i in GruposPred.objects.all():
           id.append(i.pk)
      return id
+
+def sesionGrupo(request):
+    try:
+        del request.session['idgrupo']
+    except KeyError:
+        pass
+    

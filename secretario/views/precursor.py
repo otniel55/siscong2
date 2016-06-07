@@ -11,6 +11,7 @@ from .siscong import *
 from secretario.models import Publicador, Informe, nroPrec, Precursor
 
 def vistaNombrar(request):
+     sesionGrupo(request)
      hoy = datetime.date.today()
      bajaAuto()
      cont=0
@@ -31,11 +32,13 @@ def vistaNombrar(request):
      return render(request, 'Precursor/nombrarPub.html', {'pub':p, 'precur':precur, 'url':3})
 
 def conPrec(request):
+     sesionGrupo(request)
      bajaAuto()
      precur= precursorados()
      return render(request, 'Precursor/conPrecur.html', {'precur':precur, 'url':3})
 
 def editPrecur(request):
+     sesionGrupo(request)
      return render(request, 'Precursor/editPrecur.html', {'precur': Precursor.objects.all(), 'url':3})
 
 def nombrar(request):
@@ -152,6 +155,7 @@ def conPrecs(request):
      return HttpResponse(json.dumps(data))
 
 def historiaPrec(request, year):
+     sesionGrupo(request)
      bajaAuto()
      cont=0
      precurTrue=[]

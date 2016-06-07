@@ -9,9 +9,11 @@ from .pdfs import *
 from .precursor import *
 from .usuario import *
 from .privilegios import *
-
+from .siscong import *
 def index(request):
+     sesionGrupo(request)
      return render(request, 'layout.html', {'url':0})
 
 def error404(request):
+     sesionGrupo(request)
      return render(request, 'page404.html')
