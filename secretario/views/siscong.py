@@ -178,15 +178,15 @@ def recorrerArrayMeses(array, idPub):
                except:
                     if not fin:
                          data[cont]={'mes':stringMeses[j[1]-1], 'horas':0, 'publicaciones':0,
-                             'revisitas':0, 'estudios':0, 'videos':0, "obs":"no informo"
+                             'revisitas':0, 'estudios':0, 'videos':0, "obs":"no informo", 'pk':0
                              }
                     else:
                          data[cont]={'mes':stringMeses[j[1]-1], 'horas':"", 'publicaciones':"",
-                             'revisitas':"", 'estudios':"", 'videos':"", "obs":""
+                             'revisitas':"", 'estudios':"", 'videos':"", "obs":"", 'pk':0
                              }
                else:
                     data[cont]={'mes':stringMeses[j[1]-1], 'horas':convertMinutesToHours(inf.minutos), 'publicaciones':inf.publicaciones,
-                             'revisitas':inf.revisitas, 'estudios':inf.estudios, 'videos':inf.videos, 'obs':inf.observacion
+                             'revisitas':inf.revisitas, 'estudios':inf.estudios, 'videos':inf.videos, 'obs':inf.observacion, 'pk':inf.pk
                              }
                     if primerInf.mes==j[1] and primerInf.year==j[0]:
                          fin=True
@@ -196,7 +196,7 @@ def recorrerArrayMeses(array, idPub):
                               data[cont]['obs']+="(Primer Informe)"
           else:
                data[cont]={'mes':stringMeses[j[1]-1], 'horas':"", 'publicaciones':"",
-                             'revisitas':"", 'estudios':"", 'videos':"", "obs":""
+                             'revisitas':"", 'estudios':"", 'videos':"", "obs":"", 'pk':0
                              }
           cont+=1
      return [reverseDict(data), fin]

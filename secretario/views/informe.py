@@ -8,7 +8,7 @@ from django.shortcuts import render
 from django.db.models import Q
 #modulos propios del proyecto
 from .siscong import *
-from secretario.models import Publicador, Informe
+from secretario.models import Publicador, Informe, horasCon
 
 def registrar(request):
      hoy=datetime.date.today()
@@ -39,21 +39,9 @@ def registrar(request):
                                    msg={'msg':'Informe Registrado con exito', 'on':1}
                                    if _horasCon>0:
                                         informe=Informe.objects.filter(FKpub=p.pk, mes=int(_fecha[0:2]), year=int(_fecha[3:]))
-                                        precurs=PubPrecursor.objects.filter(FKpub=p.pk, FKprecursor__in=[3,4]).order_by("-yearIni", "-mesIni")
-                                        if len(precurs)>0:
-                                             for prec in precurs:
-                                                  if precursorActivo(prec, int(_fecha[0:2]), int(_fecha[3:])):
-                                                       if _horasCon>100:
-                                                            informe[0].delete()
-                                                            msg={'msg':"Error las horas de consesion NO deben ser mayores a 100"}
-                                                       else:
-                                                            informe[0].horascon_set.create(horas=_horasCon)
-                                                  else:
-                                                       informe[0].delete()
-                                                       msg={'msg':"Error esta persona no realizo precursorado en esta fecha"}
-                                        else:
-                                             informe.delete()
-                                             msg={'msg':"Error esta persona nunca realizo un precursorado regular o especial"}
+                                        registrarH=regHorasCon(informe[0], _horasCon)
+                                        if not registrarH[0]:
+                                             msg=registrarH[1]
                               else:
                                    msg={'msg':"Error, Informe vacio"}
                          else:
@@ -85,7 +73,7 @@ def tarjeta(request, vista, idPub, y):
                totales={'horas':0, 'publicaciones':0, 'revisitas':0, 'estudios':0, 'videos':0}
                for i in inf:
                     for j in i.keys():
-                         if j not in ["mes", "obs"] and i[j]!="":
+                         if j not in ["mes", "obs", 'pk'] and i[j]!="":
                               totales[j]+=i[j]
                hT=str(totales['horas'])
                totales['horas']=hT[:hT.find(".")+3]
@@ -102,39 +90,87 @@ def tarjeta(request, vista, idPub, y):
 
 def modificar(request):
      msg={}
-     try:
-          y=request.session['tarjetaY']
-     except(KeyError):
-          msg={'msg':'Seleccione un informe'}
-     else:
+     hoy=datetime.date.today()
+     nums=['publicaciones', 'videos', 'revisitas', 'estudios', 'publicador', 'horasCons']
+     validar=gestion(request.POST,nums, ignorar='horas')
+     if not validar.error:
+          _horas=request.POST['horas']
+          _id=int(request.POST['id'])
+          _fecha = request.POST['fecha']
+          revisitas=request.POST['revisitas']
+          estudios=request.POST['estudios']
+          publicaciones=request.POST['publicaciones']
+          videos=request.POST['videos']
+          obs=request.POST['obs']
+          HorasC=int(request.POST['horasCons'])
+          _hour=convertHoursToMinutes(_horas)
           try:
-               p=request.session['tarjetaPub']
+               inf=Informe.objects.get(pk=_id)
           except(KeyError):
-               msg={'msg':'Seleccione un informe'}
-     mes=request.POST['mes']
-     horas=request.POST['horas']
-     revisitas=request.POST['revisitas']
-     estudios=request.POST['estudios']
-     publicaciones=request.POST['publicaciones']
-     videos=request.POST['videos']
-     try:
-          inf=Informe.objects.get(FKpub=p, year=y, mes=mes)
-     except(KeyError):
-          msg={"msg":"no existe un informe que haya sido registrado en esa fecha"}
-     else:
-          if inf.minutos==horas and inf.revisitas==revisitas and inf.estudios==estudios and inf.publicaciones==publicaciones and inf.videos==videos:
-               msg={"msg":"Usted no ha realizado ningun cambio"}
+               msg={"msg":"Informe no existe"}
           else:
-               inf.minutos=horas
-               inf.revisitas=revisitas
-               inf.estudios=estudios
-               inf.publicaciones=publicaciones
-               inf.videos=videos
-               inf.save()
-               msg={"msg":"Datos del informe modificados con exito"}
-     HttpResponse(json.dumps(msg))
+               if getDiferenciaMes(int(_fecha[0:2]), int(_fecha[3:]),hoy.month, hoy.year)>-2:
+                    if _horas!="0" and publicaciones!="0" and videos!="0" and revisitas!="0" and estudios!="0":
+                         informes=Informe.objects.filter(mes=int(fecha[0:2]), year=int(fecha[3:]), FKpub=inf.FKpub).exclude(pk=inf.pk)
+                         if len(informes)>0:
+                              inf.mes=int(fecha[0:2])
+                              inf.year=int(fecha[3:])
+                              inf.minutos=_hour
+                              inf.revisitas=revisitas
+                              inf.estudios=estudios
+                              inf.publicaciones=publicaciones
+                              inf.videos=videos
+                              inf.save()
+                              msg={"msg":"Datos del informe modificados con exito"}
+                              if HorasC>0:
+                                   try:
+                                        hC=horasCon.objects.get(FKinf=inf.pk)
+                                   except(KeyError, horasCon.DoesNotExist):
+                                        registrarH=regHorasCon(inf, _horasC, False)
+                                        if not registrarH[0]:
+                                             msg=registrarH[1]
+                                   else:
+                                        if horas>100:
+                                             msg={'msg':"Error las horas de consesion NO deben ser mayores a 100"}
+                                        else:
+                                             hC.horas=_horasC
+                                             hC.save()
+                         else:
+                              msg={'msg':"Error ya existe otro informe con esta fecha"}
+                    else:
+                         msg={'msg':"Error, el informe no puede estar vacio"}
+               else:
+                    msg={'msg':"Error, Informe no puede ser del futuro"}
+     else:
+          msg=validar.mensaje
+     return HttpResponse(json.dumps(msg))
 
 #metodos reutilizables
+def regHorasCon(inf, horas, borrar=True):
+     msg={}
+     validate=False
+     idPub=inf.FKpub.pk
+     precurs=PubPrecursor.objects.filter(FKpub=idPub, FKprecursor__in=[3,4]).order_by("-yearIni", "-mesIni")
+     if len(precurs)>0:
+          for prec in precurs:
+               if precursorActivo(prec, inf.mes, inf.year):
+                    if horas>100:
+                         if borrar:
+                              inf.delete()
+                         msg={'msg':"Error las horas de consesion NO deben ser mayores a 100"}
+                    else:
+                         inf.horascon_set.create(horas=horas)
+                         validate=True
+               else:
+                    if borrar:
+                         inf.delete()
+                    msg={'msg':"Error esta persona no realizo precursorado en esta fecha"}
+     else:
+          if borrar:
+               inf.delete()
+          msg={'msg':"Error esta persona nunca realizo un precursorado regular o especial"}
+     return [validate, msg]
+
 def convertToDate(mes):
      return datetime.date(2016,mes[0],4)
 
