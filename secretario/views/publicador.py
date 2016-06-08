@@ -196,7 +196,8 @@ def verTarjetaPub(request):
           yearHoy=yearHoy-1
           cont+=1
      cGrupo = traerGrupo()
-     return render(request, 'Publicador/verTarjetaPub.html', {'form': cGrupo, 'years':years, 'url':2})
+     p=Publicador.objects.all()
+     return render(request, 'Publicador/verTarjetaPub.html', {'form': cGrupo, 'years':years, 'url':2, 'pubs':p})
 
 def conPubG(request):
      datos={}

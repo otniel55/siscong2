@@ -86,7 +86,9 @@ def tarjeta(request, vista, idPub, y):
                for i in inf:
                     for j in i.keys():
                          if j not in ["mes", "obs"] and i[j]!="":
-                              totales[j]+=int(i[j])
+                              totales[j]+=i[j]
+               hT=str(totales['horas'])
+               totales['horas']=hT[:hT.find(".")+3]
                datos={'pub':inf, 'p':p, 'url':2, "total":totales}
           else:
                datos={'vacio':1, 'url':2}
@@ -147,9 +149,12 @@ def convertHoursToMinutes(hora):
      except AttributeError:
           return [False ,{'msg':'Formato de horas no valido'}]
      else:
-          hour=int(hora[:hora.find(".")])
+          print(hora[:-1])
           if hora.find(".")>-1:
                minutos=int(hora[hora.find(".")+1:])
+               hour=int(hora[:hora.find(".")])
+          else:
+               hour=int(hora)
           minutos=(hour*60)+minutos
           return [True, minutos]
           
