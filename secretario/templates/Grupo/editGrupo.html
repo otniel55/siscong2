@@ -17,11 +17,15 @@
 				<select id="enc" class="form-control mrg-bottom">
 					<option value="">Seleccione un Encargado</option>
 					{% for enc in cmbEnc %}
+
 						{% if enc.selected == 1 %}
-							<option value="{{ enc.value }}" data-priv="1" data-adress="{{ enc.direccion }}" selected> {{ enc.text }} </option>
+							<option value="{{ enc.value }}" data-priv="1" data-adress="{{ enc.direccion }}"
+							data-grupo="{{ enc.grupo }}" selected> {{ enc.text }} </option>
 						{% else %}
-							<option value="{{ enc.value }}" data-priv="1">{{ enc.text }}</option>
+							<option value="{{ enc.value }}" data-priv="1" data-grupo="{{ enc.grupo }}"
+							data-adress="{{ enc.direccion }}">{{ enc.text }}</option>
 						{% endif %}
+
 					{% endfor %}
 				</select>
 			</div>
@@ -31,13 +35,15 @@
 				<select id="aux" class="form-control mrg-bottom">
 					<option value="">Seleccione un Auxiliar</option>
 					{% for aux in cmbAux %}
+
 						{% if aux.selected == 1 %}
 							<option value="{{ aux.value }}" {% if aux.priv == 1 %} data-priv="1" {% endif %}
-							data-adress="{{ aux.direccion }}" selected>{{ aux.text }}</option>
+							data-adress="{{ aux.direccion }}" data-grupo="{{ aux.grupo }}" selected>{{ aux.text }}</option>
 						{% else %}
-							<option value="{{ aux.value }}" {% if aux.priv == 1 %} data-priv="1" {% endif %}>
-							{{ aux.text }}</option>
+							<option value="{{ aux.value }}" {% if aux.priv == 1 %} data-priv="1" {% endif %}
+							data-adress="{{ aux.direccion }}" data-grupo="{{ aux.grupo }}">{{ aux.text }}</option>
 						{% endif %}
+
 					{% endfor %}
 				</select>
 			</div>
@@ -225,8 +231,6 @@
 {% block scripts %}
 <script>
 	var publics, nombrar, altoT
-	var idEnc = $("#enc").val()
-	var idAux = $("#aux").val()
 
 	$(document).ready(function () {
 
@@ -339,23 +343,164 @@
 		reorder(select2)
 	}
 
-	function addEncAux(id, cmbNow, cmb2){
+	function searchPub(now){
 
-		fila = nombrar.row( "#"+id )
+		if( nombrar.row( "#"+now ).length > 0 ){
 
-		if( cmbNow.val() != id && cmb2.val() != id && fila.length == 0 ){
+			console.error('ya existe en nombrar '+now)
+
+		} else {
+			if ( $('#otherGroup').is(':visible') && publics.row( "#"+now ).length > 0 ){
+				console.error('ya existe en otro grupo '+now)
+
+			} else if ( $('#otherGroup').is(':hidden') && publics.row( "#"+now ).length > 0 ){
+
+				console.error('ya existe en sin grupo '+now)
+
+			} else {
+				if( newGroup.length > 0){
+					var i = 0
+					var on = 0
+					while( i < newGroup.length && on == 0 ){
+						if( newGroup[i].idPub == now ){
+							console.error('publicador se encontro en newGroup '+now)
+							on = 1
+						} else {
+							console.warn('publicador no encontrado en newGroup')
+						}
+
+						i++
+					}
+
+					if ( on == 0 )
+						return now
+
+				} else {
+					console.warn('publicador no existe en las tablas '+now)
+					return now
+				}
+			}
+		}
+
+		return false
+	}
+
+	function printPub(id, table, cmbNow, cmb2){
+		if( id && cmb2.val() != id ){
 
 			nodo = $('#'+cmbNow.attr('id')+' option[value="'+id+'"]')
 
-			newRow = nombrar.row.add([
+			newRow = table.row.add([
 								"",
 								$(nodo).html(),
 								$(nodo).attr('data-adress'),
 							]).draw().node()
 			$(newRow).attr('id', '' + $(nodo).val() ).find('td').addClass("text-center")
 
-		} else if( cmbNow.val() == id && fila.length > 0 ){
-			fila.remove().draw()
+			console.log('Publicador Impreso '+id)
+
+			if ( $('#move-left').is(':disabled') && nombrar.rows().data().length > 0) {
+				$('#move-left').removeAttr('disabled')
+				$('#save').removeProp('disabled')
+			}
+
+			if ( $('#move-right').is(':disabled') && publics.rows().data().length > 0) {
+				$('#move-right').removeAttr('disabled')
+				$('#save').removeProp('disabled')
+			}
+
+			reajustarTables()
+			pg1 = createPager(publics, 1)
+			pg2 = createPager(nombrar, 2)
+
+			if (pg2 == 1) {
+				altoT = $('#tabla2')[0].clientHeight
+			} else if (pg1 == 1) {
+				altoT = $('#tabla1')[0].clientHeight
+			} else {
+				altoT = null
+			}
+		}
+	}
+
+	function addEncAux(cmbNow, cmb2){
+		var id = ""
+		var idAntes = ""
+
+		options = cmbNow.find('option[value!=""]')
+
+		$.each(options, function(key, option){
+			if( $(option).prop('selected') == false ){
+				console.log( $(option).attr('data-grupo') )
+				if( $(option).attr('data-grupo') ==  $('#nroGrupo').html().trim() ){
+					console.log('Este es mi Grupo')
+					result = searchPub( $(option).val() )
+					if( result )
+						id = result
+				} else {
+					if ( $('#otherGroup').is(':visible') && $('#otherGroup').val() == $(option).attr('data-grupo') ){
+						console.log('Este es el Grupo Selected')
+						result = searchPub( $(option).val() )
+						if( result )
+							idAntes = result
+					}
+				}
+			}
+		})
+
+		printPub(id, nombrar, cmbNow, cmb2)
+		printPub(idAntes, publics, cmbNow, cmb2)
+	}
+
+    function delEncAux(cmbNow){
+        var remove = ""
+
+		now = cmbNow.find('option:selected').val()
+		filaNombrar = nombrar.row( "#"+now )
+		filaPublics = publics.row( "#"+now )
+
+		if( filaNombrar.length > 0 ){
+
+			console.error('Remover! ya existe en nombrar '+now)
+			filaNombrar.remove().draw()
+
+		} else {
+			if ( $('#otherGroup').is(':visible') && filaPublics.length > 0 ){
+
+				console.error('Remover! ya existe en otro grupo '+now)
+				filaPublics.remove().draw()
+
+			} else if ( $('#otherGroup').is(':hidden') && filaPublics.length > 0 ){
+
+				console.error('Remover! ya existe en sin grupo '+now)
+				filaPublics.remove().draw()
+
+			}
+		}
+
+		if( newGroup.length > 0){
+			var i = 0
+			var on = 0
+			while( i < newGroup.length && on == 0 ){
+				if( newGroup[i].idPub == now ){
+					console.error('Remover! publicador se encontro en newGroup '+now)
+					remove = i
+					on = 1
+				} else {
+					console.warn('Remover! publicador no encontrado en newGroup')
+				}
+
+				i++
+			}
+
+			if( (remove === 0 && remove !== "") || remove ){
+				newGroup.splice(remove, 1)
+			} else {
+				console.warn('Remover! no se encontro al pub '+now)
+			}
+
+		} else {
+			console.warn('Remover! publicador no existe en las tablas '+now)
 		}
 
 		reajustarTables()
@@ -369,74 +514,28 @@
 		} else {
 			altoT = null
 		}
-	}
-
-    function delEncAux(id, cmbNow, cmb2){
-        var remove = ""
-
-        if( cmbNow.val() == id || cmb2.val() == id ){
-            fila = publics.row( "#"+id )
-            if( fila.length > 0 ){
-                fila.remove().draw()
-
-                reajustarTables()
-                pg1 = createPager(publics, 1)
-                pg2 = createPager(nombrar, 2)
-
-                if (pg2 == 1) {
-                    altoT = $('#tabla2')[0].clientHeight
-                } else if (pg1 == 1) {
-                    altoT = $('#tabla1')[0].clientHeight
-                } else {
-                    altoT = null
-                }
-            }
-
-            $.each(newGroup, function(key, pub){
-                if( pub.idPub == id)
-                    remove = key
-            })
-
-            if( (remove === 0 && remove !== "") || remove )
-                newGroup.splice(remove, 1)
-
-        }
     }
 
 	$('#enc').change(function(){
 		enc = $(this)
 		aux = $('#aux')
 
-		if( this.value != "" ){
-			compararOptions(enc, aux)
-		} else {
-			compararOptions(enc, aux)
-		}
-
 		enc.find('option[selected]').removeAttr('selected')
 
-		addEncAux(idAux, enc, aux)
-		addEncAux(idEnc, enc, aux)
-        delEncAux(idAux, enc, aux)
-        delEncAux(idEnc, enc, aux)
+		compararOptions(enc, aux)
+		addEncAux(enc, aux)
+        delEncAux(enc)
 	})
 
 	$("#aux").change(function(){
 		aux = $(this)
 		enc = $('#enc')
 
-		if( this.value != "" ){
-			compararOptions(aux, enc, 1)
-		} else {
-			compararOptions(aux, enc, 1)
-		}
-
 		aux.find('option[selected]').removeAttr('selected')
 
-		addEncAux(idAux, aux, enc)
-		addEncAux(idEnc, aux, enc)
-        delEncAux(idAux, aux, enc)
-        delEncAux(idEnc, aux, enc)
+		compararOptions(aux, enc, 1)
+		addEncAux(aux, enc)
+        delEncAux(aux)
 	})
 
 	//check para seleccionar todo los elementos de la tabla
@@ -521,6 +620,15 @@
 			if (publics.data().length == 0)
 				$(this).prop('disabled', true)
 
+			if ( $('#otherGroup').is(':visible') && $('#otherGroup').val() != "" && publics.data().length == 0 )
+				$('#save').prop('disabled', true)
+
+			if ( $('#otherGroup').is(':visible') && $('#otherGroup').val() != "" && nombrar.data().length > 0 )
+				$('#tabla2').parent().css('border', 'none')
+
+			if ( publics.data().length > 0 && nombrar.data().length > 0 )
+				$('#save').removeProp('disabled')
+
 			reajustarTables()
 			pg1 = createPager(publics, 1)
 			pg2 = createPager(nombrar, 2)
@@ -591,6 +699,13 @@
 				$('#save').prop('disabled', true)
 			}
 
+			if ( $('#otherGroup').is(':visible') && $('#otherGroup').val() != "" && publics.data().length > 0 )
+				$('#tabla1').parent().css('border', 'none')
+
+
+			if ( publics.data().length > 0 && nombrar.data().length > 0 )
+				$('#save').removeProp('disabled')
+
 			reajustarTables()
 			pg2 = createPager(nombrar, 2)
 			pg1 = createPager(publics, 1)
@@ -625,17 +740,20 @@
 
 						$.each(pubsActual, function(key2, nodo){
 							if( $(nodo).attr('id') == pub.pk ){
-//								console.warn('el pub ya esta en la tabla nombrar')
+								console.warn('el pub ya esta en la tabla nombrar')
 								on = 1
 							}
 						})
 
 						$.each(newGroup, function(key2, pub2){
 							if( pub2.idPub == pub.pk ){
-//								console.warn('el pub:'+ pub2.nombre +' se encuentra en el Grupo: '+pub2.idGrupo)
+								console.warn('el pub:'+ pub2.nombre +' se encuentra en el Grupo: '+pub2.idGrupo)
 								on = 1
 							}
 						})
+
+						if( pub.pk == $('#enc').val() || pub.pk == $('#aux').val() )
+							on = 1
 
 						if(on == 0){
 							nombre = pub.nombre + " " + pub.apellido
@@ -709,10 +827,13 @@
 			$('#otherGroup').find(':first-child').prop('selected', true)
 			$("#otherGroup").css('border-color', '#ccc')
 
+			$('#move-right').attr('disabled', true)
+			publics.rows().remove().draw()
+			$('#tabla1 h3').html('Publicadores')
+
 		} else {
-			if( publics.data().length > 0){
+			if( (publics.data().length > 0 && nombrar.data().length > 0) || $('#otherGroup').val() == "" ){
 				$(this).removeClass('btn-default').addClass('btn-success')
-				$('#tabla1').parent().css('border', 'none')
 
 				$('#otherGroupP').animate({
 					width: '0%'
@@ -727,10 +848,17 @@
 					})
 				})
 			} else {
-				$('#tabla1').parent().css({
-					'border' : 'solid',
-					'border-color': '#d90000'
-				})
+				if( publics.data().length == 0 ){
+					$('#tabla1').parent().css({
+						'border' : 'solid',
+						'border-color': '#d90000'
+					})
+				} else {
+					$('#tabla2').parent().css({
+						'border' : 'solid',
+						'border-color': '#d90000'
+					})
+				}
 
 				titulo = "Editar Grupos!"
 				msg = "Error! los grupos de predicacion deben contener al menos 1 publicador"
