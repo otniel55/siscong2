@@ -186,7 +186,11 @@
 						time: 3000,
 					});
 
-					if ( fn && res.on == 1 ){
+					/*if ( fn && res.on == 1 ){
+						fn(res)
+					}*/
+
+					if ( fn ){
 						fn(res)
 					}
 

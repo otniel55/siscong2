@@ -53,7 +53,7 @@
 							</div>
 
 							<div class="col-sm-3 col-md-3 col-lg-3">
-								<button id="save" class="btn btn-primary btn-block fa fa-check-square-o fa-2x" disabled></button>
+								<button id="save" class="btn btn-primary btn-block fa fa-floppy-o fa-2x" disabled></button>
 							</div>
 						</div>
 					</div>
@@ -222,21 +222,21 @@
 					<div id="step-2">
 						<h2 class="StepTitleCustom">Nombrar Publicador</h2>
 
-						<label for="privilegio">Privilegios:</label>
-						<select id="privilegio" class="form-control mrg-bottom">
-							<option value>Seleccion un Privilegio</option>
-							<option value="1">Superintendente (Anciano)</option>
-							<option value="2">Siervo Ministerial</option>
-						</select>
-
 						<label for="fechaNa">Fecha de Nombramiento:</label>
-						<div class='input-group date datepicker2 mrg-bottom'>
+						<div class='input-group date datepicker mrg-bottom'>
 							<input id="fechaNom" type="text" class="form-control">
 							<span class="input-group-addon">
 								<span class="fa fa-calendar">
 								</span>
 							</span>
 						</div>
+
+						<label for="privilegio">Privilegios:</label>
+						<select id="privilegio" class="form-control mrg-bottom">
+							<option value>Seleccion un Privilegio</option>
+							<option value="1">Superintendente (Anciano)</option>
+							<option value="2">Siervo Ministerial</option>
+						</select>
 
 						<label for="respon">Responsabilidad:</label>
 						<input id="respon" type="text" class="form-control">
@@ -253,9 +253,99 @@
 <script>
 	var publics, nombrar, altoT
 
-	$('#modNewPub').on('shown.bs.modal', function (e) {
-		$("#step-1, #step-2").niceScroll({styler:"fb",cursorcolor:"#4ECDC4", cursorwidth: '6', cursorborderradius: '10px', background: '#404040', spacebarenabled:false,  cursorborder: '', zindex: '1000'});
+	//smartWizard
+	function saveEncAux(){
+		function nombrar(res){
+
+			pub = []
+
+			wizard2 = new Gestion()
+			wizard2.getInputs("#step-2", '0')
+			inputs = wizard2.getDataIn()
+
+			if ( inputs.vacio == 0 ){
+				pub.push({
+					'id': res.id,
+					'privilegio': $('#privilegio').val(),
+					'respon': $("#respon").val()
+				})
+
+				keys = new Array('fechaIni', 'pub')
+				wizard2.generateJson( keys, "{{ csrf_token }}", JSON.stringify(pub) )
+				wizard2.setPost("{% url 'secretario:nombrarPriv' %}", 'Registro Instantaneo!', function(res2){
+					string = res2.msg
+					if( string.substr(0, 1) == 'S' || string.substr(0, 1) == 's' )
+						$('#modNewPub').modal('hide')
+
+				})
+			}
+		}
+
+		wizard = new Gestion()
+		wizardPro = new Gestion()
+
+		sexo = $('#sexo').bootstrapSwitch('state');
+		if(sexo === true){
+			sexo = 'M'
+		} else {
+			sexo = 'F'
+		}
+
+		wizard.getInputs('#step-1')
+		wizardPro.getInputs('#step-2')
+		inputs = wizard.getDataIn()
+		inputs2 = wizardPro.getDataIn()
+
+		if ( inputs.vacio == 0 ){
+			if ( inputs2.vacio == 0 ){
+				keys = new Array('nombre', 'apellido', 'telefono', 'direccion', 'email', 'fechaNa', 'fechaBau', 'sexo')
+				wizard.generateJson(keys, "{{ csrf_token }}", sexo)
+				wizard.setPost("{% url 'secretario:publicReg' %}", 'Registro Instantaneo!', nombrar)
+			} else {
+				if ( $('#wizard').smartWizard('currentStep') != 2 )
+					$('#wizard').smartWizard('goToStep', 2)
+
+				showMsg('Error!', "Hay algunos campos vacios", "{% static 'img/error.png' %}")
+			}
+		} else {
+			if ( $('#wizard').smartWizard('currentStep') != 1 )
+				$('#wizard').smartWizard('goToStep', 1)
+
+			showMsg('Error!', "Hay algunos campos vacios", "{% static 'img/error.png' %}")
+		}
+	}
+
+	$('#wizard').smartWizard({
+		transitionEffect: 'slide',
+		labelNext:'Siguiente',
+		labelPrevious:'Anterior',
+		labelFinish:'Finalizar',
+		onFinish: saveEncAux
 	})
+
+	$('#modNewPub').on('shown.bs.modal', function (e) {
+		$("#step-1, #step-2").niceScroll({styler:"fb",cursorcolor:"#4ECDC4", cursorwidth: '6', cursorborderradius: '10px', background: '#404040', spacebarenabled:false,  cursorborder: '', zindex: '1000'})
+	})
+
+	$('#modNewPub').on('hide.bs.modal', function (e){
+		$("#step-1").scrollTo(0, 0);
+	})
+
+	$('#modNewPub').on('hidden.bs.modal', function (e){
+		wizard = new Gestion()
+		wizard.getInputs("#step-1")
+		wizard.Cargar()
+
+		wizard2 = new Gestion()
+		wizard2.getInputs("#step-2")
+		wizard2.Cargar()
+
+		$('#wizard').smartWizard('goToStep', 1)
+		$('#wizard').smartWizard('enableStep', 1)
+		$('#wizard').smartWizard('disableStep', 2)
+		$('#wizard').smartWizard('enableFinish', false)
+	})
+	//end wizard
 
 	$(document).ready(function () {
 
@@ -313,13 +403,6 @@
             state: true,
 			handleWidth: 120,
         })
-
-		$('#wizard').smartWizard({
-			transitionEffect: 'slide',
-			labelNext:'Siguiente',
-			labelPrevious:'Anterior',
-			labelFinish:'Finalizar',
-		});
 	});
 
 	//check para seleccionar todo los elementos de la tabla
@@ -553,3 +636,7 @@
 	})
 </script>
 {% endblock %}
+
+
+
+
