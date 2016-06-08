@@ -200,9 +200,9 @@ def vistaModificar(request, id):
                if i.fechaBau[0]!="N" and getEdad(i.fechaNa, hoy)>17 and not verificarAsignacion(i.pk, True, id) and i.pk!=enc:
                     auxs[cont]={'value':i.pk, 'text':i.nombre+" "+i.apellido, 'direccion':i.direccion}
                     if len(i.grupo.values())>0:
-                         encs[cont]['grupo']=i.grupo.values()[0]['IDgrupo']
+                         auxs[cont]['grupo']=i.grupo.values()[0]['IDgrupo']
                     else:
-                         encs[cont]['grupo']=0
+                         auxs[cont]['grupo']=0
                     if verificarPriv(i.pk):
                          auxs[cont]['priv']=1
                     if i.pk==aux:
