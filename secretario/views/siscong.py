@@ -86,7 +86,6 @@ def obtenerStatus(mes, year, pk):
           inf=Informe.objects.filter(FKpub=pk).order_by("-year", "-mes")
           mesi=inf[0].mes
           yeari=inf[0].year
-          print("what's up?")
           mesi-=1
           if mesi==0:
               mesi=12
@@ -178,16 +177,16 @@ def recorrerArrayMeses(array, idPub):
                     inf=Informe.objects.get(FKpub=idPub, mes=j[1], year=j[0])
                except:
                     if not fin:
-                         data[cont]={'mes':stringMeses[j[1]-1], 'horas':"0", 'publicaciones':"0",
-                             'revisitas':"0", 'estudios':"0", 'videos':"0", "obs":"no informo"
+                         data[cont]={'mes':stringMeses[j[1]-1], 'horas':0, 'publicaciones':0,
+                             'revisitas':0, 'estudios':0, 'videos':0, "obs":"no informo", 'pk':0
                              }
                     else:
                          data[cont]={'mes':stringMeses[j[1]-1], 'horas':"", 'publicaciones':"",
-                             'revisitas':"", 'estudios':"", 'videos':"", "obs":""
+                             'revisitas':"", 'estudios':"", 'videos':"", "obs":"", 'pk':0
                              }
                else:
-                    data[cont]={'mes':stringMeses[j[1]-1], 'horas':inf.minutos, 'publicaciones':inf.publicaciones,
-                             'revisitas':inf.revisitas, 'estudios':inf.estudios, 'videos':inf.videos, 'obs':inf.observacion
+                    data[cont]={'mes':stringMeses[j[1]-1], 'horas':convertMinutesToHours(inf.minutos), 'publicaciones':inf.publicaciones,
+                             'revisitas':inf.revisitas, 'estudios':inf.estudios, 'videos':inf.videos, 'obs':inf.observacion, 'pk':inf.pk
                              }
                     if primerInf.mes==j[1] and primerInf.year==j[0]:
                          fin=True
@@ -197,7 +196,7 @@ def recorrerArrayMeses(array, idPub):
                               data[cont]['obs']+="(Primer Informe)"
           else:
                data[cont]={'mes':stringMeses[j[1]-1], 'horas':"", 'publicaciones':"",
-                             'revisitas':"", 'estudios':"", 'videos':"", "obs":""
+                             'revisitas':"", 'estudios':"", 'videos':"", "obs":"", 'pk':0
                              }
           cont+=1
      return [reverseDict(data), fin]
@@ -237,4 +236,26 @@ def sesionGrupo(request):
         del request.session['idgrupo']
     except KeyError:
         pass
+
+def convertMinutesToHours(minutos):
+    result=""
+    horas=0
+    if minutos>0:
+        while(minutos>59):
+            horas+=1
+            minutos-=60
+        if horas>0:
+            result=str(horas)
+            if minutos>0:
+                result+="."+addZero(minutos)
+                result=float(result)
+            else:
+                result=int(result)
+        else:
+            result="0."+addZero(minutos)
+            result=float(result)
+        return result
+    else:
+        return "formato no valido para minutos"
+        
     
