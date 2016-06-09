@@ -197,7 +197,14 @@ def verTarjetaPub(request):
           cont+=1
      cGrupo = traerGrupo()
      p=Publicador.objects.all()
-     return render(request, 'Publicador/verTarjetaPub.html', {'form': cGrupo, 'years':years, 'url':2, 'pubs':p})
+     pubs={}
+     cont=0
+     for i in p:
+          pubs[cont]=i.__dict__
+          del pubs[cont]['_state']
+          pubs[cont]['fechaNa']=str(i.fechaNa)
+          cont+=1
+     return render(request, 'Publicador/verTarjetaPub.html', {'form': cGrupo, 'years':years, 'url':2, 'pubs':json.dumps(pubs)})
 
 def conPubG(request):
      datos={}
