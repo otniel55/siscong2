@@ -170,7 +170,7 @@
 
     }
 
-    this.setPost = function(url, titulo, fn){
+    this.setPost = function(url, titulo, fn, parametros){
 
         $.post(url, this._json)
 			.success(function(res){
@@ -186,8 +186,16 @@
 						time: 3000,
 					});
 
-					if ( fn && res.on == 1 ){
+					/*if ( fn && res.on == 1 ){
 						fn(res)
+					}*/
+
+					if ( fn ){
+                        if ( parametros ){
+						  fn(res, parametros)
+                        } else {
+						  fn(res)
+                        }
 					}
 
 				} else {
@@ -220,6 +228,8 @@
 			sticky: false,
 			time: 3000,
 		});
+
+        return 1
 	}
 
     function createPager(tabla, nro){

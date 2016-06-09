@@ -36,14 +36,44 @@
 	color: sandybrown;
 }
 
+/* styles dialog */
+
+/* styles for the title */
 .dlg-no-title .ui-dialog-titlebar{
-    display: none;
+	text-align: center;
+	font: bold 16px 'Ruda';
+}
+
+.dlg-no-title .ui-dialog-titlebar > button{
+	display: none;
+}
+
+.ui-dialog .ui-dialog-title{
+	float: none;
+}
+
+/* styles for the body */
+
+#dialogo dt {
+	color: darkcyan;
+	font-size: 18px;
+}
+
+#dialogo dd {
+	padding-bottom: 10px;
 }
 
 .ui-dialog {
     background-color: white;
     border: solid 2px #ffa31a;
 }
+
+.ui-widget-content {
+	background: none;
+	background-color: white;
+}
+
+/* end dialog */
 
 .mrgPdgNull {
     margin: 0px;
