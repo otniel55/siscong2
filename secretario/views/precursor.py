@@ -253,7 +253,7 @@ def historiaPrec(request, year):
                               while duracion>0:
                                    mesPrecur.append([iYear, iMonth, pre.FKprecursor.horas, pre.duracion])
                                    if iMonth==hoy.month and iYear==hoy.year:
-                                        mesPrecur.pop()
+                                       mesPrecur.pop()
                                    iMonth+=1
                                    if iMonth==13:
                                         iMonth=1
@@ -279,21 +279,26 @@ def historiaPrec(request, year):
                                         if request.session['precur'] in (1, 2):
                                              data[cont]={'fecha':datetime.date(f[0],f[1],15), 'horasR':f[2], 'horasI':0, 'obj':0}
                                         else:
-                                             data[cont] = {'fecha': datetime.date(f[0], f[1], 15), 'horasI':0, 'horasA':acum, 'horasRes':horasT-acum, 'obj':0, 'horastot':horasT}
+                                             if acum>=f[2]*(cont+1):
+                                                  obj=1
+                                             else:
+                                                  obj=0
+                                             data[cont] = {'fecha': datetime.date(f[0], f[1], 15), 'horasI':0, 'horasA':recortarDecimal(acum), 'horasRes':recortarDecimal(horasT-acum), 'obj':obj}
                                    else:
                                         if request.session['precur'] in (1,2):
-                                             if inf.minutos>=f[2]:
+                                             hoursDecimal=convertMinutesToHours(inf.minutos)
+                                             if hoursDecimal>=f[2]:
                                                   obj=1
                                              else:
                                                   obj=0
-                                             data[cont]={'fecha':datetime.date(f[0],f[1],15), 'horasR':f[2], 'horasI':inf.minutos, 'obj':obj}
+                                             data[cont]={'fecha':datetime.date(f[0],f[1],15), 'horasR':f[2], 'horasI':addZeroToFinal(hoursDecimal), 'obj':obj}
                                         else:
-                                             acum+=inf.minutos
-                                             if acum>=f[2]*(cont):
+                                             acum+=int(convertMinutesToHours(inf.minutos))
+                                             if acum>=f[2]*(cont+1):
                                                   obj=1
                                              else:
                                                   obj=0
-                                             data[cont]={'fecha':datetime.date(f[0],f[1],15), 'horasI':inf.minutos, 'horasA':acum, 'horasRes':horasT-acum, 'obj':obj, 'horasto':horasT}
+                                             data[cont]={'fecha':datetime.date(f[0],f[1],15), 'horasI':int(convertMinutesToHours(inf.minutos)), 'horasA':acum, 'horasRes':horasT-acum, 'obj':obj}
                                    cont=cont+1
                          else:
                               precursor=Precursor.objects.get(pk=request.session['precur'])

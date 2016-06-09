@@ -185,7 +185,7 @@ def recorrerArrayMeses(array, idPub):
                              'revisitas':"", 'estudios':"", 'videos':"", "obs":"", 'pk':0
                              }
                else:
-                    data[cont]={'mes':stringMeses[j[1]-1], 'horas':convertMinutesToHours(inf.minutos), 'publicaciones':inf.publicaciones,
+                    data[cont]={'horasC':convertMinutesToHours(inf.minutos),'mes':stringMeses[j[1]-1], 'horas':addZeroToFinal(convertMinutesToHours(inf.minutos)), 'publicaciones':inf.publicaciones,
                              'revisitas':inf.revisitas, 'estudios':inf.estudios, 'videos':inf.videos, 'obs':inf.observacion, 'pk':inf.pk
                              }
                     if primerInf.mes==j[1] and primerInf.year==j[0]:
@@ -247,15 +247,33 @@ def convertMinutesToHours(minutos):
         if horas>0:
             result=str(horas)
             if minutos>0:
-                result+="."+addZero(minutos)
-                result=float(result)
+                result+="."+minutos
+                result=float(addZeroToFinal(float(result)))
             else:
                 result=int(result)
         else:
-            result="0."+addZero(minutos)
-            result=float(result)
+            result="0."+str(minutos)
+            result=float(addZeroToFinal(float(result)))
         return result
     else:
         return "formato no valido para minutos"
-        
+
+def addZeroToFinal(num):
+    try:
+        if not num.is_integer():
+            num=str(num)
+            decimales=num[num.find(".")+1:]
+            if len(decimales)==1:
+                num+="0"
+    except AttributeError:
+        pass
+    return num
+
+def recortarDecimal(num):
+    num=str(num)
+    if num.find(".")>-1:
+        return addZeroToFinal(float(num[:num.find(".")+3]))
+    else:
+        return num
+
     

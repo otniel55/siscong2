@@ -20,7 +20,10 @@ def Vista_registrar(request):
      pubSinGrupo=Publicador.objects.exclude(grupo__IDgrupo__in=idGrupos)
      for i in pubSinGrupo:
           if getEdad(i.fechaNa, hoy)>17 and i.fechaBau[0]!="N" and i.sexo=="M":
-               pubAux.append(i)
+               add={'pk':i.pk, 'nombre':i.nombre, 'apellido':i.apellido, 'direccion':i.direccion}
+               if verificarPriv(i.pk):
+                    add['priv']=1
+               pubAux.append(add)
      pubsEncargado=pubSinGrupo.filter(privilegiopub__status=True)
      return render(request, 'Grupo/regGrupo.html', { 'url':1, 'regPub': pub, 'all':pubSinGrupo, 'encargados':pubsEncargado, 'aux':pubAux})
 

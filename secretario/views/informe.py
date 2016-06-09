@@ -34,7 +34,7 @@ def registrar(request):
                     else:
                          inf=Informe.objects.filter(mes=int(_fecha[0:2]), year=int(_fecha[3:]),FKpub=_pub)
                          if len(inf)==0:
-                              if _horas!="0" and _publicaciones!="0" and _videos!="0" and _revisitas!="0" and _estudios!="0":
+                              if _horas!="0":
                                    p.informe_set.create(minutos=_hour[1], publicaciones=_publicaciones, videos=_videos, revisitas=_revisitas, estudios=_estudios, mes=int(_fecha[0:2]), year=int(_fecha[3:]), observacion=_obs)
                                    msg={'msg':'Informe Registrado con exito', 'on':1}
                                    if _horasCon>0:
@@ -49,7 +49,7 @@ def registrar(request):
                else:
                     msg={'msg':"No puede introducir un informe del futuro"}
           else:
-               msg=_hour[2]
+               msg=_hour[1]
      else:
           msg=validar.mensaje
      return HttpResponse(json.dumps(msg))
@@ -70,13 +70,15 @@ def tarjeta(request, vista, idPub, y):
                mesesY=arraymeses(yFin)
                inf=recorrerArrayMeses(mesesY, idPub)[0]
                inf=inf.values()
-               totales={'horas':0, 'publicaciones':0, 'revisitas':0, 'estudios':0, 'videos':0}
+               totales={'horasC':0, 'publicaciones':0, 'revisitas':0, 'estudios':0, 'videos':0}
                for i in inf:
                     for j in i.keys():
-                         if j not in ["mes", "obs", 'pk'] and i[j]!="":
+                         if j not in ["mes", "obs", 'pk', 'horas'] and i[j]!="":
                               totales[j]+=i[j]
-               hT=str(totales['horas'])
+               hT=str(totales['horasC'])
                totales['horas']=hT[:hT.find(".")+3]
+               if not float(totales['horas']).is_integer():
+                    totales['horas']=addZeroToFinal(float(totales['horas']))
                datos={'pub':inf, 'p':p, 'url':2, "total":totales}
           else:
                datos={'vacio':1, 'url':2}
@@ -110,7 +112,7 @@ def modificar(request):
                msg={"msg":"Informe no existe"}
           else:
                if getDiferenciaMes(int(_fecha[0:2]), int(_fecha[3:]),hoy.month, hoy.year)>-2:
-                    if _horas!="0" and publicaciones!="0" and videos!="0" and revisitas!="0" and estudios!="0":
+                    if _horas!="0":
                          informes=Informe.objects.filter(mes=int(fecha[0:2]), year=int(fecha[3:]), FKpub=inf.FKpub).exclude(pk=inf.pk)
                          if len(informes)>0:
                               inf.mes=int(fecha[0:2])
@@ -175,23 +177,19 @@ def convertToDate(mes):
      return datetime.date(2016,mes[0],4)
 
 def convertHoursToMinutes(hora):
+     result=[]
      hour=0
      minutos=0
-     hora=str(hora)
-     patron=re.compile('^[0-9]+(\.([0-5]{1})([0-9]{1})?)?$')
-     verificar=patron.search(hora)
-     try:
-          verificar.group()
-     except AttributeError:
-          return [False ,{'msg':'Formato de horas no valido'}]
-     else:
-          print(hora[:-1])
-          if hora.find(".")>-1:
+     hora=float(hora)
+     if hora<1:
+          if hora==0.15 or hora==0.30 or hora==0.45:
+               hora=str(hora)
                minutos=int(hora[hora.find(".")+1:])
                hour=int(hora[:hora.find(".")])
+               minutos=(hour*60)+minutos
+               result= [True, minutos]
           else:
-               hour=int(hora)
-          minutos=(hour*60)+minutos
-          return [True, minutos]
-          
-          
+               result= [False ,{'msg':'Formato de horas no valido'}]
+     else:
+          result= [True, int(hora)*60]
+     return result
