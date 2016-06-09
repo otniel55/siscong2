@@ -1,6 +1,5 @@
-{% extends "layout.html" %}
+{% extends "layout.html" %} {% load staticfiles %} {% block contenido %}
 
-{% block contenido %}
 <div class="col-md-12 col-lg-12">
 	<div class="row">
 		<div class="form-panel">
@@ -49,87 +48,89 @@
 {% endblock %}
 {% block scripts %}
 	<script>
-
 		//obtener todos los selects
 		combos = $('select')
 		datpub = $('#datpub')
-        cont=0
 
-		//ordernar alfabeticamente los selects
-		combos.eq(0).each(function() {
-		    $(this).html($("option", $(this)).sort(function(a, b) {
-		        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1
-		    }));
-		})
-		combos.eq(0).find(':first-child').prop('selected', true)
+		//controladores de combos
+		function loadPubs(res){
+			if ( res.on == 1 ){
 
-		combos.eq(0).change(function(){
-            cmbG=new Gestion()
-            cmbG.getInputs(".form-group", '0')
-            g=cmbG.getDataIn()
-			if(!g.vacio==0){
-				combos.eq(1).attr('disabled', true).find('option:first').prop('selected', true)
-				combos.eq(2).attr('disabled', true).find('option:first').prop('selected', true)
-				datpub.hide('blind', 1000, function(){})
-			}else{
-                f=function(res){
-                    if (res.on==1){
-						$.gritter.add({
-                            title: "Consulta de publicadores",
-                            text: 'No hay publicadores en este grupo',
-                            image: '',
-                            sticky: false,
-                            time: 3000,
-                            class_name: ''
-                        });
-					} else{
-                        combos.eq(1).find('option:first').siblings().detach()
-                        combos.eq(1).attr('disabled', false)
-                        $.each(res.p, function(key, values){
-							combos.eq(1).append("<option value="+values.IDpub+">"+values.nombre+" "+values.apellido+"</option>")
-						})
-                        combos.eq(1).each(function() {
-						    $(this).html($("option", $(this)).sort(function(a, b) {
-						        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1
-						    }));
-						})
-						combos.eq(1).find(':first-child').prop('selected', true)
-                    }
+				$.gritter.add({
+					title: "Consulta de publicadores",
+					text: 'No hay publicadores en este grupo',
+					image: "{% static 'img/error.png' %}",
+					time: 3000,
+				})
+
+			} else{
+
+				//cmb de publicadores
+				combos.eq(1).find('option:first').siblings().detach()
+				combos.eq(1).removeAttr('disabled')
+
+				$.each(res, function(key, pub){
+					combos.eq(1).append(
+						"<option value="+pub.pk+">"+pub.nombre+" "+pub.apellido+"</option>"
+					)
+				})
+
+				reorder( combos.eq(1) )
+			}
+		}
+
+		function llamarload(valid){
+
+            idPub = combos.eq(1).val()
+            year = combos.eq(2).val()
+
+            combos.eq(2).removeAttr('disabled')
+
+            if ( idPub != "" && year != "" ){
+
+				cargar = new Gestion()
+				cargar.ejecutarLoad("../2/"+idPub+"/Tarjeta/"+year+"", datpub)
+
+            } else {
+                if ( datpub.is(":visible") ){
+                    datpub.hide('blind', 1000)
                 }
-                keys=new Array('g')
-                cmbG.generateJson(keys, '{{ csrf_token }}')
-                cmbG.setPost("{% url 'secretario:conPubG' %}", '', f)
-
-            }
-        })
-		
-		combos.eq(1).change(function(){
-            llamarload(1)
-		})
-
-        function llamarload(valid){
-            pub=combos.eq(1).val()
-            year=combos.eq(2).val()
-            combos.eq(2).attr('disabled', false)
-            if (validar=$.trim(pub)!="" && $.trim(year)!=""){
-                cargar=new Gestion()
-                cargar.ejecutarLoad("../2/"+pub+"/Tarjeta/"+year+"", datpub)
-            } else{
-                if(datpub.is(":visible")){
-                    datpub.hide('blind', 1000, function(){})
-                }
-                if (valid==1 && cont>0){
+                if ( idPub == "" ){
                     combos.eq(2).attr('disabled', true).find('option:first').prop('selected', true)
-                }
-                if($.trim(pub)==""){
-                    cont=0
                 }
             }
         }
 
+		//cmb de grupos
+		reorder( combos.eq(0) )//ordernar alfabeticamente
+
+		combos.eq(0).change(function(){
+
+            cmbG = new Gestion()
+            cmbG.getInputs(".form-group", '0')
+            g = cmbG.getDataIn()
+
+			if( g.vacio == 0 ){
+
+                keys = new Array('id')
+                cmbG.generateJson(keys, '{{ csrf_token }}')
+                cmbG.setPost("{% url 'secretario:conPubG' %}", 0, loadPubs)
+
+            } else {
+				combos.eq(1).attr('disabled', true).find('option:first').prop('selected', true)
+				combos.eq(2).attr('disabled', true).find('option:first').prop('selected', true)
+				datpub.hide('blind', 1000)
+			}
+        })
+
+		//cmb de publicadores
+		combos.eq(1).change(function(){
+            llamarload()
+		})
+
+		//cmb de años de servicio
 		combos.eq(2).change(function(){
-            llamarload(2)
-            cont=1
+            llamarload()
         })
 
 	</script>
