@@ -18,7 +18,7 @@
 							<select id="enc" class="form-control mrg-bottom">
 								<option value="">Seleccione un Encargado</option>
 								{% for pub in encargados %}
-									<option value="{{ pub.pk }}">{{ pub.nombre }} {{ pub.apellido }}</option>
+									<option value="{{ pub.pk }}" data-priv="1" data-adress="{{ pub.direccion }}">{{ pub.nombre }} {{ pub.apellido }}</option>
 								{% endfor %}
 							</select>
 						</div>
@@ -33,7 +33,7 @@
 							<select id="aux" class="form-control mrg-bottom">
 								<option value="">Seleccione un Auxiliar</option>
 								{% for pub in aux %}
-									<option value="{{ pub.pk }}">{{ pub.nombre }} {{ pub.apellido }}</option>
+									<option value="{{ pub.pk }}" {% if pub.priv == 1 %} data-priv="1" {% endif %} data-adress="{{ pub.direccion }}">{{ pub.nombre }} {{ pub.apellido }}</option>
 								{% endfor %}
 							</select>
 						</div>
@@ -248,6 +248,59 @@
     var peligro = 0
     var cmb = 0
 
+	$(document).ready(function () {
+
+		reorder( $("#enc") )
+		reorder( $("#aux") )
+
+		tablaConfig = {
+			columnDefs: [{
+				orderable: false,
+				className: 'select-checkbox',
+				targets: 0
+			}],
+			select: {
+				style: 'multi',
+				selector: 'td:first-child',
+			},
+			order: [[1, 'asc']],
+			"bInfo": false,
+			"oLanguage": {
+				"sInfoEmpty": "La Tabla esta Vacia",
+				"sZeroRecords": "No se Encontraron Registros",
+			}
+		}
+
+		//instancia de las tablas
+		publics = $('#publics').DataTable(tablaConfig)
+		nombrar = $('#nombrar').DataTable(tablaConfig)
+
+		//estilisando los filtros
+		$('#publics_length').hide()
+		$('#publics_filter').hide()
+		$('#publics_paginate').hide()
+		$('#filtro1').on('keyup change', function () {
+			$('#publics').dataTable().fnFilter(this.value)
+		})
+
+		$('#nombrar_length').hide()
+		$('#nombrar_filter').hide()
+		$('#nombrar_paginate').hide()
+		$('#filtro2').on('keyup change', function () {
+			$('#nombrar').dataTable().fnFilter(this.value)
+		})
+
+		//asignacion de altura de las tablas
+		reajustarTables()
+
+		//creacion del pager
+		pg1 = createPager(publics, 1)
+
+		if (pg1 == 1) {
+			altoT = $('#tabla1')[0].clientHeight
+		}
+	})
+
 	//smartWizard
 	function saveEncAux(){
 		function nombrar(res, pubR){
@@ -276,33 +329,34 @@
             if( string.substr(0, 1) == 'S' || res.on ){
                 $('#modNewPub').modal('hide')
 
-                nombre = pub.nombre+" "+pub.apellido
+                nombre = (pub.nombre+" "+pub.apellido).toUpperCase()
+				adress = pub.direccion.toUpperCase()
 
                 nodo =  publics.row.add([
 									"",
 									nombre,
-									pub.direccion,
+									adress,
 								]).draw().node()
 
                 if( cmb == 1 && pub.id ){
 
-                    $('#enc').append(
-                        "<option value='"+pub.id+"' data-priv='1' data-adress='"+pub.direccion+"'>"+nombre+"</option>"
+                    $('#enc, #aux').append(
+                        "<option value='"+pub.id+"' data-priv='1' data-adress='"+adress+"'>"+nombre+"</option>"
                     )
 
                     $(nodo).attr('id', '' + pub.id  ).find('td').addClass("numeric text-center")
 
                 } else if( cmb == 2 && peligro == 0 && pub.id ){
 
-                    $('#aux').append(
-                        "<option value='"+pub.id+"' data-priv='1' data-adress='"+pub.direccion+"'>"+nombre+"</option>"
+                    $('#aux, #enc').append(
+                        "<option value='"+pub.id+"' data-priv='1' data-adress='"+adress+"'>"+nombre+"</option>"
                     )
 
                     $(nodo).attr('id', '' + pub.id  ).find('td').addClass("numeric text-center")
 
                 } else {
                     $('#aux').append(
-                        "<option value='"+res.id+"' data-adress='"+pub.direccion+"'>"+nombre+"</option>"
+                        "<option value='"+res.id+"' data-adress='"+adress+"'>"+nombre+"</option>"
                     )
 
                     $(nodo).attr('id', '' + res.id ).find('td').addClass("numeric text-center")
@@ -333,7 +387,12 @@
                     keys = new Array('nombre', 'apellido', 'telefono', 'direccion', 'email', 'fechaNa', 'fechaBau', 'sexo')
                     pub = wizard.generateJson(keys, "{{ csrf_token }}", 'M')
                     wizard.setPost("{% url 'secretario:publicReg' %}", 'Registro Instantaneo!', closeModal, pub)
-                }
+                } else {
+					showMsg('Precaucion!', "Hay algunos campos vacios", "{% static 'img/error.png' %}")
+
+					if ( $('#wizard').smartWizard('currentStep') != 2 )
+						$('#wizard').smartWizard('goToStep', 2)
+				}
 			}
 		} else {
 			if ( $('#wizard').smartWizard('currentStep') != 1 )
@@ -386,54 +445,82 @@
     })
 	//end wizard
 
-	$(document).ready(function () {
+	//controladores de combos
+	function delAddPub(cmb1, cmb2){
+		function _searchDel(cmb){
 
-		tablaConfig = {
-			columnDefs: [{
-				orderable: false
-				, className: 'select-checkbox'
-				, targets: 0
-					        }]
-			, select: {
-				style: 'multi'
-				, selector: 'td:first-child'
-			, }
-			, order: [[1, 'asc']]
-			, "bInfo": false
-			, "oLanguage": {
-				"sInfoEmpty": "La Tabla esta Vacia"
-				, "sZeroRecords": "No se Encontraron Registros"
-			, }
+			id = cmb.val()
+
+			if (id){
+				onNom = nombrar.row("#"+id).length
+				onPub = publics.row("#"+id).length
+
+				console
+
+				if( onNom > 0 ){
+					nombrar.row("#"+id).remove().draw()
+					return 1
+				} else if ( onPub > 0 ) {
+					publics.row("#"+id).remove().draw()
+					return 1
+				}
+			}
+
+			return 0
 		}
 
-		//instancia de las tablas
-		publics = $('#publics').DataTable(tablaConfig);
-		nombrar = $('#nombrar').DataTable(tablaConfig);
+		function _searchAdd(cmb, cmb2){
 
-		//estilisando los filtros
-		$('#publics_length').hide()
-		$('#publics_filter').hide()
-		$('#publics_paginate').hide()
-		$('#filtro1').on('keyup change', function () {
-			$('#publics').dataTable().fnFilter(this.value);
-		});
+			cmb.find('option[value!=""]').each(function(){
+				id = $(this).val()
 
-		$('#nombrar_length').hide()
-		$('#nombrar_filter').hide()
-		$('#nombrar_paginate').hide()
-		$('#filtro2').on('keyup change', function () {
-			$('#nombrar').dataTable().fnFilter(this.value);
-		});
+				if ( id != cmb.val() ){
+					onNom = nombrar.row("#"+id).length
+					onPub = publics.row("#"+id).length
+					onCmb = cmb2.val()
 
-		//asignacion de altura de las tablas
-		reajustarTables()
+					if( onNom == 0 && onPub == 0 && onCmb != id ){
+						nodo =  publics.row.add([
+										"",
+										$(this).html().trim(),
+										$(this).attr("data-adress"),
+									]).draw().node()
 
-		//creacion del pager
-		pg1 = createPager(publics, 1)
+						$(nodo).attr('id', '' + id ).find('td').addClass("numeric text-center")
 
-		if (pg1 == 1) {
-			altoT = $('#tabla1')[0].clientHeight
+						console.log('pub agregado ' + id)
+					} else {
+						console.log('publicador existe '+id)
+					}
+				}
+			})
 		}
+
+		s1 = _searchDel(cmb1)
+		s2 = _searchDel(cmb2)
+
+		console.log(s1)
+		console.log(s2)
+
+		_searchAdd(cmb1, cmb2)
+		_searchAdd(cmb2, cmb1)
+
+	}
+
+	$('#enc').change(function(){
+		enc = $(this)
+		aux = $('#aux')
+
+		compararOptions(enc, aux)
+		delAddPub(enc, aux)
+	})
+
+	$('#aux').change(function(){
+		aux = $(this)
+		enc = $('#enc')
+
+		compararOptions(aux, enc, 1)
+		delAddPub(aux, enc)
 	})
 
 	//check para seleccionar todo los elementos de la tabla
@@ -469,6 +556,7 @@
 
 			//obtener la filas seleccionadas
 			row = publics.rows('.selected').data()
+			rowNode = publics.rows('.selected').nodes()
 			publics.rows('.selected').remove().draw()
 
 			//crear las filas en la tabla Nombrar
@@ -481,7 +569,7 @@
 								]).draw().node()
 
 				//asignar atributos a la fila creada
-				$(nodo).attr('id', row[key].DT_RowId ).find('td').addClass("numeric text-center")
+				$(nodo).attr('id', rowNode[key].id ).find('td').addClass("numeric text-center")
 			})
 
 			if ($('#move-left').is(':disabled') && row.length > 0) {
@@ -571,35 +659,9 @@
 				altoT = null
 			}
 		}) //fin del moveleft
-
-	$('#enc').change(function(){
-		aux = $('#aux')
-
-		if( this.value != "" ){
-			option = aux.find('[value="'+this.value+'"]')
-
-			if(option.length > 0){
-				$(option).detach()
-			}
-		} else {
-			encOptions = $(this).find('option[value!=""]')
-			auxOptions = aux.find('option[value!=""]')
-
-			$.each(encOptions, function(key, nodo1){
-				exist = 0
-				$.each(auxOptions, function(key2, nodo2){
-					if(nodo1.value == nodo2.value)
-						exist++
-				})
-
-				if(exist == 0){
-					aux.append( nodo1.cloneNode(true) )
-				}
-			})
-		}
-	})
-
 	//fin de cambiar de tabla
+
+
 	$('#save').click(function () {
 		result = function (res) {
 			bien = 0

@@ -256,23 +256,23 @@
 		}
 
 		//instancia de las tablas
-		publics = $('#publics').DataTable(tablaConfig);
-		nombrar = $('#nombrar').DataTable(tablaConfig);
+		publics = $('#publics').DataTable(tablaConfig)
+		nombrar = $('#nombrar').DataTable(tablaConfig)
 
 		//estilisando los filtros
 		$('#publics_length').hide()
 		$('#publics_filter').hide()
 		$('#publics_paginate').hide()
 		$('#filtro1').on('keyup change', function () {
-			$('#publics').dataTable().fnFilter(this.value);
-		});
+			$('#publics').dataTable().fnFilter(this.value)
+		})
 
 		$('#nombrar_length').hide()
 		$('#nombrar_filter').hide()
 		$('#nombrar_paginate').hide()
 		$('#filtro2').on('keyup change', function () {
-			$('#nombrar').dataTable().fnFilter(this.value);
-		});
+			$('#nombrar').dataTable().fnFilter(this.value)
+		})
 
 		//asignacion de altura de las tablas
 		reajustarTables()
@@ -295,54 +295,6 @@
 	})
 
 	//controladores de combos
-	function reorder(cmb){
-		selected = cmb.val()
-		cmb.each(function() {
-		    $(this).html($('option[value!=""]', $(this)).sort(function(a, b) {
-		        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1
-		    }))
-		})
-		cmb.val(selected).prop('selected', true)
-	}
-
-	function compararOptions(select1, select2, priv){
-		options1 = select1.find('option[value!=""]')
-		options2 = select2.find('option[value!=""]')
-
-		$.each(options1, function(key, nodo1){
-			exist = 0
-
-			$.each(options2, function(key2, nodo2){
-				if(nodo1.value == nodo2.value){
-					exist++
-
-					if( $(nodo1).is(':selected') )
-						$(nodo2).detach()
-				}
-			})
-
-			if(exist == 0){
-
-				node = nodo1.cloneNode(true)
-
-				if( $(node).is(':selected') )
-					$(node).removeAttr('selected')
-
-				if( priv ){
-					if( $(node).attr('data-priv') ){
-						select2.append( node )
-					}
-				} else {
-					select2.append( node )
-				}
-
-			}
-		})
-
-		reorder(select1)
-		reorder(select2)
-	}
-
 	function searchPub(now){
 
 		if( nombrar.row( "#"+now ).length > 0 ){
