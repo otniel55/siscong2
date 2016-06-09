@@ -283,10 +283,10 @@ def historiaPrec(request, year):
                                                   obj=1
                                              else:
                                                   obj=0
-                                             data[cont] = {'fecha': datetime.date(f[0], f[1], 15), 'horasI':0, 'horasA':recortarDecimal(acum), 'horasRes':recortarDecimal(horasT-acum), 'obj':obj}
+                                             data[cont] = {'fecha': datetime.date(f[0], f[1], 15), 'horasI':0, 'horasA':acum, 'horasRes':horasT-acum, 'obj':obj}
                                    else:
                                         if request.session['precur'] in (1,2):
-                                             hoursDecimal=convertMinutesToHours(inf.minutos)
+                                             hoursDecimal=int(convertMinutesToHours(inf.minutos))
                                              if hoursDecimal>=f[2]:
                                                   obj=1
                                              else:

@@ -74,6 +74,20 @@ def tarjeta(request, vista, idPub, y):
                for i in inf:
                     for j in i.keys():
                          if j not in ["mes", "obs", 'pk', 'horas'] and i[j]!="":
+                              if j=="horasC":
+                                   tH=str(float(totales[j]))
+                                   tHoras=str(float(i[j]))
+                                   tHInt=int(tH[tH.find(".")+1:])
+                                   tHorasInt=int(tHoras[tHoras.find(".")+1:])
+                                   if tHInt+tHorasInt>59:
+                                        entero=int(tH[:tH.find(".")])+1
+                                        decimal=60-tHInt
+                                        decimal=tHorasInt-decimal
+                                        r=float(str(entero)+"."+str(decimal))
+                                        if r.is_integer():
+                                             totales[j]=int(r)
+                                        else:
+                                             totales[j]=r
                               totales[j]+=i[j]
                hT=str(totales['horasC'])
                totales['horas']=hT[:hT.find(".")+3]
@@ -191,5 +205,8 @@ def convertHoursToMinutes(hora):
           else:
                result= [False ,{'msg':'Formato de horas no valido'}]
      else:
-          result= [True, int(hora)*60]
+          if hora.is_integer():
+               result= [True, int(hora)*60]
+          else:
+               result= [False ,{'msg':'Formato de horas no valido'}]
      return result

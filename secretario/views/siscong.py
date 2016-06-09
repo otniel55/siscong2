@@ -247,7 +247,7 @@ def convertMinutesToHours(minutos):
         if horas>0:
             result=str(horas)
             if minutos>0:
-                result+="."+minutos
+                result+="."+str(minutos)
                 result=float(addZeroToFinal(float(result)))
             else:
                 result=int(result)
