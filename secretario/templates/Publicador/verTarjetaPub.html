@@ -82,6 +82,7 @@
 		combos.eq(1).select2()
 		loadCmbPubs(Pubs)
 
+		//nice scroll combo buscador
 		combos.eq(1).on('select2:opening', function(evt){
 			$("ul.select2-results__options").niceScroll({styler:"fb",cursorcolor:"#4ECDC4", cursorwidth: '6', cursorborderradius: '10px', background: '#404040', spacebarenabled:false,  cursorborder: '', zindex: '1000'})
 		})
@@ -89,20 +90,16 @@
 		//controladores de combos
 		function loadPubs(res){
 			if ( res.on == 1 ){
-
 				$.gritter.add({
 					title: "Consulta de publicadores",
 					text: 'No hay publicadores en este grupo',
 					image: "{% static 'img/error.png' %}",
 					time: 3000,
 				})
-
 			} else{
-
 				//cmb de publicadores
 				combos.eq(1).find('option:first').siblings().detach()
 				loadCmbPubs(res)
-				reorder( combos.eq(1) )
 
 				//combo years
 				combos.eq(2).attr('disabled', true).find('option:first').prop('selected', true)
@@ -110,7 +107,7 @@
 			}
 		}
 
-		function llamarload(valid){
+		function llamarload(){
 
             idPub = combos.eq(1).val()
             year = combos.eq(2).val()

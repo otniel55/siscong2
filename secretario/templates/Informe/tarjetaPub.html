@@ -6,41 +6,46 @@
 		<h3 class="text-center" style="margin:0px;margin-bottom:15px;">Actividad de: <span style="color: darkcyan;">{{ p.nombre|upper }} {{ p.apellido|upper }}</span></h3>
 		
 		<section id="no-more-tables">
-			<table id="public" class="table table-bordered table-striped table-condensed cf" style="font-size:20px;">
+			<table id="tarjeta" class="table table-bordered table-striped table-hover table-condensed cf">
 		    	<thead class="cf">				
 					<tr>
-						<th class="numeric text-center" style="width:20%;">Mes</th>
-						<th class="numeric text-center" style="width:15%;">Horas</th>
-						<th class="numeric text-center" style="width:15%;">Publicaciones</th>
-						<th class="numeric text-center" style="width:15%;">Videos</th>
-						<th class="numeric text-center" style="width:15%;">Revisitas</th>
-						<th class="numeric text-center" style="width:20%;">Cursos Biblicos</th>
-						<th class="numeric text-center" style="width:20%;">Observaciones</th>
+						<th class="numeric text-center colTarjeta-1">Mes</th>
+						<th class="numeric text-center colTarjeta-2">Horas</th>
+						<th class="numeric text-center colTarjeta-3">Publicaciones</th>
+						<th class="numeric text-center colTarjeta-4">Videos</th>
+						<th class="numeric text-center colTarjeta-5">Revisitas</th>
+						<th class="numeric text-center colTarjeta-6">Cursos Biblicos</th>
+						<th class="numeric text-center colTarjeta-7">Observaciones</th>
 					</tr>
 				</thead>
 				<tbody>
-				{% for x in pub %}
-					<tr>
-						<td class="numeric text-center" data-title="Meses" style="width:20%;">
-							{{ x.mes}}
+				{% for informe in pub %}
+					<tr id="{{ informe.pk }}">
+						<td class="numeric text-center" data-title="Meses">
+							{{ informe.mes }}
 						</td>
-						<td class="numeric text-center" data-title="Horas" style="width:15%;">
-							{{ x.horas }}
+						<td class="numeric text-center" data-title="Horas">
+							{% if not informe.horasCon %}
+								{{ informe.horas }}
+							{% else %}
+								<div class="text-center horasCon divisor">{{ informe.horas }}</div>
+								<div class="text-center horasCon">{{ informe.horasCon }}</div>
+							{% endif %}
 						</td>
-						<td class="numeric text-center" data-title="Public." style="width:15%;">
-							{{ x.publicaciones }}
+						<td class="numeric text-center" data-title="Public.">
+							{{ informe.publicaciones }}
 						</td>
-						<td class="numeric text-center" data-title="Videos" style="width:15%;">
-							{{ x.videos }}
+						<td class="numeric text-center" data-title="Videos">
+							{{ informe.videos }}
 						</td>
-						<td class="numeric text-center" data-title="Revisitas" style="width:15%;">
-							{{ x.revisitas }}
+						<td class="numeric text-center" data-title="Revisitas">
+							{{ informe.revisitas }}
 						</td>
-						<td class="numeric text-center" data-title="Estudios" style="width:20%;">
-							{{ x.estudios }}
+						<td class="numeric text-center" data-title="Estudios">
+							{{ informe.estudios }}
 						</td>
-						<td class="numeric text-center" data-title="Observ." style="width:20%;">
-							{{ x.obs }}
+						<td class="numeric text-center" data-title="Observ.">
+							{{ informe.obs }}
 						</td>
 					</tr>
 				{% endfor %}
@@ -72,3 +77,153 @@
 		</section>
 	{% endif %}
 </div>
+
+<div class="modal fade" id="modEditInfo" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+			  <button id="closeInf" type="button" class="close" data-dismiss="modal">&times;</button>
+			  <h4 class="modal-title">Registrar Informe</h4>
+			</div>
+
+			<div class="modal-body">
+
+				<input type="number" min="0" placeholder="Ingrese las Horas..." class="form-control mrg-bottom">
+				<input type="number" min="0" placeholder="Ingrese las Publicaciones..." class="form-control mrg-bottom">
+				<input type="number" min="0" placeholder="Ingrese los Videos..." class="form-control mrg-bottom">
+				<input type="number" min="0" placeholder="Ingrese las Revisitas..." class="form-control mrg-bottom">
+				<input type="number" min="0" placeholder="Ingrese los Estudios..." class="form-control mrg-bottom">
+				<input type="text" placeholder="Ingrese una Observacion..." class="form-control mrg-bottom">
+
+				<div class='input-group date datepicker'>
+					<input type="text" class="form-control" placeholder="Ingrese la Fecha...">
+					<span class="input-group-addon">
+						<span class="fa fa-calendar">
+						</span>
+					</span>
+				</div>
+
+				<hr>
+				<input type="number" class="form-control" min="0" placeholder="Ingrese las Horas por Consecion...">
+			</div>
+
+			<div class="modal-footer">
+				<button id="modInf" type="button" class="btn btn-success">Modificar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="dialogo" style="display: none"></div>
+
+<script>
+	$('#tarjeta tr').each(function(){
+		//dialog
+		$(this).children(':eq(1)').mouseover(function(){
+			if( $(this).children().length == 2 ){
+				$('#dialogo').html(
+					'<dl>\
+						<dt>Horas Predicadas:</dt>\
+						<dd>'+$(this).children(':eq(0)').html().trim()+'</dd>\
+						<dt>Horas por Concecion:</dt>\
+						<dd>'+$(this).children(':eq(1)').html().trim()+'</dd>\
+						<dt>Observacion:</dt>\
+						<dd>'+$(this).siblings(':eq(5)').html().trim()+'</dd>\
+					</dl>'
+				)
+
+				$('#dialogo').dialog({
+					title: "Detalles de Horas",
+					position: { my: "right-60 center", at: "", of: this },
+					dialogClass: 'dlg-no-title',
+				})
+			}
+		})
+
+		$(this).children(':eq(1)').mouseleave(function(){
+			if( $(this).children().length == 2 )
+				$('#dialogo').dialog("destroy")
+		})
+		//end dialog
+
+
+		$(this).click(function(){
+			id = $(this).attr('id')
+
+			if( id && id != '0' ){
+				//inputs de la ventana modal
+				inputs = $('input', '.modal-body')
+
+				//llenar los inputs con los valores de las 'td' de fila
+				$.each($(this).children(':eq(0)').siblings(), function(key, td){
+					if( key != 5 ){
+						value = parseInt( $(td).html().trim() )
+					} else {
+						value = $(td).html().trim()
+					}
+
+					if( $(td).children().length == 2 ){
+						//input horas
+						inputs.eq(key).val( parseInt( $(td).children(':eq(0)').html().trim() ) )
+
+						//input horas por concesion
+						inputs.eq(6).val( parseInt( $(td).children(':eq(1)').html().trim() ) )
+					} else {
+						inputs.eq(key).val( value )
+					}
+				})
+
+				//btn modInfo
+				$('#modInf').click(function(){
+					close = function(res){
+						$('#modEditInfo').modal('hide')
+						edit.Cargar()
+					}
+
+					if( $("input[type='number']:eq(0)", ".modal-body").val() != 0 ){
+						obs =  $(":text:eq(0)", ".modal-body")
+						if ( obs.val().trim() == "" ){
+							obs.val("n/t")
+						}
+
+						HC = $("input[type='number']:eq(5)", ".modal-body")
+						if ( HC.val().trim() == "" ){
+							HC.val(0)
+						}
+
+						edit = new Gestion()
+						edit.getInputs('.modal-body')
+						data = edit.getDataIn()
+
+						if ( data.vacio == 0 ){
+							keys = new Array('horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'obs','fecha', 'horasCons', 'publicador', 'id')
+
+							ids = new Array( $('select:eq(1)').val(), id)
+
+							x = edit.generateJson(keys, '{{ csrf_token }}', ids)
+							console.log(x)
+							edit.setPost("{% url 'secretario:modInf' %}", 'Modificar Informe!', close)
+						}
+					} else {
+						$.gritter.add({
+							title: 'Error al Modificar Informe!',
+							text: 'No Puede Registrar un Informe con Total de Horas menor a 1',
+							image: "{% static 'img/error.png' %}",
+							sticky: false,
+							time: 3000,
+						});
+					}
+				})
+
+				//modal
+				$('#modEditInfo').modal('show')
+			}
+		})
+
+		$('#modEditInfo').on('hidden.bs.modal',function(){
+			clean = new Gestion()
+			clean.getInputs('.modal-body')
+			clean.Cargar()
+		})
+	})
+</script>
