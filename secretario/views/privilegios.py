@@ -29,7 +29,8 @@ def Vistanombrar(request):
 
 def consultarNombrados(request):
     sesionGrupo(request)
-    return render(request, "Privilegio/consNombrados.html")
+    pubs=Publicador.objects.filter(privilegiopub__status=True)
+    return render(request, "Privilegio/consNombrados.html", {'data':pubs})
 
 def nombrar(request):
     cont=0
