@@ -118,6 +118,15 @@
 <div id="dialogo" style="display: none"></div>
 
 <script>
+	$('.datepicker').datetimepicker({
+		format: 'MM-YYYY',
+		widgetPositioning:  {
+		  horizontal: 'right',
+		  vertical: 'auto',
+		},
+		maxDate:'now'
+	})
+
 	$('#tarjeta tr').each(function(){
 		//dialog
 		$(this).children(':eq(1)').mouseover(function(){
@@ -149,9 +158,9 @@
 
 
 		$(this).click(function(){
-			id = $(this).attr('id')
-
-			if( id && id != '0' ){
+			idRow = $(this).attr('id')
+			console.log(idRow)
+			if( idRow && idRow != '0' ){
 				//inputs de la ventana modal
 				inputs = $('input', '.modal-body')
 
@@ -168,14 +177,29 @@
 						inputs.eq(key).val( parseInt( $(td).children(':eq(0)').html().trim() ) )
 
 						//input horas por concesion
-						inputs.eq(6).val( parseInt( $(td).children(':eq(1)').html().trim() ) )
+						inputs.eq(7).val( parseInt( $(td).children(':eq(1)').html().trim() ) )
 					} else {
 						inputs.eq(key).val( value )
 					}
 				})
 
+				//obtener fecha
+				mes = $(this).children(':eq(0)').html().trim()
+				year = $('select:eq(2)').val().substring(0,4)
+				year2 = $('select:eq(2)').val().substring(4)
+				mes = moment().month(mes).format("MM")
+
+				if( mes >= '09' && mes <= '12' ){
+					fecha = mes+"-"+year
+				} else {
+					fecha = mes+"-"+year2
+				}
+
+				inputs.eq(6).val(fecha)
+
 				//btn modInfo
 				$('#modInf').click(function(){
+					console.log(idRow)
 					close = function(res){
 						$('#modEditInfo').modal('hide')
 						edit.Cargar()
@@ -197,11 +221,8 @@
 						data = edit.getDataIn()
 
 						if ( data.vacio == 0 ){
-							keys = new Array('horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'obs','fecha', 'horasCons', 'publicador', 'id')
-
-							ids = new Array( $('select:eq(1)').val(), id)
-
-							x = edit.generateJson(keys, '{{ csrf_token }}', ids)
+							keys = new Array('horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'obs','fecha', 'horasCons', 'id')
+							x = edit.generateJson(keys, '{{ csrf_token }}', idRow)
 							console.log(x)
 							edit.setPost("{% url 'secretario:modInf' %}", 'Modificar Informe!', close)
 						}
