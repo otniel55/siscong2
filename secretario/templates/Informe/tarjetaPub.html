@@ -118,6 +118,8 @@
 <div id="dialogo" style="display: none"></div>
 
 <script>
+	var idRow
+
 	$('.datepicker').datetimepicker({
 		format: 'MM-YYYY',
 		widgetPositioning:  {
@@ -156,10 +158,9 @@
 		})
 		//end dialog
 
-
 		$(this).click(function(){
 			idRow = $(this).attr('id')
-			console.log(idRow)
+
 			if( idRow && idRow != '0' ){
 				//inputs de la ventana modal
 				inputs = $('input', '.modal-body')
@@ -197,55 +198,56 @@
 
 				inputs.eq(6).val(fecha)
 
-				//btn modInfo
-				$('#modInf').click(function(){
-					console.log(idRow)
-					close = function(res){
-						$('#modEditInfo').modal('hide')
-						edit.Cargar()
-					}
-
-					if( $("input[type='number']:eq(0)", ".modal-body").val() != 0 ){
-						obs =  $(":text:eq(0)", ".modal-body")
-						if ( obs.val().trim() == "" ){
-							obs.val("n/t")
-						}
-
-						HC = $("input[type='number']:eq(5)", ".modal-body")
-						if ( HC.val().trim() == "" ){
-							HC.val(0)
-						}
-
-						edit = new Gestion()
-						edit.getInputs('.modal-body')
-						data = edit.getDataIn()
-
-						if ( data.vacio == 0 ){
-							keys = new Array('horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'obs','fecha', 'horasCons', 'id')
-							x = edit.generateJson(keys, '{{ csrf_token }}', idRow)
-							console.log(x)
-							edit.setPost("{% url 'secretario:modInf' %}", 'Modificar Informe!', close)
-						}
-					} else {
-						$.gritter.add({
-							title: 'Error al Modificar Informe!',
-							text: 'No Puede Registrar un Informe con Total de Horas menor a 1',
-							image: "{% static 'img/error.png' %}",
-							sticky: false,
-							time: 3000,
-						});
-					}
-				})
-
 				//modal
 				$('#modEditInfo').modal('show')
 			}
 		})
+	})
 
-		$('#modEditInfo').on('hidden.bs.modal',function(){
-			clean = new Gestion()
-			clean.getInputs('.modal-body')
-			clean.Cargar()
-		})
+	//evento al cerrar la modal
+	$('#modEditInfo').on('hidden.bs.modal',function(){
+		clean = new Gestion()
+		clean.getInputs('.modal-body')
+		clean.Cargar()
+	})
+
+	//btn modInfo
+	$('#modInf').click(function(){
+
+		close = function(res){
+			$('#modEditInfo').modal('hide')
+			edit.Cargar()
+		}
+
+		if( $("input[type='number']:eq(0)", ".modal-body").val() != 0 ){
+			obs =  $(":text:eq(0)", ".modal-body")
+			if ( obs.val().trim() == "" ){
+				obs.val("n/t")
+			}
+
+			HC = $("input[type='number']:eq(5)", ".modal-body")
+			if ( HC.val().trim() == "" ){
+				HC.val(0)
+			}
+
+			edit = new Gestion()
+			edit.getInputs('.modal-body')
+			data = edit.getDataIn()
+
+			if ( data.vacio == 0 ){
+				keys = new Array('horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'obs','fecha', 'horasCons', 'id')
+				x = edit.generateJson(keys, '{{ csrf_token }}', idRow)
+				console.log(x)
+				edit.setPost("{% url 'secretario:modInf' %}", 'Modificar Informe!', close)
+			}
+		} else {
+			$.gritter.add({
+				title: 'Error al Modificar Informe!',
+				text: 'No Puede Registrar un Informe con Total de Horas menor a 1',
+				image: "{% static 'img/error.png' %}",
+				sticky: false,
+				time: 3000,
+			});
+		}
 	})
 </script>
