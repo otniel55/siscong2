@@ -3,7 +3,7 @@ import datetime
 #modulos de django
 from django.db.models import Q
 #modulos propios del proyecto
-from secretario.models import PubPrecursor, Informe, GruposPred
+from secretario.models import PubPrecursor, Informe, GruposPred, horasCon
 class gestion:
     elementos={}
     nroKeys=[]
@@ -188,6 +188,12 @@ def recorrerArrayMeses(array, idPub):
                     data[cont]={'horasC':convertMinutesToHours(inf.minutos),'mes':stringMeses[j[1]-1], 'horas':addZeroToFinal(convertMinutesToHours(inf.minutos)), 'publicaciones':inf.publicaciones,
                              'revisitas':inf.revisitas, 'estudios':inf.estudios, 'videos':inf.videos, 'obs':inf.observacion, 'pk':inf.pk
                              }
+                    try:
+                        hCon=horasCon.objects.get(FKinf=inf.pk)
+                    except(KeyError, horasCon.DoesNotExist):
+                        pass
+                    else:
+                        data[cont]['horasCon']=hCon.horas
                     if primerInf.mes==j[1] and primerInf.year==j[0]:
                          fin=True
                          if inf.observacion=="n/t":

@@ -70,7 +70,7 @@ def tarjeta(request, vista, idPub, y):
                mesesY=arraymeses(yFin)
                inf=recorrerArrayMeses(mesesY, idPub)[0]
                inf=inf.values()
-               totales={'horasC':0, 'publicaciones':0, 'revisitas':0, 'estudios':0, 'videos':0}
+               totales={'horasC':0, 'publicaciones':0, 'revisitas':0, 'estudios':0, 'videos':0, 'horasCon':0}
                for i in inf:
                     for j in i.keys():
                          if j not in ["mes", "obs", 'pk', 'horas'] and i[j]!="":
@@ -93,6 +93,8 @@ def tarjeta(request, vista, idPub, y):
                totales['horas']=hT[:hT.find(".")+3]
                if not float(totales['horas']).is_integer():
                     totales['horas']=addZeroToFinal(float(totales['horas']))
+               if totales['horasCon']==0:
+                    del totales['horasCon']
                datos={'pub':inf, 'p':p, 'url':2, "total":totales}
           else:
                datos={'vacio':1, 'url':2}
