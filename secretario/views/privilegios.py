@@ -90,6 +90,30 @@ def nombrar(request):
         msg={'msg':'Se han asignado los privilegios con exito.'}
     return HttpResponse(json.dumps(msg))
 
+def modificar(request):
+    msg={}
+    num=['tiempoBau', 'edad', 'id']
+    validar=gestion(request.POST, num)
+    validar.validar()
+    if not validar.error:
+        _id=int(request.POST['id'])
+        _tiempo=int(request.POST['tiempoBau'])
+        _edadMin=int(request.POST['edad'])
+        _nombre=request.POST['nombre']
+        try:
+            priv=privilegio.objects.get(pk=_id)
+        except(KeyError, privilegio.DoesNotExist):
+            msg={'msg':"Error, privilegio no existe"}
+        else:
+            priv.nombre=_nombre
+            priv.tiempoBauMin=_tiempo
+            priv.edadMin=_edadMin
+            priv.save()
+            msg={'msg':"Privilegio modificado con exito"}
+    else:
+        msg=validar.mensaje
+    return HttpResponse(json.dumps(msg))
+
 def privilegioActivo(priv, mes, year):
      activo=False
      if getDiferenciaMes(priv.mes, priv.year, mes, year) > -2:
