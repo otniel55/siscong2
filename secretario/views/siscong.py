@@ -202,8 +202,6 @@ def recorrerArrayMeses(array, idPub):
                     fin=True
                     if inf.observacion=="n/t":
                          data[cont]['obs']="Primer Informe."
-                    else:
-                         data[cont]['obs']+="(Primer Informe)"
           cont+=1
      return [reverseDict(data), fin]
 
