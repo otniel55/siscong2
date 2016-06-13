@@ -144,14 +144,25 @@
 		})
 
 		$('#btnMod').click(function(){
-			redirect=function(res){location.href="../../consultar/Publicadores/"}
-			datMod=new Gestion()
+			redirect =  function(){
+							location.href="../../consultar/Publicadores/"
+						}
+
+			sexo = $('#sexo').bootstrapSwitch('state');
+			if(sexo === true){
+				sexo = 'M'
+			} else {
+				sexo = 'F'
+			}
+
+			datMod = new Gestion()
 			datMod.getInputs('.form-group')
-            inputs=datMod.getDataIn()
+            inputs = datMod.getDataIn()
+
 			if (inputs.vacio==0){
-				keys=new Array('nombre', 'apellido', 'telefono', 'direccion', 'email', 'fechaNa', 'fechaBau', 'Encargado')
-				datMod.generateJson(keys, "{{ csrf_token }}")
-				datMod.setPost("{% url 'secretario:modPub' %}", '', redirect)
+				keys = new Array('nombre', 'apellido', 'telefono', 'direccion', 'email', 'fechaNa', 'fechaBau', 'sexo')
+				datMod.generateJson(keys, "{{ csrf_token }}", sexo)
+				datMod.setPost("{% url 'secretario:modPub' %}", 0, redirect)
 			}
 		})
 

@@ -1,6 +1,4 @@
-{% extends "layout.html" %}
-
-{% block contenido %}
+{% extends "layout.html" %} {% load staticfiles %} {% block contenido %}
 
 <div class="col-xs-12">
 	<div class="form-panel">
@@ -229,7 +227,7 @@
 										{% endif %}
 
 										{% if x.status == 0 %}
-											<td class="estado tConPubCol5" id="{{x.id}}" data-title="Estado" style="background-color: #09B20F;" >
+											<td class="tConPubCol5" id="{{x.id}}" data-title="Estado" style="background-color: #09B20F;" >
 
 												<div style="display: none">
 													<dl>
@@ -248,7 +246,7 @@
 												</div>
 											</td>
 										{% elif x.status == 1 %}
-											<td class="estado tConPubCol5" id="{{x.id}}" data-title="Estado" style="background-color:#ffad33">
+											<td class="tConPubCol5" id="{{x.id}}" data-title="Estado" style="background-color:#ffad33">
 
 												<div style="display: none">
 													<dl>
@@ -267,7 +265,7 @@
 												</div>
 											</td>
 										{% elif x.status ==  2 %}
-											<td class="estado tConPubCol5" id="{{x.id}}" data-title="Estado" style="background-color:#b30000">
+											<td class="tConPubCol5" id="{{x.id}}" data-title="Estado" style="background-color:#b30000">
 
 												<div style="display: none">
 													<dl>
@@ -286,7 +284,7 @@
 												</div>
 											</td>
 										{% elif x.status ==  3 %}
-											<td class="estado tConPubCol5" id="{{x.id}}" data-title="Estado" style="background-color: #009999">
+											<td class="tConPubCol5" id="{{x.id}}" data-title="Estado" style="background-color: #009999">
 
 												<div style="display: none">
 													<dl>
@@ -302,7 +300,7 @@
 												</div>
 											</td>
 										{% else %}
-											<td class="estado tConPubCol5" id="{{x.id}}" data-title="Estado" style="background-color: #b6b6b6">
+											<td class="tConPubCol5" id="{{x.id}}" data-title="Estado" style="background-color: #b6b6b6">
 												<div style="display: none">
 													<dl>
 														<dt>Estado:</dt>
@@ -631,7 +629,10 @@
 		//end panel
 
 		//dialog
-			$('td.estado').mouseover(function(){
+		$.each(table.rows().nodes(), function(key, nodo){
+			var colStatus = $(nodo).children(':eq(4)')
+
+			$(colStatus).mouseover(function(){
 				$('#dialogo').html(
 					$(this).find('div').html()
 				)
@@ -640,11 +641,13 @@
 					title: "Detalles del Estado",
 					position: { my: "right-60 center", at: "", of: this },
 					dialogClass: 'dlg-no-title',
-				});
+				})
 			})
-			$('td.estado').mouseleave(function(){
+
+			$(colStatus).mouseleave(function(){
 				$('#dialogo').dialog("destroy")
 			})
+		})
 		//end dialog
 
 		//alert when edit public
@@ -652,7 +655,7 @@
                 $.gritter.add({
 					title: 'Modificar publicador',
 					text: "{{ msg }}",
-					image: '',
+					image: "{% static 'img/success.png' %}",
 					sticky: false,
 					time: 3000,
 					class_name: ''
