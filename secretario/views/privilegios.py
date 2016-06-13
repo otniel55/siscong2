@@ -115,6 +115,21 @@ def modificar(request):
         msg=validar.mensaje
     return HttpResponse(json.dumps(msg))
 
+def baja(request):
+    msg={}
+    try:
+        idPub=int(request.POST['id'])
+    except ValueError:
+        msg={'msg':"Error, No intente hacer trampa"}
+    else:
+        try:
+            p=Publicador.objects.get(pk=idPub)
+        except(KeyError, Publicador.DoesNotExist):
+            msg={'msg':"Error, Publicador no existe"}
+        else:
+            hoy=datetime.date.today()
+            pass
+
 def privilegioActivo(priv, mes, year):
      activo=False
      if getDiferenciaMes(priv.mes, priv.year, mes, year) > -2:

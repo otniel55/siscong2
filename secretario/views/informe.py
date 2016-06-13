@@ -77,20 +77,31 @@ def tarjeta(request, vista, idPub, y):
                               if j=="horasC":
                                    tH=str(float(totales[j]))
                                    tHoras=str(float(i[j]))
-                                   tHInt=int(tH[tH.find(".")+1:])
-                                   tHorasInt=int(tHoras[tHoras.find(".")+1:])
+                                   tHInt=porDiez(int(tH[tH.find(".")+1:]))
+                                   tHorasInt=porDiez(int(tHoras[tHoras.find(".")+1:]))
+                                   print("tHInt:"+str(tHInt))
+                                   print("tHorasInt:"+str(tHorasInt))
                                    if tHInt+tHorasInt>59:
                                         entero=int(tH[:tH.find(".")])+1
                                         decimal=60-tHInt
+                                        print("1:"+str(decimal))
                                         decimal=tHorasInt-decimal
+                                        print("2:"+str(decimal))
                                         r=float(str(entero)+"."+str(decimal))
                                         if r.is_integer():
                                              totales[j]=int(r)
                                         else:
                                              totales[j]=r
-                              totales[j]+=i[j]
+                                   else:
+                                       totales[j]+=i[j] 
+                              else:
+                                   totales[j]+=i[j]
+                              print(j+":"+str(totales[j]))
                hT=str(totales['horasC'])
-               totales['horas']=hT[:hT.find(".")+3]
+               if hT.find(".")>-1:
+                    totales['horas']=hT[:hT.find(".")+3]
+               else:
+                    totales['horas']=hT
                if not float(totales['horas']).is_integer():
                     totales['horas']=addZeroToFinal(float(totales['horas']))
                if totales['horasCon']==0:
@@ -216,3 +227,9 @@ def convertHoursToMinutes(hora):
           else:
                result= [False ,{'msg':'Formato de horas no valido'}]
      return result
+
+def porDiez(num):
+     if num <10:
+          return num*10
+     else:
+          return num
