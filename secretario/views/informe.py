@@ -155,16 +155,16 @@ def modificar(request):
                                    msg={"msg":"Datos del informe modificados con exito", 'on':1}
                                    if HorasC>0:
                                         try:
-                                             hC=horasCon.objects.get(FKinf=inf.pk)
-                                        except(KeyError, horasCon.DoesNotExist):
+                                             hC=horasCon.objects.get(FKinf=48)
+                                        except(horasCon.DoesNotExist):
                                              registrarH=regHorasCon(inf, HorasC, False)
                                              if not registrarH[0]:
                                                   msg=registrarH[1]
                                         else:
-                                             if horas>100:
+                                             if HorasC>100:
                                                   msg={'msg':"Error las horas de consesion NO deben ser mayores a 100"}
                                              else:
-                                                  hC.horas=_horasC
+                                                  hC.horas=HorasC
                                                   hC.save()
                               else:
                                    msg={'msg':"Error ya existe otro informe con esta fecha"}
