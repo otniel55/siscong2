@@ -36,7 +36,7 @@
 
             <section id="no-more-tables" style="margin-top: 20px;">
 
-                <table id="public" class="table table-bordered table-striped table-condensed cf" style="font-size:14px;">
+                <table id="regular" class="table table-bordered table-striped table-condensed cf" style="font-size:14px;">
                     <thead class="cf">
                         <tr>
                             <th class="numeric text-center">Fecha</th>
@@ -53,7 +53,12 @@
                                     {{ info.fecha|date:"F" }}
                                 </td>
                                 <td class="numeric text-center" data-title="Horas Realizadas">
-                                    {{ info.horasI }}/{{info.horasCon}}
+                                    {% if not info.horasCon %}
+										{{ info.horasI }}
+									{% else %}
+										<div class="text-center horasCon divisor">{{ info.horasI }}</div>
+										<div class="text-center horasCon">{{ info.horasCon }}</div>
+									{% endif %}
                                 </td>
                                 <td class="numeric text-center" data-title="Horas Acumuladas">
                                     {{ info.horasA }}
@@ -76,10 +81,71 @@
                         {% endfor %}
                     </tbody>
                 </table>
-                {{total}}
+
+                {% if total %}
+					<table id="totalReg" class="table table-bordered table-striped table-condensed cf" style="font-size:14px;margin-top:30px;">
+						<thead class="cf">
+							<tr>
+								<th class="numeric text-center">Totales</th>
+								<th class="numeric text-center">Horas Informadas</th>
+								<th class="numeric text-center">Horas por Concesion</th>
+								<th class="numeric text-center" style="width:8%;">Objetivo</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="numeric text-center" data-title="Total">
+									Total
+								</td>
+								<td class="numeric text-center" data-title="Horas Informadas">
+									{{ total.totalYear }}
+								</td>
+								<td class="numeric text-center" data-title="Horas por Concesion">
+									{{ total.horasCon }}
+								</td>
+								{% if total.obj == 1 %}
+									<td class="numeric"  data-title="Objetivo" style="width:8%; background-color:#09B20F">
+									</td>
+								{% else %}
+									<td class="numeric"  data-title="Objetivo" style="width:8%; background-color:#af0000">
+									</td>
+								{% endif %}
+							</tr>
+						</tbody>
+					</table>
+        		{% endif %}
             </section>
         </div>
     </div>
 </div>
 
+<div id="dialogo" style="display: none"></div>
+
 {% include 'modalBajaPrecur.html' %}
+
+<script>
+	$('#regular tr').each(function(){
+		$(this).children(':eq(1)').mouseover(function(){
+			if( $(this).children().length == 2 ){
+				$('#dialogo').html(
+					'<dl>\
+						<dt>Horas Predicadas:</dt>\
+						<dd>'+$(this).children(':eq(0)').html().trim()+'</dd>\
+						<dt>Horas por Concesion:</dt>\
+						<dd>'+$(this).children(':eq(1)').html().trim()+'</dd>\
+					</dl>'
+				)
+
+				$('#dialogo').dialog({
+					title: "Detalles de Horas",
+					position: { my: "right-60 center", at: "", of: this },
+					dialogClass: 'dlg-no-title',
+				})
+			}
+		})
+		$(this).children(':eq(1)').mouseleave(function(){
+			if( $(this).children().length == 2 )
+				$('#dialogo').dialog("destroy")
+		})
+	})
+</script>
