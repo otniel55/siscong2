@@ -150,7 +150,7 @@ def modificar(request):
                                    inf.estudios=estudios
                                    inf.publicaciones=publicaciones
                                    inf.videos=videos
-                                   inf.obs=obs
+                                   inf.observacion=obs
                                    inf.save()
                                    msg={"msg":"Datos del informe modificados con exito"}
                                    if HorasC>0:
