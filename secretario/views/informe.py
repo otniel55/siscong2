@@ -152,7 +152,7 @@ def modificar(request):
                                    inf.videos=videos
                                    inf.observacion=obs
                                    inf.save()
-                                   msg={"msg":"Datos del informe modificados con exito"}
+                                   msg={"msg":"Datos del informe modificados con exito", 'on':1}
                                    if HorasC>0:
                                         try:
                                              hC=horasCon.objects.get(FKinf=inf.pk)

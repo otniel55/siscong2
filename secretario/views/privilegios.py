@@ -88,7 +88,7 @@ def nombrar(request):
         msg={'msg':"No se pueden hacer nombramientos del futuro"}
         validaciones=False
     if validaciones:
-        msg={'msg':'Se han asignado los privilegios con exito.'}
+        msg={'msg':'Se han asignado los privilegios con exito.', 'on':1}
     return HttpResponse(json.dumps(msg))
 
 def modificar(request):
@@ -110,7 +110,7 @@ def modificar(request):
             priv.tiempoBauMin=_tiempo
             priv.edadMin=_edadMin
             priv.save()
-            msg={'msg':"Privilegio modificado con exito"}
+            msg={'msg':"Privilegio modificado con exito", 'on':1}
     else:
         msg=validar.mensaje
     return HttpResponse(json.dumps(msg))
