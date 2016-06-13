@@ -79,14 +79,10 @@ def tarjeta(request, vista, idPub, y):
                                    tHoras=str(float(i[j]))
                                    tHInt=porDiez(int(tH[tH.find(".")+1:]))
                                    tHorasInt=porDiez(int(tHoras[tHoras.find(".")+1:]))
-                                   print("tHInt:"+str(tHInt))
-                                   print("tHorasInt:"+str(tHorasInt))
                                    if tHInt+tHorasInt>59:
                                         entero=int(tH[:tH.find(".")])+1
                                         decimal=60-tHInt
-                                        print("1:"+str(decimal))
                                         decimal=tHorasInt-decimal
-                                        print("2:"+str(decimal))
                                         r=float(str(entero)+"."+str(decimal))
                                         if r.is_integer():
                                              totales[j]=int(r)
@@ -96,7 +92,6 @@ def tarjeta(request, vista, idPub, y):
                                        totales[j]+=i[j] 
                               else:
                                    totales[j]+=i[j]
-                              print(j+":"+str(totales[j]))
                hT=str(totales['horasC'])
                if hT.find(".")>-1:
                     totales['horas']=hT[:hT.find(".")+3]
@@ -156,7 +151,7 @@ def modificar(request):
                                    msg={"msg":"Datos del informe modificados con exito", 'on':1}
                                    if HorasC>0:
                                         try:
-                                             hC=horasCon.objects.get(FKinf=48)
+                                             hC=horasCon.objects.get(FKinf=inf.pk)
                                         except(horasCon.DoesNotExist):
                                              registrarH=regHorasCon(inf, HorasC, False)
                                              if not registrarH[0]:

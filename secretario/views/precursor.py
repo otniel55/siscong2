@@ -311,6 +311,10 @@ def historiaPrec(request, year):
                                                   pass
                                              else:
                                                   data[cont]['horasCon']=hCon.horas
+                                                  if acum+hCon.horas>=f[2]*(cont+1):
+                                                       data[cont]['obj']=1
+                                                  else:
+                                                       data[cont]['obj']=0
                                                   acumCon+=hCon.horas
                                    cont=cont+1
                          else:
@@ -325,7 +329,6 @@ def historiaPrec(request, year):
                               else:
                                    data[cont] = {'fecha': datetime.date(hoy.year, hoy.month, 15), 'horasI': "Mes en curso", 'horasA': 0,'horasRes': horasT, 'obj': 2}
                          if (hoy.month==9 and hoy.year==finY) or (cont==12 and data[cont-1]['horasI']!="Mes en curso"):
-                              print("soy pro y llego")
                               total={'horas':acum, 'obj':0}
                               if acum<horasT:
                                    if acumCon>0:
