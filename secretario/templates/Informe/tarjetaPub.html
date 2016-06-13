@@ -11,9 +11,9 @@
 		    	<thead class="cf">				
 					<tr>
 						<th class="numeric text-center colTarjeta-1">Mes</th>
-						<th class="numeric text-center colTarjeta-2">Horas</th>
-						<th class="numeric text-center colTarjeta-3">Publicaciones</th>
-						<th class="numeric text-center colTarjeta-4">Videos</th>
+						<th class="numeric text-center colTarjeta-2">Publicaciones</th>
+						<th class="numeric text-center colTarjeta-3">Videos</th>
+						<th class="numeric text-center colTarjeta-4">Horas</th>
 						<th class="numeric text-center colTarjeta-5">Revisitas</th>
 						<th class="numeric text-center colTarjeta-6">Cursos Biblicos</th>
 						<th class="numeric text-center colTarjeta-7">Observaciones</th>
@@ -22,10 +22,16 @@
 				<tbody>
 				{% for informe in pub %}
 					<tr id="{{ informe.pk }}">
-						<td class="numeric text-center" data-title="Meses">
+						<td class="numeric text-center colTarjeta-1" data-title="Meses">
 							{{ informe.mes }}
 						</td>
-						<td class="numeric text-center" data-title="Horas">
+						<td class="numeric text-center colTarjeta-2" data-title="Public.">
+							{{ informe.publicaciones }}
+						</td>
+						<td class="numeric text-center colTarjeta-3" data-title="Videos">
+							{{ informe.videos }}
+						</td>
+						<td class="numeric text-center colTarjeta-4" data-title="Horas">
 							{% if not informe.horasCon %}
 								{{ informe.horas }}
 							{% else %}
@@ -33,44 +39,37 @@
 								<div class="text-center horasCon">{{ informe.horasCon }}</div>
 							{% endif %}
 						</td>
-						<td class="numeric text-center" data-title="Public.">
-							{{ informe.publicaciones }}
-						</td>
-						<td class="numeric text-center" data-title="Videos">
-							{{ informe.videos }}
-						</td>
-						<td class="numeric text-center" data-title="Revisitas">
+						<td class="numeric text-center colTarjeta-5" data-title="Revisitas">
 							{{ informe.revisitas }}
 						</td>
-						<td class="numeric text-center" data-title="Estudios">
+						<td class="numeric text-center colTarjeta-6" data-title="Estudios">
 							{{ informe.estudios }}
 						</td>
-						<td class="numeric text-center" data-title="Observ.">
+						<td class="numeric text-center colTarjeta-7" data-title="Observ.">
 							{{ informe.obs }}
 						</td>
 					</tr>
 				{% endfor %}
 					<tr>
-						<td class="numeric text-center" data-title="Totales" style="width:20%;">
+						<td class="numeric text-center colTarjeta-1" data-title="Totales">
 							Totales
 						</td>
-						<td class="numeric text-center" data-title="Horas" style="width:15%;">
-							{{ total.horas }}
-						</td>
-						<td class="numeric text-center" data-title="Public." style="width:15%;">
+						<td class="numeric text-center colTarjeta-2" data-title="Public.">
 							{{ total.publicaciones }}
 						</td>
-						<td class="numeric text-center" data-title="Videos" style="width:15%;">
+						<td class="numeric text-center colTarjeta-3" data-title="Videos">
 							{{ total.videos }}
 						</td>
-						<td class="numeric text-center" data-title="Revisitas" style="width:15%;">
+						<td class="numeric text-center colTarjeta-4" data-title="Horas">
+							{{ total.horas }}
+						</td>
+						<td class="numeric text-center colTarjeta-5" data-title="Revisitas">
 							{{ total.revisitas }}
 						</td>
-						<td class="numeric text-center" data-title="Estudios" style="width:20%;">
+						<td class="numeric text-center colTarjeta-6" data-title="Estudios">
 							{{ total.estudios }}
 						</td>
-						<td class="numeric text-center" data-title="Observ." style="width:20%;">
-
+						<td class="numeric text-center colTarjeta-7" data-title="Observ.">
 						</td>
 					</tr>
 				</tbody>
@@ -79,41 +78,7 @@
 	{% endif %}
 </div>
 
-<div class="modal fade" id="modEditInfo" role="dialog">
-	<div class="modal-dialog modal-sm">
-		<div class="modal-content">
-			<div class="modal-header">
-			  <button id="closeInf" type="button" class="close" data-dismiss="modal">&times;</button>
-			  <h4 class="modal-title">Registrar Informe</h4>
-			</div>
-
-			<div class="modal-body">
-
-				<input type="number" min="0" placeholder="Ingrese las Horas..." class="form-control mrg-bottom">
-				<input type="number" min="0" placeholder="Ingrese las Publicaciones..." class="form-control mrg-bottom">
-				<input type="number" min="0" placeholder="Ingrese los Videos..." class="form-control mrg-bottom">
-				<input type="number" min="0" placeholder="Ingrese las Revisitas..." class="form-control mrg-bottom">
-				<input type="number" min="0" placeholder="Ingrese los Estudios..." class="form-control mrg-bottom">
-				<input type="text" placeholder="Ingrese una Observacion..." class="form-control mrg-bottom">
-
-				<div class='input-group date datepicker'>
-					<input type="text" class="form-control" placeholder="Ingrese la Fecha...">
-					<span class="input-group-addon">
-						<span class="fa fa-calendar">
-						</span>
-					</span>
-				</div>
-
-				<hr>
-				<input type="number" class="form-control" min="0" placeholder="Ingrese las Horas por Consecion...">
-			</div>
-
-			<div class="modal-footer">
-				<button id="modInf" type="button" class="btn btn-success">Modificar</button>
-			</div>
-		</div>
-	</div>
-</div>
+{% include 'inc/modalInforme.html' %}
 
 <div id="dialogo" style="display: none"></div>
 
@@ -131,7 +96,7 @@
 
 	$('#tarjeta tr').each(function(){
 		//dialog
-		$(this).children(':eq(1)').mouseover(function(){
+		$(this).children(':eq(3)').mouseover(function(){
 			if( $(this).children().length == 2 ){
 				$('#dialogo').html(
 					'<dl>\
@@ -152,7 +117,7 @@
 			}
 		})
 
-		$(this).children(':eq(1)').mouseleave(function(){
+		$(this).children(':eq(3)').mouseleave(function(){
 			if( $(this).children().length == 2 )
 				$('#dialogo').dialog("destroy")
 		})
@@ -199,27 +164,34 @@
 				inputs.eq(6).val(fecha)
 
 				//modal
-				$('#modEditInfo').modal('show')
+				$('#informe').modal('show')
 			}
 		})
 	})
 
 	//evento al cerrar la modal
-	$('#modEditInfo').on('hidden.bs.modal',function(){
+	$('#informe').on('hidden.bs.modal',function(){
 		clean = new Gestion()
 		clean.getInputs('.modal-body')
 		clean.Cargar()
 	})
 
+	//modal informe
+	$('#regInf').html('Modificar')
+	$('.modal-title').html('Modificar Informe')
+	$('#regInf').addClass('btn-success')
+
 	//btn modInfo
-	$('#modInf').click(function(){
+	$('#regInf').click(function(){
 
 		close = function(res){
-			$('#modEditInfo').modal('hide')
-			edit.Cargar()
+			$('#informe').modal('hide')
+			idPub = combos.eq(1).val()
+            year = combos.eq(2).val()
+			edit.ejecutarLoad("../2/"+idPub+"/Tarjeta/"+year+"", datpub)
 		}
 
-		if( $("input[type='number']:eq(0)", ".modal-body").val() != 0 ){
+		if( $("input[type='number']:eq(2)", ".modal-body").val() > 0 ){
 			obs =  $(":text:eq(0)", ".modal-body")
 			if ( obs.val().trim() == "" ){
 				obs.val("n/t")
@@ -235,19 +207,15 @@
 			data = edit.getDataIn()
 
 			if ( data.vacio == 0 ){
-				keys = new Array('horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'obs','fecha', 'horasCons', 'id')
-				x = edit.generateJson(keys, '{{ csrf_token }}', idRow)
-				console.log(x)
+				keys = new Array('publicaciones', 'videos', 'horas', 'revisitas', 'estudios', 'obs','fecha', 'horasCons', 'id')
+				edit.generateJson(keys, '{{ csrf_token }}', idRow)
 				edit.setPost("{% url 'secretario:modInf' %}", 'Modificar Informe!', close)
+			} else {
+				showMsg('Error al Registrar Informe!','Hay Algunos Campos Vacios o con valores invalidos', "{% static 'img/error.png' %}")
 			}
 		} else {
-			$.gritter.add({
-				title: 'Error al Modificar Informe!',
-				text: 'No Puede Registrar un Informe con Total de Horas menor a 1',
-				image: "{% static 'img/error.png' %}",
-				sticky: false,
-				time: 3000,
-			});
+			showMsg('Error al Registrar Informe!','No Puede Registrar Informes Vacios', "{% static 'img/error.png' %}")
+			hrs.css('border-color', '#d90000')
 		}
 	})
 </script>
