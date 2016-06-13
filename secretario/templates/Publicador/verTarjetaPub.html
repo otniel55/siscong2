@@ -82,7 +82,18 @@
 
 		Pubs = {{ pubs|safe }}
 
-		combos.eq(1).select2()
+		combos.eq(1).select2({
+			sorter: function(results) {
+						return results.sort(function(a, b) {
+							if (a.value == "" || b.value == ""){
+								return 0
+							} else {
+								return a.text == b.text ? 0 : a.text < b.text ? -1 : 1
+							}
+						})
+					}
+		})
+
 		loadCmbPubs(Pubs)
 
 		//nice scroll combo buscador
