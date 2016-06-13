@@ -150,7 +150,7 @@ def conInfPrec(request):
                               promE.append(0)
                               promR.append(0)
                          else:
-                              promH.append(inf.minutos)
+                              promH.append(int(convertMinutesToHours(inf.minutos)))
                               promE.append(inf.estudios)
                               promR.append(inf.revisitas)
                          contP += 1
@@ -185,11 +185,11 @@ def conEstPub(request):
                               if precursorActivo(p, i[1], i[0]):
                                    add=False
                                    break
-                         horas.append(inf.minutos)
+                         horas.append(int(convertMinutesToHours(inf.minutos)))
                          revisitas.append(inf.revisitas)
                          estudios.append(inf.estudios)
                          if add:
-                              pubH.append(inf.minutos)
+                              pubH.append(int(convertMinutesToHours(inf.minutos)))
                     data[cont]={'year':i[0],'mes':i[1], 'promE':prom(estudios), 'promH':prom(horas), 'promR':prom(revisitas)}
                     if len(pubH)>0:
                          data[cont]['promP']=prom(pubH)
@@ -246,7 +246,7 @@ def informeTotal(mes, year):
           inform['publicaciones'] += inf.publicaciones
           inform['revisitas'] += inf.revisitas
           inform['estudios'] += inf.estudios
-          inform['horas'] += inf.minutos
+          inform['horas'] += int(convertMinutesToHours(inf.minutos))
           inform['videos'] += inf.videos
      return inform
 

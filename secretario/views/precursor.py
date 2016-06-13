@@ -114,7 +114,7 @@ def nombrar(request):
           msg={'msg':"Error! no intente hacer trampa"}
           validaciones=False
      if validaciones:
-          msg={'msg':'Los publicadores han sido nombrados precursores.'}
+          msg={'msg':'Los publicadores han sido nombrados precursores.', 'on':1}
      return HttpResponse(json.dumps(msg))
 
 def conPrecs(request):
@@ -366,7 +366,7 @@ def darBaja(request):
                     else:
                          precur.duracion=getDiferenciaMes(precur.mesIni, precur.yearIni, hoy.month, hoy.year)+1
                     precur.save()
-                    data={'msg':"Precursor dado de baja"}
+                    data={'msg':"Precursor dado de baja", 'on':1}
      return HttpResponse(json.dumps(data))
 
 def yearServicio(request):

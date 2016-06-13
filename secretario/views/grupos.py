@@ -112,7 +112,7 @@ def registrar(request):
      else:
           msg=validar.mensaje
      if validaciones:
-          msg={'msg':"Grupo creado con exito"}
+          msg={'msg':"Grupo creado con exito", 'on':1}
      return  HttpResponse(json.dumps(msg))
 
 def vistaConsultar(request):
@@ -290,7 +290,7 @@ def modificar(request):
      else:
           msg=validar.mensaje
      if pasar:
-          msg={'msg':"Datos modificados exitosamente"}
+          msg={'msg':"Datos modificados exitosamente", 'on':1}
      return HttpResponse(json.dumps(msg))
 
 def verificarPriv(id):
@@ -354,7 +354,7 @@ def eliminar(request):
      try:
           g=GruposPred.objects.get(pk=id)
      except(KeyError, GruposPred.DoesNotExist):
-          datos={'msg':"Error, este grupo existe", 'on':1}
+          datos={'msg':"Error, este grupo no existe"}
      else:
           g.delete()
           datos={'msg':"Grupo eliminado con exito", 'on':1}
