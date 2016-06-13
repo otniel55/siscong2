@@ -64,6 +64,7 @@
 						<button id="btnSave" class="btn btn-primary btn-block">Guardar</button>
 					</div>
 				{% endif %}
+				<div class="clearfix"></div>
 			</div>
 		</div>    
 	</div>
@@ -75,6 +76,16 @@
 			{% if on %}
 				$("#fechaNA").val("{{ fechaNa }}")
 				$('#fechaBau').val("{{ fechaBau }}")
+
+				sexo = '{{ sexo }}'
+				state = $('#sexo').bootstrapSwitch('state');
+				if( !state === true && sexo === 'M' ){
+					$('#sexo').bootstrapSwitch('toggleState')
+				}
+
+				if( !state === false && sexo === 'F' ){
+					$('#sexo').bootstrapSwitch('toggleState')
+				}
 			{% endif %}
 
 			$('span.btn').click(function(){

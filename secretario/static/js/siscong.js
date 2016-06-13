@@ -197,7 +197,7 @@
 				res = JSON.parse(res)
 
 				if ( titulo ){
-					if ( res.msg.substring(0,5) == "Error" ){
+					if ( !res.on ){
 						img = "/static/img/error.png"
 					} else {
 						img = "/static/img/success.png"
@@ -726,4 +726,20 @@
 
 		reorder(select1)
 		reorder(select2)
+	}
+
+	function searchIntoJson(json, id){
+		var i = 0
+		var key = ""
+		var ok = false
+
+		while( ok == false && i < Object.keys(json).length ){
+			if ( json[i].IDpub == id ){
+				ok = true
+				return i
+			}
+			i++
+		}
+
+		return false
 	}

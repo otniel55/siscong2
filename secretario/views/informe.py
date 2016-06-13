@@ -114,6 +114,7 @@ def tarjeta(request, vista, idPub, y):
                request.session['idgrupo'] = p.grupo.values()[0]['IDgrupo']
           else:
                pagina = 'Informe/tarjetaPub.html'
+               datos['vista'] = 2
 
      return render(request, pagina , datos)
 

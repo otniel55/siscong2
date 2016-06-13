@@ -4,8 +4,39 @@
 	{% if vacio %}
 		<h3 class="text-center" style="margin:0px;margin-bottom:15px;">Este publicador no ha informado en ese año de servicio</h3>
 	{% else %}
-		<h3 class="text-center" style="margin:0px;margin-bottom:15px;">Actividad de: <span style="color: darkcyan;">{{ p.nombre|upper }} {{ p.apellido|upper }}</span></h3>
-		
+
+		<div id="datosPub">
+			<h3 class="text-center titlecolor" style="margin:0px;margin-bottom:10px;">Datos del Publicador</h3>
+			<div class="col-md-6">
+				<dl class="ficha">
+					<dt>Nombre:</dt>
+					<dd>{{ p.nombre }} {{ p.apellido }}</dd>
+
+					<dt>Telefono:</dt>
+					<dd>{{ p.telefono }}</dd>
+
+					<dt>Direccion:</dt>
+					<dd>{{ p.direccion }}</dd>
+
+					<dt>E-mail:</dt>
+					<dd>{{ p.email }}</dd>
+				</dl>
+			</div>
+
+			<div class="col-md-6">
+				<dl class="ficha">
+					<dt>Fecha de Nacimiento:</dt>
+					<dd>{{ p.fechaNa }}</dd>
+
+					<dt>Fecha de Bautismo:</dt>
+					<dd>{{ p.fechaBau }}</dd>
+
+					<dt>Sexo:</dt>
+					<dd>{{ p.sexo }}</dd>
+				</dl>
+			</div>
+		</div>
+
 		<section id="no-more-tables">
 			<table id="tarjeta" class="table table-bordered table-striped table-hover table-condensed cf">
 		    	<thead class="cf">				
@@ -74,6 +105,7 @@
 					</tr>
 				</tbody>
 			</table>
+			<div class="clearfix"></div>
 		</section>
 	{% endif %}
 </div>
@@ -82,140 +114,142 @@
 
 <div id="dialogo" style="display: none"></div>
 
-<script>
-	var idRow
+{% if vista == 2 %}
+	<script>
+		var idRow
 
-	$('.datepicker').datetimepicker({
-		format: 'MM-YYYY',
-		widgetPositioning:  {
-		  horizontal: 'right',
-		  vertical: 'auto',
-		},
-		maxDate:'now'
-	})
+		$('.datepicker').datetimepicker({
+			format: 'MM-YYYY',
+			widgetPositioning:  {
+			  horizontal: 'right',
+			  vertical: 'auto',
+			},
+			maxDate:'now'
+		})
 
-	$('#tarjeta tr').each(function(){
-		//dialog
-		$(this).children(':eq(3)').mouseover(function(){
-			if( $(this).children().length == 2 ){
-				$('#dialogo').html(
-					'<dl>\
-						<dt>Horas Predicadas:</dt>\
-						<dd>'+$(this).children(':eq(0)').html().trim()+'</dd>\
-						<dt>Horas por Concecion:</dt>\
-						<dd>'+$(this).children(':eq(1)').html().trim()+'</dd>\
-						<dt>Observacion:</dt>\
-						<dd>'+$(this).siblings(':eq(5)').html().trim()+'</dd>\
-					</dl>'
-				)
+		$('#tarjeta tr').each(function(){
+			//dialog
+			$(this).children(':eq(3)').mouseover(function(){
+				if( $(this).children().length == 2 ){
+					$('#dialogo').html(
+						'<dl>\
+							<dt>Horas Predicadas:</dt>\
+							<dd>'+$(this).children(':eq(0)').html().trim()+'</dd>\
+							<dt>Horas por Concecion:</dt>\
+							<dd>'+$(this).children(':eq(1)').html().trim()+'</dd>\
+							<dt>Observacion:</dt>\
+							<dd>'+$(this).siblings(':eq(5)').html().trim()+'</dd>\
+						</dl>'
+					)
 
-				$('#dialogo').dialog({
-					title: "Detalles de Horas",
-					position: { my: "right-60 center", at: "", of: this },
-					dialogClass: 'dlg-no-title',
-				})
+					$('#dialogo').dialog({
+						title: "Detalles de Horas",
+						position: { my: "right-60 center", at: "", of: this },
+						dialogClass: 'dlg-no-title',
+					})
+				}
+			})
+
+			$(this).children(':eq(3)').mouseleave(function(){
+				if( $(this).children().length == 2 )
+					$('#dialogo').dialog("destroy")
+			})
+			//end dialog
+
+			$(this).click(function(){
+				idRow = $(this).attr('id')
+
+				if( idRow && idRow != '0' ){
+					//inputs de la ventana modal
+					inputs = $('input', '.modal-body')
+
+					//llenar los inputs con los valores de las 'td' de fila
+					$.each($(this).children(':eq(0)').siblings(), function(key, td){
+						if( key != 5 ){
+							value = parseInt( $(td).html().trim() )
+						} else {
+							value = $(td).html().trim()
+						}
+
+						if( $(td).children().length == 2 ){
+							//input horas
+							inputs.eq(key).val( parseInt( $(td).children(':eq(0)').html().trim() ) )
+
+							//input horas por concesion
+							inputs.eq(7).val( parseInt( $(td).children(':eq(1)').html().trim() ) )
+						} else {
+							inputs.eq(key).val( value )
+						}
+					})
+
+					//obtener fecha
+					mes = $(this).children(':eq(0)').html().trim()
+					year = $('select:eq(2)').val().substring(0,4)
+					year2 = $('select:eq(2)').val().substring(4)
+					mes = moment().month(mes).format("MM")
+
+					if( mes >= '09' && mes <= '12' ){
+						fecha = mes+"-"+year
+					} else {
+						fecha = mes+"-"+year2
+					}
+
+					inputs.eq(6).val(fecha)
+
+					//modal
+					$('#informe').modal('show')
+				}
+			})
+		})
+
+		//evento al cerrar la modal
+		$('#informe').on('hidden.bs.modal',function(){
+			clean = new Gestion()
+			clean.getInputs('.modal-body')
+			clean.Cargar()
+		})
+
+		//modal informe
+		$('#regInf').html('Modificar')
+		$('.modal-title').html('Modificar Informe')
+		$('#regInf').addClass('btn-success')
+
+		//btn modInfo
+		$('#regInf').click(function(){
+
+			close = function(res){
+				$('#informe').modal('hide')
+				idPub = combos.eq(1).val()
+				year = combos.eq(2).val()
+				edit.ejecutarLoad("../2/"+idPub+"/Tarjeta/"+year+"", datpub)
 			}
-		})
 
-		$(this).children(':eq(3)').mouseleave(function(){
-			if( $(this).children().length == 2 )
-				$('#dialogo').dialog("destroy")
-		})
-		//end dialog
-
-		$(this).click(function(){
-			idRow = $(this).attr('id')
-
-			if( idRow && idRow != '0' ){
-				//inputs de la ventana modal
-				inputs = $('input', '.modal-body')
-
-				//llenar los inputs con los valores de las 'td' de fila
-				$.each($(this).children(':eq(0)').siblings(), function(key, td){
-					if( key != 5 ){
-						value = parseInt( $(td).html().trim() )
-					} else {
-						value = $(td).html().trim()
-					}
-
-					if( $(td).children().length == 2 ){
-						//input horas
-						inputs.eq(key).val( parseInt( $(td).children(':eq(0)').html().trim() ) )
-
-						//input horas por concesion
-						inputs.eq(7).val( parseInt( $(td).children(':eq(1)').html().trim() ) )
-					} else {
-						inputs.eq(key).val( value )
-					}
-				})
-
-				//obtener fecha
-				mes = $(this).children(':eq(0)').html().trim()
-				year = $('select:eq(2)').val().substring(0,4)
-				year2 = $('select:eq(2)').val().substring(4)
-				mes = moment().month(mes).format("MM")
-
-				if( mes >= '09' && mes <= '12' ){
-					fecha = mes+"-"+year
-				} else {
-					fecha = mes+"-"+year2
+			if( $("input[type='number']:eq(2)", ".modal-body").val() > 0 ){
+				obs =  $(":text:eq(0)", ".modal-body")
+				if ( obs.val().trim() == "" ){
+					obs.val("n/t")
 				}
 
-				inputs.eq(6).val(fecha)
+				HC = $("input[type='number']:eq(5)", ".modal-body")
+				if ( HC.val().trim() == "" ){
+					HC.val(0)
+				}
 
-				//modal
-				$('#informe').modal('show')
+				edit = new Gestion()
+				edit.getInputs('.modal-body')
+				data = edit.getDataIn()
+
+				if ( data.vacio == 0 ){
+					keys = new Array('publicaciones', 'videos', 'horas', 'revisitas', 'estudios', 'obs','fecha', 'horasCons', 'id')
+					edit.generateJson(keys, '{{ csrf_token }}', idRow)
+					edit.setPost("{% url 'secretario:modInf' %}", 'Modificar Informe!', close)
+				} else {
+					showMsg('Error al Registrar Informe!','Hay Algunos Campos Vacios o con valores invalidos', "{% static 'img/error.png' %}")
+				}
+			} else {
+				showMsg('Error al Registrar Informe!','No Puede Registrar Informes Vacios', "{% static 'img/error.png' %}")
+				hrs.css('border-color', '#d90000')
 			}
 		})
-	})
-
-	//evento al cerrar la modal
-	$('#informe').on('hidden.bs.modal',function(){
-		clean = new Gestion()
-		clean.getInputs('.modal-body')
-		clean.Cargar()
-	})
-
-	//modal informe
-	$('#regInf').html('Modificar')
-	$('.modal-title').html('Modificar Informe')
-	$('#regInf').addClass('btn-success')
-
-	//btn modInfo
-	$('#regInf').click(function(){
-
-		close = function(res){
-			$('#informe').modal('hide')
-			idPub = combos.eq(1).val()
-            year = combos.eq(2).val()
-			edit.ejecutarLoad("../2/"+idPub+"/Tarjeta/"+year+"", datpub)
-		}
-
-		if( $("input[type='number']:eq(2)", ".modal-body").val() > 0 ){
-			obs =  $(":text:eq(0)", ".modal-body")
-			if ( obs.val().trim() == "" ){
-				obs.val("n/t")
-			}
-
-			HC = $("input[type='number']:eq(5)", ".modal-body")
-			if ( HC.val().trim() == "" ){
-				HC.val(0)
-			}
-
-			edit = new Gestion()
-			edit.getInputs('.modal-body')
-			data = edit.getDataIn()
-
-			if ( data.vacio == 0 ){
-				keys = new Array('publicaciones', 'videos', 'horas', 'revisitas', 'estudios', 'obs','fecha', 'horasCons', 'id')
-				edit.generateJson(keys, '{{ csrf_token }}', idRow)
-				edit.setPost("{% url 'secretario:modInf' %}", 'Modificar Informe!', close)
-			} else {
-				showMsg('Error al Registrar Informe!','Hay Algunos Campos Vacios o con valores invalidos', "{% static 'img/error.png' %}")
-			}
-		} else {
-			showMsg('Error al Registrar Informe!','No Puede Registrar Informes Vacios', "{% static 'img/error.png' %}")
-			hrs.css('border-color', '#d90000')
-		}
-	})
-</script>
+	</script>
+{% endif %}

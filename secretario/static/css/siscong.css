@@ -414,6 +414,13 @@ label[for="line"] {
 	width: 25%
 }
 
+#datosPub .ficha {
+	margin: 0px;
+	padding: 0px;
+    font-size: 14px;
+	padding-bottom: 10px;
+}
+
 /* Media Queries*/
 @media (min-width: 1680px){
 	#btnCon {
