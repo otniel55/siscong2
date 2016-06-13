@@ -87,41 +87,7 @@
 	</div>
 </div>
 
-<div class="modal fade" id="informe" role="dialog">
-	<div class="modal-dialog modal-sm">
-		<div class="modal-content">
-			<div class="modal-header">
-			  <button id="closeInf" type="button" class="close" data-dismiss="modal">&times;</button>
-			  <h4 class="modal-title">Registrar Informe</h4>
-			</div>
-
-			<div class="modal-body">
-
-				<input type="number" min="0" placeholder="Ingrese las Horas..." class="form-control mrg-bottom">
-				<input type="number" min="0" placeholder="Ingrese las Publicaciones..." class="form-control mrg-bottom">
-				<input type="number" min="0" placeholder="Ingrese los Videos..." class="form-control mrg-bottom">
-				<input type="number" min="0" placeholder="Ingrese las Revisitas..." class="form-control mrg-bottom">
-				<input type="number" min="0" placeholder="Ingrese los Estudios..." class="form-control mrg-bottom">
-				<input type="text" placeholder="Ingrese una Observacion..." class="form-control mrg-bottom">
-
-				<div class='input-group date datepicker'>
-					<input type="text" class="form-control" placeholder="Ingrese la Fecha...">
-					<span class="input-group-addon">
-						<span class="fa fa-calendar">
-						</span>
-					</span>
-				</div>
-
-				<hr>
-				<input type="number" class="form-control" min="0" placeholder="Ingrese las Horas por Consecion...">
-			</div>
-
-			<div class="modal-footer">
-				<button id="regInf" type="button" class="btn btn-primary">Registrar</button>
-			</div>
-		</div>
-	</div>
-</div>
+{% include 'inc/modalInforme.html' %}
 
 <script>
 
@@ -144,6 +110,10 @@
 		maxwidth = $(window).width()
 	})
 
+	$('#regInf').html('Registrar')
+	$('.modal-title').html('Registrar Informe')
+	$('#regInf').addClass('btn-primary')
+
 	$("td > button:nth-child(1)").click(function(){
 		id = 0
 		id = this.parentNode.id
@@ -155,11 +125,13 @@
 
 	$("#regInf").click(function(){
 		close = function(res){
-			$("#closeInf").click()
+			$('#informe').modal('hide')
 			datInf.Cargar()
 		}
 
-		if( $("input[type='number']:eq(0)", ".modal-body").val() != 0 ){
+		hrs = $("input[type='number']:eq(2)", ".modal-body")
+		if( hrs.val() > 0 ){
+
 			obs =  $(":text:eq(0)", ".modal-body")
 			if ( obs.val().trim() == "" ){
 				obs.val("n/t")
@@ -175,19 +147,15 @@
 			input = datInf.getDataIn()
 
 			if ( input.vacio == 0 ){
-				keys = new Array('horas', 'publicaciones', 'videos', 'revisitas', 'estudios', 'obs','fecha','horasCons', 'publicador')
-				x = datInf.generateJson(keys, '{{ csrf_token }}', id)
-				console.log(x)
+				keys = new Array('publicaciones', 'videos', 'horas', 'revisitas', 'estudios', 'obs','fecha','horasCons', 'publicador')
+				datInf.generateJson(keys, '{{ csrf_token }}', id)
 				datInf.setPost("{% url 'secretario:regInf' %}", 'Regitro de informe!', close)
+			} else {
+				showMsg('Error al Registrar Informe!','Hay Algunos Campos Vacios o con valores invalidos', "{% static 'img/error.png' %}")
 			}
 		} else {
-			$.gritter.add({
-				title: 'Error al Registrar Informe!',
-				text: 'No Puede Registrar un Informe con Total de Horas menor a 1',
-				image: "{% static 'img/error.png' %}",
-				sticky: false,
-				time: 3000,
-			});
+			showMsg('Error al Registrar Informe!','No Puede Registrar Informes Vacios', "{% static 'img/error.png' %}")
+			hrs.css('border-color', '#d90000')
 		}
 	})
 

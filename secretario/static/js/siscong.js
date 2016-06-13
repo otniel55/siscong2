@@ -93,11 +93,31 @@
                 vacio = true
             } else {
                 if ( $(this).is('[type="number"]') ){
-                    if( !/^[0-9]+(\.([0-5]{1})([0-9]{1})?)?$/.test( $(this).val() ) ){
-                        vacio = true
+					valor = $(this).val()
+
+                    if( !/^([0-9])*$/.test( valor ) ){
+						if ( /^[0]+(\.([1,3,4]{1})([0,5]{1})?)?$/.test( valor ) ){
+							var on = 0
+
+                        	if( valor == 0.15 )
+								on = 1
+							if( valor == 0.30 )
+								on = 1
+							if( valor == 0.45 )
+								on = 1
+
+							if ( on == 0 ){
+								vacio = true
+								console.log('tengo los minutos mal')
+							}
+
+						} else {
+							vacio = true
+						}
                     }
                 }
             }
+
             if (vacio){
                 $(this).css('border-color', '#d90000')
                 Clear++
@@ -177,21 +197,22 @@
 				res = JSON.parse(res)
 
 				if ( titulo ){
+					if ( res.msg.substring(0,5) == "Error" ){
+						img = "/static/img/error.png"
+					} else {
+						img = "/static/img/success.png"
+					}
 
 					$.gritter.add({
 						title: titulo,
 						text: ''+res.msg,
-						image: '',
+						image: img,
 						sticky: false,
 						time: 3000,
 					});
 
 					if ( fn ){
-                        if ( parametros ){
 						  fn(res, parametros)
-                        } else {
-						  fn(res)
-                        }
 					}
 
 				} else {

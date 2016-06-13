@@ -402,6 +402,18 @@ label[for="line"] {
 	border-right: solid 1px black;
 }
 
+.colTarjeta-1 {
+	width: 25%;
+}
+
+.colTarjeta-2, .colTarjeta-3, .colTarjeta-4, .colTarjeta-5, .colTarjeta-6 {
+	width: 10%;
+}
+
+.colTarjeta-7 {
+	width: 25%
+}
+
 /* Media Queries*/
 @media (min-width: 1680px){
 	#btnCon {
