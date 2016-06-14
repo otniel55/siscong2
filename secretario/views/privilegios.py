@@ -4,9 +4,10 @@ import json
 #modulos propios de django
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.db.models import *
 #modulos propios de proyecto
 from .siscong import *
-from secretario.models import Publicador, privilegio, privilegioPub
+from secretario.models import Publicador, privilegio, privilegioPub, GruposPred
 
 def consultar(request):
     sesionGrupo(request)
@@ -128,7 +129,19 @@ def baja(request):
             msg={'msg':"Error, Publicador no existe"}
         else:
             hoy=datetime.date.today()
-            pass
+            privilegios=privilegioPub.objects.filter(FKpub=p.pk, status=True).order_by("-year", "-mes")
+            if len(privilegios)>0:
+                if len(GruposPred.objects.filter(Q(encargado=p.pk)|Q(auxiliar=p.pk)))==0:
+                    priv=privilegios[0]
+                    priv.status=False
+                    priv.fechaFin=str(datetime.date.today())[0:7]
+                    priv.save()
+                    msg={'msg':"Publcador dado de baja", 'on':1}
+                else:
+                    msg={'msg':"Error, Publicador tiene responsabilidades en un grupo"}
+            else:
+                msg={'msg':"Error, Este publicador no tiene privilegios"}
+    return HttpResponse(json.dumps(msg))
 
 def privilegioActivo(priv, mes, year):
      activo=False
@@ -137,7 +150,6 @@ def privilegioActivo(priv, mes, year):
                mesF = mes
                yearF = year
           else:
-
                fechaF = priv.fechaFin
                mesF = int(fechaF[0:2])
                yearF = int(fechaF[3:])

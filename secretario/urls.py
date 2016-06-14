@@ -59,4 +59,5 @@ urlpatterns = [
     url(r'^privilegio/nombrar$', views.privilegios.Vistanombrar, name='privnombrar'),
     url(r'^privilegio/consultarnombrados$', views.privilegios.consultarNombrados, name='privconsnombrados'),
     url(r'^privnombrar$', views.privilegios.nombrar, name='nombrarPriv'),
+    url(r'^privilegio/baja$', views.privilegios.baja, name='privBaja'),
 ]
