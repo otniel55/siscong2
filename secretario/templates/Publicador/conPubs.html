@@ -455,10 +455,20 @@
 			$('#public_length').hide()
 			$('#public_filter').hide()
 			//$('#public_paginate').hide()
-	        $('.filtro').on( 'keyup change', function (){
-				$('#public').dataTable().fnFilter( this.value )
-			})
         //end dateTable
+
+		//input filtro
+			$('.filtro').on( 'keyup change', function(){
+				if( column && column.search() !== this.value ){
+					console.log('entre')
+					column
+						.search( this.value )
+						.draw()
+				} else if ( !column ){
+					$('#public').dataTable().fnFilter( this.value )
+				}
+			})
+		//end input filtro
 
 		//dataTimePicker
 			$(function () {
@@ -476,25 +486,26 @@
 						date = moment(date._d.toJSON()).format('YYYY-MM-DD')
 	            		$('.filtro').val(date)
 	            		$('.filtro').change()
-	        		});
-	        });
+	        		})
+	        })
 		//end dataTimePicker
 
 		//button clear filter
-				btnClear = $(".visible-lg #clear, .visible-md #clear, .visible-sm #clear")
-				btnClear.click(function(){
-				fechai = fechaf = fechaActual = look = ""
+			btnClear = $(".visible-lg #clear, .visible-md #clear, .visible-sm #clear")
+
+			btnClear.click(function(){
+				column = fechai = fechaf = fechaActual = look = ""
 				$('.filtro').val("").change()
 				table.columns().search('').draw()
+				$('input').iCheck('indeterminate')
 			})
 		//end button clear
 
 		//icheck
 			var column
-			$('input').on('ifChecked', function(){
+			$('input[type="radio"]').on('ifChecked', function(){
 				opt = ""
 				column = ""
-
 				opt = parseInt( $(this).eq(0).attr('id').substr(-1) )
 
 				if(opt == 1){
@@ -512,14 +523,9 @@
 				if(opt == 4){
 					column = table.column(3)
 				}
-			})
 
-			$('.filtro').on( 'keyup change', function(){
-				if( column && column.search() !== this.value ){
-					column
-						.search( this.value )
-						.draw();
-				}
+				//table.columns().search('').draw()
+				$('.filtro').keyup()
 			})
 		//end icheck
 

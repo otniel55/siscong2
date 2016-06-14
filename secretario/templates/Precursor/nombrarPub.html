@@ -304,6 +304,7 @@
 
                 //obtener la filas seleccionadas
 				row = publics.rows('.selected').data()
+				rowNode = publics.rows('.selected').nodes()
 				publics.rows('.selected').remove().draw()
 
                 //crear las filas en la tabla Nombrar
@@ -318,7 +319,7 @@
 
                     //asignar atributos a la fila creada
 					$(nodo).attr({
-                        id: row[key].DT_RowId,
+                        id: ''+rowNode[key].id,
                         fechaBau: value[2],
                         Tbau: value[3],
                     })   
