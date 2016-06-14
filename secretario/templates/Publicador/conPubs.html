@@ -322,6 +322,23 @@
 								{% endfor %}
 								</tbody>
 							</table>
+
+							<div style="height:80px;">
+								<nav class="center-block">
+								  <ul id="pager" class="pagination pager hide" >
+									<li>
+									  <a href="#" aria-label="P">
+										<span aria-hidden="true">&laquo;</span>
+									  </a>
+									</li>
+									<li>
+									  <a href="#" aria-label="N">
+										<span aria-hidden="true">&raquo;</span>
+									  </a>
+									</li>
+								  </ul>
+								</nav>
+							</div>
 						</section>
 					</div>
 				</div>
@@ -345,6 +362,9 @@
 			$('input').iCheck({
 				radioClass: 'iradio_flat-green'
 			});
+
+			//creacion del pager
+			createPager(table)
 
 			check1 = $('div.visible-lg input[type="radio"]:eq(3)').parent().parent()
 			check2 = $('div.visible-sm input[type="radio"]:eq(3)').parent().parent()
@@ -454,7 +474,7 @@
 			//estilisando los filtros por defecto
 			$('#public_length').hide()
 			$('#public_filter').hide()
-			//$('#public_paginate').hide()
+			$('#public_paginate').hide()
         //end dateTable
 
 		//input filtro
@@ -657,16 +677,9 @@
 		//end dialog
 
 		//alert when edit public
-            {% if msg %}
-                $.gritter.add({
-					title: 'Modificar publicador',
-					text: "{{ msg }}",
-					image: "{% static 'img/success.png' %}",
-					sticky: false,
-					time: 3000,
-					class_name: ''
-				});
-            {% endif %}
+		{% if msg %}
+			showMsg('Modificar publicador', "{{ msg }}", "{% static 'img/success.png' %}")
+		{% endif %}
 		//end alert
 	</script>
 {% endblock %}

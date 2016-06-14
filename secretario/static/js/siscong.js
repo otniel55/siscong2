@@ -250,6 +250,8 @@
 	}
 
     function createPager(tabla, nro){
+		if( !nro )
+			nro = ""
 
         filas = tabla.data().length
 
@@ -294,7 +296,8 @@
                     tabla.page( val ).draw( 'page' );
                 }
 
-                reajustarTables()
+				if( nro )
+                	reajustarTables()
             })
 
             return 1
@@ -636,6 +639,8 @@
 						initialDoughnut('pie1', pie1)
 					break
 				}
+
+				labelPie--
 			}
 		}
 

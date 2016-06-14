@@ -117,14 +117,13 @@
 	$("td > button:nth-child(1)").click(function(){
 		id = 0
 		id = this.parentNode.id
-		console.log(id)
 		informe = new Gestion()
 		informe.getInputs('#informe')
 		informe.Cargar()
 	})
 
 	$("#regInf").click(function(){
-		close = function(res){
+		close = function(){
 			$('#informe').modal('hide')
 			datInf.Cargar()
 		}
