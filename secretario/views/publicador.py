@@ -155,7 +155,6 @@ def modificar(request):
           _email=datosP['email']
           _fechaBau=datosP['fechaBau']
           _fechaNa=datosP['fechaNa']
-          _grupo=datosP['Encargado']
           edad=getEdad(datetime.date(int(_fechaNa[0:4]),int(_fechaNa[5:7]), int(_fechaNa[8:])), hoy)
           if edad>3:
                try:
@@ -164,21 +163,15 @@ def modificar(request):
                     msg="Error! Antes de modificar seleccione un publicador"
                else:
                     p=Publicador.objects.get(pk=_id)
-                    try:
-                         g=GruposPred.objects.get(pk=_grupo)
-                    except(KeyError, GruposPred.DoesNotExist):
-                         msg='Grupo no existe'
-                    else:
-                         Publicador.objects.filter(pk=_id).update(FKgrupo=_grupo)
-                         p.nombre=_nombre
-                         p.apellido=_apellido
-                         p.telefono=_telefono
-                         p.direccion=_direccion
-                         p.email=_email
-                         p.fechaBau=_fechaBau
-                         p.fechaNa=_fechaNa
-                         p.save()
-                         msg='Publicador modificado con exito'
+                    p.nombre=_nombre
+                    p.apellido=_apellido
+                    p.telefono=_telefono
+                    p.direccion=_direccion
+                    p.email=_email
+                    p.fechaBau=_fechaBau
+                    p.fechaNa=_fechaNa
+                    p.save()
+                    msg='Publicador modificado con exito'
           else:
                msg="El minimo de edad aceptable es 4 anios en adelante"
      else:
