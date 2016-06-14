@@ -89,7 +89,12 @@ def obtenerInf(request):
                          if actual[j]==0:
                               result[j]=ant[j]*-100
                          else:
-                              result[j]=calculo(actual[j], ant[j])-100
+                              resultadoCalc=str(calculo(actual[j], ant[j])-100)
+                              if resultadoCalc.find(".")>-1:
+                                   resultadoCalc=float(recortarDecimal(resultadoCalc))
+                              else:
+                                   resultadoCalc=int(resultadoCalc)
+                              result[j]=resultadoCalc
                     suma=0
                     contDiv=0
                     for j in result.values():
@@ -264,8 +269,8 @@ def calculo(nro, base):
      try:
           resultado=(nro*100)/base
           resultado=str(resultado)
-          resultado=resultado[:resultado.find(".")+3]
           if resultado.find(".")>-1:
+               resultado=resultado[:resultado.find(".")+3]
                resultado=float(resultado)
           else:
                resultado=int(resultado)
