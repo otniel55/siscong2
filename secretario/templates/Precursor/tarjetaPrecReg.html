@@ -79,41 +79,34 @@
                                 {% endif %}
                             </tr>
                         {% endfor %}
+
+                       {% if total %}
+                            <tr>
+                                <th colspan="5" class="text-center">Totales de Año de Servicio</th>
+                            </tr>
+                            <tr>
+                            <th colspan="2" class="text-center">Horas Informadas</th>
+                            <th colspan="2" class="text-center">Horas por Concesión</th>
+                            <th colspan="1" class="text-center">Objetivo</th>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="numeric text-center" data-title="Horas Informadas">
+                                    {{ total.totalYear }}
+                                </td>
+                                <td colspan="2" class="numeric text-center" data-title="Horas por Concesion">
+                                    {{ total.horasCon }}
+                                </td>
+                                {% if total.obj == 1 %}
+                                    <td class="numeric"  data-title="Objetivo" style="width:8%; background-color:#09B20F">
+                                    </td>
+                                {% else %}
+                                    <td class="numeric"  data-title="Objetivo" style="width:8%; background-color:#af0000">
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        {% endif %}
                     </tbody>
                 </table>
-
-                {% if total %}
-					<table id="totalReg" class="table table-bordered table-striped table-condensed cf" style="font-size:14px;margin-top:30px;">
-						<thead class="cf">
-							<tr>
-								<th class="numeric text-center">Totales</th>
-								<th class="numeric text-center">Horas Informadas</th>
-								<th class="numeric text-center">Horas por Concesion</th>
-								<th class="numeric text-center" style="width:8%;">Objetivo</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td class="numeric text-center" data-title="Total">
-									Total
-								</td>
-								<td class="numeric text-center" data-title="Horas Informadas">
-									{{ total.totalYear }}
-								</td>
-								<td class="numeric text-center" data-title="Horas por Concesion">
-									{{ total.horasCon }}
-								</td>
-								{% if total.obj == 1 %}
-									<td class="numeric"  data-title="Objetivo" style="width:8%; background-color:#09B20F">
-									</td>
-								{% else %}
-									<td class="numeric"  data-title="Objetivo" style="width:8%; background-color:#af0000">
-									</td>
-								{% endif %}
-							</tr>
-						</tbody>
-					</table>
-        		{% endif %}
             </section>
         </div>
     </div>

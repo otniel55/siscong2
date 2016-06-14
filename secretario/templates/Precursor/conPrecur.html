@@ -16,21 +16,21 @@
             <div class="form-group" style="margin-top: 30px">
 
 
-                <div class="col-lg-2 col-md-offset-2">
+                <div class="col-lg-3">
                     {{ precur.precur }}
                 </div>
 
-                <div class="col-lg-2">
+                <div class="col-lg-3">
                     <input id="status" type="checkbox" checked>
                 </div>
 
-                <div class="col-lg-2">
+                <div class="col-lg-3">
                     <select id="precur" class="form-control" disabled>
                         <option value="">Seleccione el Precursor</option>
                     </select>
                 </div>
 
-                <div class="col-lg-2">
+                <div class="col-lg-3">
                     <select id="periodo" class="form-control" disabled>
                         <option value="">Seleccione el Periodo</option>
                     </select>
@@ -55,6 +55,19 @@
             $("#id_precur option[value='1']").detach()
         })
 
+        $(window).resize(function(){
+            $("#status").bootstrapSwitch('handleWidth', ($("#id_precur")[0].clientWidth/2) - 25 )
+        })
+
+        $("#status").bootstrapSwitch({
+            onText: 'Activo',
+            offText: 'Inactivo',
+            offColor: 'danger',
+            handleWidth: ($("#id_precur")[0].clientWidth/2) - 25,
+            disabled: true,
+            state: true,
+        })
+
         var ficha = $('#fichaPrecur')
         var status
 
@@ -74,15 +87,6 @@
                 })
             })
         }
-
-        $("#status").bootstrapSwitch({
-            onText: 'Activo',
-            offText: 'Inactivo',
-            offColor: 'danger',
-            handleWidth: 100,
-            disabled: true,
-            state: true,
-        });
 
         $("#id_precur").change(function(){
             if ( $(this).val() ){
