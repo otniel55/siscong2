@@ -4,13 +4,16 @@ import json
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth.models import User
-#modulos propios del proyecti
+from django.contrib.auth.decorators import login_required
+#modulos propios del proyecto
 from .siscong import gestion, sesionGrupo
 
+@login_required(login_url='/login')
 def vistaRegistro(request):
      sesionGrupo(request)
      return render(request, 'usuReg.html')
 
+@login_required(login_url='/login')
 def registrar(request):
      validar=gestion(request.POST)
      if not validar.error:

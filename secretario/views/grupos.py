@@ -5,12 +5,14 @@ import datetime
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 #modulos propios del proyecto
 from ..forms import traerGrupo, modalPub, regInforme, regPub
 from .siscong import *
 #modelos
 from secretario.models import GruposPred, Publicador
 
+@login_required(login_url='/login')
 def Vista_registrar(request):
      sesionGrupo(request)
      hoy=datetime.date.today()
@@ -27,6 +29,7 @@ def Vista_registrar(request):
      pubsEncargado=pubSinGrupo.filter(privilegiopub__status=True)
      return render(request, 'Grupo/regGrupo.html', { 'url':1, 'regPub': pub, 'all':pubSinGrupo, 'encargados':pubsEncargado, 'aux':pubAux})
 
+@login_required(login_url='/login')
 def registrar(request):
      validaciones=True
      cont=0
@@ -115,6 +118,7 @@ def registrar(request):
           msg={'msg':"Grupo creado con exito", 'on':1}
      return  HttpResponse(json.dumps(msg))
 
+@login_required(login_url='/login')
 def vistaConsultar(request):
      try:
           request.session['idgrupo']
@@ -132,10 +136,12 @@ def vistaConsultar(request):
                on = 1
      return render(request, 'Grupo/conGrupo.html', {'form': cGrupo, 'onPub': on, 'url':1 })
 
+@login_required(login_url='/login')
 def conGrupoofPubs(request, idGrupo):
      cGrupo = traerGrupo(initial={'Encargado': idGrupo})
      return render(request, 'Grupo/conGrupo.html', {'form': cGrupo, 'onPub': 1, 'url':1 })
 
+@login_required(login_url='/login')
 def consultar(request,idGrupo):
      pubs={}
      cont=0
@@ -163,6 +169,7 @@ def consultar(request,idGrupo):
      return render(request, 'Grupo/datGrupo.html',datos)
 
 
+@login_required(login_url='/login')
 def vistaModificar(request, id):
      sesionGrupo(request)
      try:
@@ -217,6 +224,7 @@ def vistaModificar(request, id):
           data={'id':id, 'cmbEnc':encs, 'cmbAux':auxs, 'pubs':publicadores, 'cmbGrupo':groups, 'sinG':sinGrupo}
           return render(request, "Grupo/editGrupo.html", data)
 
+@login_required(login_url='/login')
 def modificar(request):
      pasar=False
      msg={}
@@ -347,7 +355,8 @@ def addToGroup(pub, grupo, nombrarA=False, nombrarE=False):
           else:
                p.grupo.clear()
      return resp
-     
+
+@login_required(login_url='/login')     
 def eliminar(request):
      datos={}
      id=int(request.POST['id'])
@@ -379,6 +388,7 @@ def verificarAsignacion(id, excluir=False, gPk=0):
           exist=False
      return exist
 
+@login_required(login_url='/login')
 def grupoExist(request):
      g=request.POST['id']
      try:

@@ -5,15 +5,18 @@ import json
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.db.models import *
+from django.contrib.auth.decorators import login_required
 #modulos propios de proyecto
 from .siscong import *
 from secretario.models import Publicador, privilegio, privilegioPub, GruposPred
 
+@login_required(login_url='/login')
 def consultar(request):
     sesionGrupo(request)
     priv=privilegio.objects.all()
     return render(request, "Privilegio/consultar.html", {'data':priv})
 
+@login_required(login_url='/login')
 def Vistanombrar(request):
     sesionGrupo(request)
     hoy=datetime.date.today()
@@ -28,11 +31,13 @@ def Vistanombrar(request):
     data=data.values()
     return render(request, "Privilegio/nombrar.html", {'data':data})
 
+@login_required(login_url='/login')
 def consultarNombrados(request):
     sesionGrupo(request)
     pubs=Publicador.objects.filter(privilegiopub__status=True)
     return render(request, "Privilegio/consNombrados.html", {'data':pubs})
 
+@login_required(login_url='/login')
 def nombrar(request):
     cont=0
     hoy=datetime.date.today()
@@ -92,6 +97,7 @@ def nombrar(request):
         msg={'msg':'Se han asignado los privilegios con exito.', 'on':1}
     return HttpResponse(json.dumps(msg))
 
+@login_required(login_url='/login')
 def modificar(request):
     msg={}
     num=['tiempoBau', 'edad', 'id']
@@ -116,6 +122,7 @@ def modificar(request):
         msg=validar.mensaje
     return HttpResponse(json.dumps(msg))
 
+@login_required(login_url='/login')
 def baja(request):
     msg={}
     try:

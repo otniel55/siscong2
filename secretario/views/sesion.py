@@ -5,6 +5,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 #modulos del proyecto
 from .siscong import *
 
@@ -37,6 +38,7 @@ def autenticar(request):
           msg=validar.mensaje
      return HttpResponse(json.dumps(msg))
 
+@login_required(login_url='/login')
 def cerrar(request):
      logout(request)
      return HttpResponseRedirect('/login')

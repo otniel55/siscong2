@@ -4,16 +4,19 @@ import json
 #modulos de django
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 #modulos propios del proyecto
 from secretario.forms import traerGrupo
 from .siscong import *
 from secretario.models import Publicador, Informe
 
+@login_required(login_url='/login')
 def vistaPdfPub(request):
      sesionGrupo(request)
      cGrupo = traerGrupo()
      return render(request, "Informe/pdfTarPub.html", {'form':cGrupo})
 
+@login_required(login_url='/login')
 def datosPdfPub(request):
      mK=[]
      data={}

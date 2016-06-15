@@ -4,17 +4,20 @@ import json
 #modulos de django
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 #modulos propios del proyecto
 from ..forms import traerGrupo, regPub
 from .siscong import *
 from secretario.models import GruposPred, Publicador, Informe
 
+@login_required(login_url='/login')
 def vistaRegistrar(request):
      sesionGrupo(request)
      formPub = regPub()
      cmbGrupo = traerGrupo()
      return render(request, 'Publicador/regPubli.html', {'form': formPub, 'form2': cmbGrupo, 'url':2})
 
+@login_required(login_url='/login')
 def registrar(request):
      hoy=datetime.date.today()
      vFechas=['fechaNa']
@@ -52,6 +55,7 @@ def registrar(request):
           msg=validar.mensaje
      return HttpResponse(json.dumps(msg))
 
+@login_required(login_url='/login')
 def consultarNameGroup(request):
      try:
         p=Publicador.objects.get(pk=request.POST['id'])
@@ -62,6 +66,7 @@ def consultarNameGroup(request):
           datos={'pub':p}
           return HttpResponse(json.dumps(datos))
 
+@login_required(login_url='/login')
 def cambiarPub(request):
      n=['id','grupo']
      validar=gestion(request.POST,n)
@@ -87,6 +92,7 @@ def cambiarPub(request):
           msg=validar.mensaje
      return HttpResponse(json.dumps(msg))
 
+@login_required(login_url='/login')
 def consultarTodos(request):
      sesionGrupo(request)
      hoy=datetime.date.today()
@@ -122,6 +128,7 @@ def consultarTodos(request):
      pubs=pubs.values()
      return render(request, 'Publicador/conPubs.html',{'pub':pubs,'msg':msg, 'url':2})
 
+@login_required(login_url='/login')
 def consultar(request, idpub):
      sesionGrupo(request)
      fechaNa=""
@@ -140,6 +147,7 @@ def consultar(request, idpub):
           data={'form': formPub, 'on': 1, 'url':2, 'fechaNa':fechaNa, 'fechaBau':p.fechaBau, 'sexo':p.sexo}
      return render(request, pg, data)
 
+@login_required(login_url='/login')
 def modificar(request):
      hoy=datetime.date.today()
      nums=['Encargado']
@@ -179,6 +187,7 @@ def modificar(request):
      request.session['msgpub']=msg
      return HttpResponse(json.dumps({'msg':msg}))
 
+@login_required(login_url='/login')
 def verTarjetaPub(request):
      sesionGrupo(request)
      years=[]
@@ -199,6 +208,7 @@ def verTarjetaPub(request):
           cont+=1
      return render(request, 'Publicador/verTarjetaPub.html', {'form': cGrupo, 'years':years, 'url':2, 'pubs':json.dumps(pubs)})
 
+@login_required(login_url='/login')
 def conPubG(request):
      datos={}
      cont=0

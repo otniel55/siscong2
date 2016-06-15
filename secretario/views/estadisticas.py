@@ -4,23 +4,29 @@ import json
 #modulos de django
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 #modulos propios del proyecto
 from .siscong import *
 from secretario.models import Publicador, Informe
 
+@login_required(login_url='/login')
 def verEstadisticas(request):
     sesionGrupo(request)
     return render(request, "Informe/estadisticas.html", {})
 
+@login_required(login_url='/login')
 def estGlobal(request):
      return render(request, "Informe/estCong.html", {})
 
+@login_required(login_url='/login')
 def infPrec(request):
      return render(request, "Informe/estadisticasPrec.html", {})
 
+@login_required(login_url='/login')
 def estPub(request):
      return render(request, "Informe/estPub.html", {})
 
+@login_required(login_url='/login')
 def obtenerInf(request):
      hoy=datetime.date.today()
      try:
@@ -129,6 +135,7 @@ def obtenerInf(request):
                cont+= 1
      return HttpResponse(json.dumps(data))
 
+@login_required(login_url='/login')
 def conInfPrec(request):
      cont = 0
      data = {}
@@ -168,6 +175,7 @@ def conInfPrec(request):
                cont += 1
      return HttpResponse(json.dumps(data))
 
+@login_required(login_url='/login')
 def conEstPub(request):
      data={}
      try:

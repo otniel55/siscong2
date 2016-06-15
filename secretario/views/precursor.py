@@ -5,11 +5,13 @@ import json
 from django.db.models import Q
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 #modulos propios del proyecto
 from secretario.forms import precursorados
 from .siscong import *
 from secretario.models import Publicador, Informe, nroPrec, Precursor, horasCon
 
+@login_required(login_url='/login')
 def vistaNombrar(request):
      sesionGrupo(request)
      hoy = datetime.date.today()
@@ -31,16 +33,19 @@ def vistaNombrar(request):
      p=p.values()
      return render(request, 'Precursor/nombrarPub.html', {'pub':p, 'precur':precur, 'url':3})
 
+@login_required(login_url='/login')
 def conPrec(request):
      sesionGrupo(request)
      bajaAuto()
      precur= precursorados()
      return render(request, 'Precursor/conPrecur.html', {'precur':precur, 'url':3})
 
+@login_required(login_url='/login')
 def editPrecur(request):
      sesionGrupo(request)
      return render(request, 'Precursor/editPrecur.html', {'precur': Precursor.objects.all(), 'url':3})
 
+@login_required(login_url='/login')
 def nombrar(request):
      hoy=datetime.date.today()
      bajaAuto()
@@ -117,6 +122,7 @@ def nombrar(request):
           msg={'msg':'Los publicadores han sido nombrados precursores.', 'on':1}
      return HttpResponse(json.dumps(msg))
 
+@login_required(login_url='/login')
 def conPrecs(request):
      bajaAuto()
      contaux=0
@@ -154,6 +160,7 @@ def conPrecs(request):
                data={'msg':'No hay ningun registro de este tipo de precursor'}
      return HttpResponse(json.dumps(data))
 
+@login_required(login_url='/login')
 def historiaPrec(request, year):
      acumCon=0
      total=0
@@ -345,6 +352,7 @@ def historiaPrec(request, year):
                     data={'msg':"Este Publicador nunca ha sido precursor"}
      return render(request, pg, {'ficha':ficha, 'datos':data,'total':total})
 
+@login_required(login_url='/login')
 def darBaja(request):
      hoy=datetime.date.today()
      data={}
@@ -372,6 +380,7 @@ def darBaja(request):
                     data={'msg':"Precursor dado de baja", 'on':1}
      return HttpResponse(json.dumps(data))
 
+@login_required(login_url='/login')
 def yearServicio(request):
      bajaAuto()
      y=[]

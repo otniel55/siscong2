@@ -6,10 +6,12 @@ import re
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 #modulos propios del proyecto
 from .siscong import *
 from secretario.models import Publicador, Informe, horasCon
 
+@login_required(login_url='/login')
 def registrar(request):
      hoy=datetime.date.today()
      nums=['publicaciones', 'videos', 'revisitas', 'estudios', 'publicador', 'horasCons']
@@ -55,6 +57,7 @@ def registrar(request):
           msg=validar.mensaje
      return HttpResponse(json.dumps(msg))
 
+@login_required(login_url='/login')
 def tarjeta(request, vista, idPub, y):
      yIni=int(y[:4])
      yFin=int(y[4:])
@@ -114,6 +117,7 @@ def tarjeta(request, vista, idPub, y):
 
      return render(request, pagina , datos)
 
+@login_required(login_url='/login')
 def modificar(request):
      msg={}
      hoy=datetime.date.today()
