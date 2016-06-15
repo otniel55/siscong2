@@ -92,6 +92,7 @@
 <script>
 
 	var id
+	var colStatus
 
 	$(document).ready(function() {
 		$('.datepicker').datetimepicker({
@@ -115,17 +116,36 @@
 	$('#regInf').addClass('btn-primary')
 
 	$("td > button:nth-child(1)").click(function(){
+		colStatus = ""
 		id = 0
 		id = this.parentNode.id
 		informe = new Gestion()
 		informe.getInputs('#informe')
 		informe.Cargar()
+		colStatus = $(this).parent().siblings(':eq(4)').children()
 	})
 
 	$("#regInf").click(function(){
-		close = function(){
+		close = function(res){
 			$('#informe').modal('hide')
 			datInf.Cargar()
+
+			if ( res.status ){
+				var status = res.status
+				var color = ""
+
+				if (status == 0){
+					color = '#09B20F'
+				} else if (status == 1){
+					color = '#FFAD33'
+				} else if (status == 2){
+					color = '#B30000'
+				} else {
+					color = '#B6B6B6'
+				}
+
+				$(colStatus).css('background-color', color)
+			}
 		}
 
 		hrs = $("input[type='number']:eq(2)", ".modal-body")
