@@ -4,5 +4,5 @@ from secretario import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^home/', include('secretario.urls')),
+    url(r'^', include('secretario.urls')),
 ]

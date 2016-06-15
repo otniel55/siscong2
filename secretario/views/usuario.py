@@ -22,6 +22,7 @@ def registrar(request):
                msg={'msg':'Usuario ya existe'}
           else:
                newUser.is_staff=True
+               newUser.is_active=True
                newUser.save()
                msg={'msg':'Usuario registrado con exito', 'on':1}
      else:
