@@ -60,4 +60,8 @@ urlpatterns = [
     url(r'^privilegio/consultarnombrados$', views.privilegios.consultarNombrados, name='privconsnombrados'),
     url(r'^privnombrar$', views.privilegios.nombrar, name='nombrarPriv'),
     url(r'^privilegio/baja$', views.privilegios.baja, name='privBaja'),
+    #urls relacionadas con sesion de usuarios
+    url(r'^login$', views.sesion.ingreso, name='login'),
+    url(r'^autenticar$', views.sesion.autenticar, name='autenticar'),
+    url(r'^cerrarsesion$', views.sesion.cerrar, name='cerrar'),
 ]

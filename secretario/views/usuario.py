@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 #modulos propios del proyecti
-from .siscong import gestion
+from .siscong import gestion, sesionGrupo
 
 def vistaRegistro(request):
      sesionGrupo(request)
@@ -14,7 +14,7 @@ def vistaRegistro(request):
 def registrar(request):
      validar=gestion(request.POST)
      if not validar.error:
-          nombre=request.POST['nombre'].upper()
+          nombre=request.POST['nombre']
           clave=request.POST['pass']
           try:
                newUser=User.objects.create_user(username=nombre, password=clave)
@@ -23,6 +23,7 @@ def registrar(request):
           else:
                newUser.is_staff=True
                newUser.is_active=True
+               newUser.is_superuser=True
                newUser.save()
                msg={'msg':'Usuario registrado con exito', 'on':1}
      else:

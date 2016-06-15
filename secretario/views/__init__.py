@@ -10,6 +10,7 @@ from .precursor import *
 from .usuario import *
 from .privilegios import *
 from .siscong import *
+from .sesion import *
 def index(request):
      sesionGrupo(request)
      return render(request, 'layout.html', {'url':0})
