@@ -112,7 +112,7 @@ def obtenerStatus(mes, year, pk):
           status=1
      else:
           status=2
-     return (status, meses)
+     return [status, meses]
 
 def prom(nums):
      acum=0
