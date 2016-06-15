@@ -142,73 +142,13 @@
 		]
 	}
 
-	var init = 2
+	var init = 1
 	var data2 = [
-			{
-				value: init,
-				color:"#42fd66",
-				highlight: "#42fd66",
-				label: "Horas"
-			},
-			{
-				value: init,
-				color: "#46BFBD",
-				highlight: "#46BFBD",
-				label: "Publicaciones"
-			},
-			{
-				value: init,
-				color: "#FDB45C",
-				highlight: "#FDB45C",
-				label: "Videos"
-			},
-			{
-				value: init,
-				color: "#5c75fd",
-				highlight: "#5c75fd",
-				label: "Revisitas"
-			},
-			{
-				value: init,
-				color: "#ede867",
-				highlight: "#ede867",
-				label: "Estudios"
-			},
-			{
-				value: init,
-				color: "#bc6a3e",
-				highlight: "#bc6a3e",
-				label: "Nro Publicadores"
-			},
-			{
-				value: init,
-				color: "#bf4646",
-				highlight: "#bf4646",
-				label: "Bautizados"
-			},
-			{
-				value: init,
-				color: "#b428bf",
-				highlight: "#b428bf",
-				label: "Irregulares"
-			},
-			{
-				value: init,
-				color: "#46bf87",
-				highlight: "#46bf87",
-				label: "Inactivos"
-			},
-			{
-				value: init,
-				color: "#e2d25a",
-				highlight: "#e2d25a",
-				label: "Prec. Reg."
-			},
 			{
 				value: init,
 				color: "#bf4667",
 				highlight: "#bf4667",
-				label: "Prec. Aux."
+				label: ""
 			}
 		]
 	var configPie = {
@@ -266,25 +206,25 @@
 
 		$.post("{% url 'secretario:infG' %}",{ 'fecha': fecha, csrfmiddlewaretoken: '{{ csrf_token }}' })
 			.success(function(res){
-				res = JSON.parse(res)
-				results = res
+				results = res = JSON.parse(res)
 				console.log(res)
 
 				$('#resultAT').children().detach()
 
 				$.each(res, function(key, value){
+					signo = "%"
 					mes = moment(value.mes, "MM").format('MMMM')
 					mes = toUpperFirst(mes)
 
 					if(value.result > 0){
 						status = "Incremento del"
 					} else if(typeof value.result === 'string' ){
-						status = ""
+						status = signo = ""
 					} else {
-						status = "Decremento del "
+						status = "Decremento del"
 					}
 
-					$('#resultAT').append("<dt>"+mes+":</dt><dd>"+status+" "+value.result+"%</dd>")
+					$('#resultAT').append("<dt>"+mes+":</dt><dd>"+status+" "+value.result+""+signo+"</dd>")
 
 					if(key < 3){
 						mes2 = mes
@@ -294,17 +234,17 @@
 								value.datasetLabel = mes
 							})
 
-							lineChart.datasets[key].points[0].value = value.horas
-							lineChart.datasets[key].points[1].value = value.publicaciones
-							lineChart.datasets[key].points[2].value = value.videos
-							lineChart.datasets[key].points[3].value = value.revisitas
-							lineChart.datasets[key].points[4].value = value.estudios
-							lineChart.datasets[key].points[5].value = value.pubs
-							lineChart.datasets[key].points[6].value = value.bau
-							lineChart.datasets[key].points[7].value = value.irreg
-							lineChart.datasets[key].points[8].value = value.inactivos
-							lineChart.datasets[key].points[9].value = value.reg
-							lineChart.datasets[key].points[10].value = value.aux
+							lineChart.datasets[key].points[0].value = value.horas ? value.horas : 0
+							lineChart.datasets[key].points[1].value = value.publicaciones ? value.publicaciones : 0
+							lineChart.datasets[key].points[2].value = value.videos ? value.videos : 0
+							lineChart.datasets[key].points[3].value = value.revisitas ? value.revisitas : 0
+							lineChart.datasets[key].points[4].value = value.estudios ? value.estudios : 0
+							lineChart.datasets[key].points[5].value = value.pubs ? value.pubs : 0
+							lineChart.datasets[key].points[6].value = value.bau ? value.bau : 0
+							lineChart.datasets[key].points[7].value = value.irreg ? value.irreg : 0
+							lineChart.datasets[key].points[8].value = value.inactivos ? value.inactivos : 0
+							lineChart.datasets[key].points[9].value = value.reg ? value.reg : 0
+							lineChart.datasets[key].points[10].value = value.aux ? value.aux : 0
 							lineChart.update();
 					}
 				})
@@ -338,18 +278,18 @@
 							value.datasetLabel = mes
 						})
 
-						lineChart.datasets[key].points[0].value = value.horas
-						lineChart.datasets[key].points[1].value = value.publicaciones
-						lineChart.datasets[key].points[2].value = value.videos
-						lineChart.datasets[key].points[3].value = value.revisitas
-						lineChart.datasets[key].points[4].value = value.estudios
-						lineChart.datasets[key].points[5].value = value.pubs
-						lineChart.datasets[key].points[6].value = value.bau
-						lineChart.datasets[key].points[7].value = value.irreg
-						lineChart.datasets[key].points[8].value = value.inactivos
-						lineChart.datasets[key].points[9].value = value.reg
-						lineChart.datasets[key].points[10].value = value.aux
-						lineChart.update()
+						lineChart.datasets[key].points[0].value = value.horas ? value.horas : 0
+						lineChart.datasets[key].points[1].value = value.publicaciones ? value.publicaciones : 0
+						lineChart.datasets[key].points[2].value = value.videos ? value.videos : 0
+						lineChart.datasets[key].points[3].value = value.revisitas ? value.revisitas : 0
+						lineChart.datasets[key].points[4].value = value.estudios ? value.estudios : 0
+						lineChart.datasets[key].points[5].value = value.pubs ? value.pubs : 0
+						lineChart.datasets[key].points[6].value = value.bau ? value.bau : 0
+						lineChart.datasets[key].points[7].value = value.irreg ? value.irreg : 0
+						lineChart.datasets[key].points[8].value = value.inactivos ? value.inactivos : 0
+						lineChart.datasets[key].points[9].value = value.reg ? value.reg : 0
+						lineChart.datasets[key].points[10].value = value.aux ? value.aux : 0
+						lineChart.update();
 					}
 				})
 
@@ -385,22 +325,23 @@
 						mes = moment(value.mes, "MM").format('MMMM')
 						mes = toUpperFirst(mes)
 
+						//establecer los valores de las key 3 - 5 en los datasets 0 - 2
 						$.each(lineChart.datasets[key-dec].points, function(key, value){
 							value.datasetLabel = mes
 						})
 
-						lineChart.datasets[key-dec].points[0].value = value.horas
-						lineChart.datasets[key-dec].points[1].value = value.publicaciones
-						lineChart.datasets[key-dec].points[2].value = value.videos
-						lineChart.datasets[key-dec].points[3].value = value.revisitas
-						lineChart.datasets[key-dec].points[4].value = value.estudios
-						lineChart.datasets[key-dec].points[5].value = value.pubs
-						lineChart.datasets[key-dec].points[6].value = value.bau
-						lineChart.datasets[key-dec].points[7].value = value.irreg
-						lineChart.datasets[key-dec].points[8].value = value.inactivos
-						lineChart.datasets[key-dec].points[9].value = value.reg
-						lineChart.datasets[key-dec].points[10].value = value.aux
-						lineChart.update()
+						lineChart.datasets[key-dec].points[0].value = value.horas ? value.horas : 0
+						lineChart.datasets[key-dec].points[1].value = value.publicaciones ? value.publicaciones : 0
+						lineChart.datasets[key-dec].points[2].value = value.videos ? value.videos : 0
+						lineChart.datasets[key-dec].points[3].value = value.revisitas ? value.revisitas : 0
+						lineChart.datasets[key-dec].points[4].value = value.estudios ? value.estudios : 0
+						lineChart.datasets[key-dec].points[5].value = value.pubs ? value.pubs : 0
+						lineChart.datasets[key-dec].points[6].value = value.bau ? value.bau : 0
+						lineChart.datasets[key-dec].points[7].value = value.irreg ? value.irreg : 0
+						lineChart.datasets[key-dec].points[8].value = value.inactivos ? value.inactivos : 0
+						lineChart.datasets[key-dec].points[9].value = value.reg ? value.reg : 0
+						lineChart.datasets[key-dec].points[10].value = value.aux ? value.aux : 0
+						lineChart.update();
 					}
 				})
 
