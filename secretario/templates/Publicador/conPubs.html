@@ -481,9 +481,7 @@
 			$('.filtro').on( 'keyup change', function(){
 				if( column && column.search() !== this.value ){
 					console.log('entre')
-					column
-						.search( this.value )
-						.draw()
+					column.search( this.value ).draw()
 				} else if ( !column ){
 					$('#public').dataTable().fnFilter( this.value )
 				}
@@ -544,8 +542,16 @@
 					column = table.column(3)
 				}
 
-				//table.columns().search('').draw()
-				$('.filtro').keyup()
+				table.columns().search('').draw()
+				if( $('div.visible-lg').is(':visible') ){
+					$('.filtro:eq(0)').keyup()
+				}
+				if( $('div.visible-md').is(':visible') ){
+					$('.filtro:eq(1)').keyup()
+				}
+				if( $('div.visible-sm').is(':visible') ){
+					$('.filtro:eq(2)').keyup()
+				}
 			})
 		//end icheck
 
