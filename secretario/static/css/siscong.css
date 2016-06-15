@@ -556,3 +556,7 @@ label[for="line"] {
 		color: #fff;
 	}
 }
+
+.modal-bottom {
+	margin-bottom: 20px;
+}
