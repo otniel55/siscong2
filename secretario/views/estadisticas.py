@@ -125,7 +125,7 @@ def obtenerInf(request):
                          for k in keys:
                               data[cont]['torta']['t'+k[0].upper()+k[1:]]=calculo(data[cont]['torta'][k], sumaTotal)
                else:
-                    data[cont]={'msg':"Sin actividad."}
+                    data[cont]={'result':"Sin actividad.", 'mes':i[1]}
                cont+= 1
      return HttpResponse(json.dumps(data))
 
