@@ -23,16 +23,14 @@ def autenticar(request):
           usuario=request.POST['user']
           password=request.POST['password']
           acceso=authenticate(username=usuario, password=password)
-          print("en un momento ...")
           if acceso is not None:
-               print("listo!")
                if acceso.is_active:
                     login(request, acceso)
                     msg={'on':1}
+                    request.session['nombre']=request.user.username
                else:
                     msg={'msg':"Error, usuario desactivado"}
           else:
-               print("listo pero mal ps!")
                msg={'msg':"Error, usuario o clave incorrecta"}
      else:
           msg=validar.mensaje
@@ -40,5 +38,9 @@ def autenticar(request):
 
 @login_required(login_url='/login')
 def cerrar(request):
+     try:
+          del request.session['nombre']
+     except KeyError:
+          pass
      logout(request)
      return HttpResponseRedirect('/login')
