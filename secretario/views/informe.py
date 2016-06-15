@@ -38,8 +38,10 @@ def registrar(request):
                          if len(inf)==0:
                               if _horas!="0":
                                    p.informe_set.create(minutos=_hour[1], publicaciones=_publicaciones, videos=_videos, revisitas=_revisitas, estudios=_estudios, mes=int(_fecha[0:2]), year=int(_fecha[3:]), observacion=_obs)
-                                   msg={'msg':'Informe Registrado con exito', 'on':1, 'status':obtenerStatus(int(_fecha[0:2]), int(_fecha[3:]), p.pk)[0]}
-                                   print(msg['status'])
+                                   msg={'msg':'Informe Registrado con exito', 'on':1}
+                                   ultInf=Informe.objects.filter(FKpub=p.pk).order_by("-year", "-mes")[0]
+                                   if int(_fecha[0:2])==ultInf.mes and int(_fecha[3:])==ultInf.year:
+                                        msg['status']=obtenerStatus(ultInf.mes, ultInf.year, p.pk)[0]
                                    if _horasCon>0:
                                         informe=Informe.objects.filter(FKpub=p.pk, mes=int(_fecha[0:2]), year=int(_fecha[3:]))
                                         registrarH=regHorasCon(informe[0], _horasCon)
