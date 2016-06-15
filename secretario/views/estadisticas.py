@@ -124,7 +124,9 @@ def obtenerInf(request):
                                         keys.append(pie)
                          for k in keys:
                               data[cont]['torta']['t'+k[0].upper()+k[1:]]=calculo(data[cont]['torta'][k], sumaTotal)
-                    cont += 1
+               else:
+                    data[cont]={'msg':"Sin actividad."}
+               cont+= 1
      return HttpResponse(json.dumps(data))
 
 def conInfPrec(request):
