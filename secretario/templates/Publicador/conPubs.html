@@ -479,8 +479,9 @@
 
 		//input filtro
 			$('.filtro').on( 'keyup change', function(){
+				$('.filtro').val( this.value )
+
 				if( column && column.search() !== this.value ){
-					console.log('entre')
 					column.search( this.value ).draw()
 				} else if ( !column ){
 					$('#public').dataTable().fnFilter( this.value )
