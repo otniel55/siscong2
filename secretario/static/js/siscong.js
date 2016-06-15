@@ -284,21 +284,38 @@
 
             $('nav.center-block:eq('+(nro-1)+')').width( $('#pager'+nro).width() )
 
+			$('#pager'+nro+' > li:eq(1) > a')
+						.css({'background-color': '#77b9ea', 'boder-color': '#fff'})
+
             $('#pager'+nro+' > li > a').click(function(){
                 val = $(this).attr('aria-label')
 
+				$(this).parent().siblings().children().removeAttr('style')
+
                 if(val === 'N'){
                     tabla.page( 'next' ).draw( 'page' );
+
+					$('#pager'+nro+' > li > a[aria-label="'+tabla.page()+'"]')
+						.css({'background-color': '#77b9ea', 'boder-color': '#fff'})
+
                 } else if (val === 'P'){
                     tabla.page( 'previous' ).draw( 'page' );
+
+					$('#pager'+nro+' > li > a[aria-label="'+tabla.page()+'"]')
+						.css({'background-color': '#77b9ea', 'boder-color': '#fff'})
                 } else {
                     val = parseInt(val)
                     tabla.page( val ).draw( 'page' );
+					$(this).css({'background-color': '#77b9ea', 'boder-color': '#fff'})
                 }
 
 				if( nro )
                 	reajustarTables()
             })
+
+			$('#pager'+nro+' > li > a').mouseleave(function(){
+				$(this).blur()
+			})
 
             return 1
 
