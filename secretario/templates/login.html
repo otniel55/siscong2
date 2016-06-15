@@ -1,0 +1,81 @@
+{% load staticfiles %}
+
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="">
+	<meta name="author" content="Dashboard">
+	<meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+
+	<title>Login</title>
+
+	<!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}" />
+
+    <!--iconos-->
+    <link rel="stylesheet" type="text/css" href="{% static 'font-awesome/css/font-awesome.css' %}" />
+
+	<!--Plantilla styles -->
+	<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style-responsive.css' %}" />
+</head>
+
+<body>
+	<div id="login-page">
+		<div class="container">
+			{% csrf_token %}
+			<div class="form-login">
+				<h2 class="form-login-heading">Bienvenido a SISCONG</h2>
+				<div class="login-wrap">
+					<input type="text" class="form-control" placeholder="Ingrese su Usuario..." autofocus>
+					<br>
+					<input type="password" class="form-control" placeholder="Ingrese su Contraseña...">
+					<br>
+					<label class="checkbox">
+						<span class="pull-right">
+							<a data-toggle="modal" href="login.html#myModal" style="font-size:12px;">Olvido su Contraseña?</a>
+						</span>
+					</label>
+					<button class="btn btn-theme btn-block" href="index.html" type="submit"><i class="fa fa-lock"></i> Ingresar</button>
+				</div>
+
+				<!-- Modal -->
+				<div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+								<h4 class="modal-title">Forgot Password ?</h4>
+							</div>
+							<div class="modal-body">
+								<p>Enter your e-mail address below to reset your password.</p>
+								<input type="text" name="email" placeholder="Email" autocomplete="off" class="form-control placeholder-no-fix">
+
+							</div>
+							<div class="modal-footer">
+								<button data-dismiss="modal" class="btn btn-default" type="button">Cancel</button>
+								<button class="btn btn-theme" type="button">Submit</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- modal -->
+			</div>
+		</div>
+	</div>
+
+	<!-- librerias obligatorias -->
+	<script src="{% static 'js/jquery.min.js' %}"></script>
+	<script src="{% static 'js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'js/jqueryUI/jquery-ui.min.js' %}"></script>
+	<script src="{% static 'js/gritter/js/jquery.gritter.js' %}" type="text/javascript"></script>
+	<script src="{% static 'js/jquery.backstretch.min.js'%}" type="text/javascript"></script>
+    <script>
+        //$.backstretch("{% static 'img/jwfull.jpg'%}", {speed: 500});
+		$('body').css('background-color', '#1C70AE')
+    </script>
+</body>
+
+</html>
