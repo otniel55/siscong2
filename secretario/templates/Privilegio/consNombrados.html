@@ -19,14 +19,18 @@
 				<div id="pubs" class="col-xs-12 col-sm-12 col-md-12 col-lg-10 col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-lg-offset-1">
 					<div class="content-panel">
 						<div class="row container-fluid">
-							<div class="col-xs-12 col-sm-10 col-md-8 col-lg-8" style="float:right;">
+							<div class="col-xs-10 col-sm-8 col-md-6 col-lg-6 col-xs-offset-0 col-sm-offset-1 col-md-offset-4 col-lg-offset-4">
 								<input type="text" class="form-control .input mrg-bottom filtro" placeholder="Ingrese su busqueda..." />
+							</div>
+							<div class="col-xs-1 col-sm-2 col-md-2 col-lg-2">
+								<button id="baja" class="btn btn-danger mrg-bottom">Dar de baja</button>
 							</div>
 						</div>
 						<section id="no-more-tables">
 							<table id="public" class="table table-bordered table-striped table-condensed cf">
 								<thead class="cf">
 									<tr>
+										<th class="text-center"><input type="checkbox" id="selectAll" /></th>
 										<th class="text-center">Nombre y Apellido</th>
 										<th class="numeric text-center">Privilegio</th>
 										<th class="text-center">Responsabildad</th>
@@ -35,7 +39,12 @@
 								</thead>
 								<tbody>
 								{% for x in data %}
-									<tr>
+									{% if not x.excluye %}
+										<tr id="{{x.pk}}">
+									{% else %}
+										<tr id="{{x.pk}}" class="Ignorar">
+									{% endif %}
+										<td></td>
 										<td class="text-center" data-title="Nombre:">
 											{{ x.nombre }} {{ x.apellido }}
 										</td>
@@ -76,22 +85,31 @@
         </div>
 	</div>
 </div>
-<div class="modal fade" id="modalPriv" role="dialog">
+<div class="modal fade" id="modalPrivBaja" role="dialog">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
-			<div class="modal-header">
+			<div class="modal-header" style="background-color: #9d1818;">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Modificar Privilegio</h4>
+                <h4 class="modal-title">Quitar Privilegios</h4>
 			</div>
 
 			<div class="modal-body">
-				<input type="text" class="form-control mrg-bottom" placeholder="Nombre del privilegio..." >
-				<input type="number" class="form-control mrg-bottom" placeholder="Edad mínima..." >
-				<input type="number" class="form-control mrg-bottom" placeholder="Tiempo mínimo de bautizado ..." >
+				<strong id="def1"></strong>
+				<ul id="list">
+					
+				</ul>
+				<strong id="def2"></strong>
+				<ul id="list2">
+				</ul>
 			</div>
 
 			<div class="modal-footer">
-                <button id="modPriv" type="button" class="btn btn-primary">Modificar privilegio</button>
+                <div class="col-xs-6">
+                    <button id="si" class="btn btn-danger" data-dismiss="modal">SI</button>
+                </div>
+			    <div class="col-xs-1">
+                    <button class="btn btn-info" data-dismiss="modal">NO</button>
+                </div>
 			</div>
 		</div>
 	</div>
@@ -100,14 +118,24 @@
 {% block scripts %}
 <script>
 	//inicializar tabla
+	p=[]
+	ignore=[]
 	var table = $('#public').DataTable({
-	"bPaginate":true,
-	"bInfo":false,
-	"bFilter":true,
-	"oLanguage": {
-		"sInfoEmpty": "La Tabla esta Vacia",
-		"sZeroRecords": "No se Encontraron Registros"
-	 }
+		columnDefs: [{
+			className: 'select-checkbox',
+			targets: 0
+		}],
+		"bPaginate":true,
+		"bInfo":false,
+		"bFilter":true,
+		"oLanguage": {
+			"sInfoEmpty": "La Tabla esta Vacia",
+			"sZeroRecords": "No se Encontraron Registros"
+		 },
+		select: {
+			style: 'multi',
+			selector: 'td:first-child',
+		}
 	});
 	$('#public_length').hide()
 	$('#public_filter').hide()
@@ -118,5 +146,109 @@
 	})
 	//habilitar paginador
 	createPager(table)
+	
+	$('#selectAll').click(function () {
+
+		if (this.checked) {
+			table.rows().select();
+		} else {
+			table.rows().deselect();
+		}
+
+	})
+	$("#baja").click(function(){
+		p=[]
+		ignore=[]
+		trs=table.rows(".selected").nodes()
+		if (trs.length>0){
+			$.each(table.rows(".selected").nodes(),function(k,v){
+				if (v.className.indexOf("Ignorar")==-1){
+					p.push({'id':v.id, 'nombre':$.trim(v.children[1].innerHTML)})
+				}
+				else{
+					ignore.push({'id':v.id, 'nombre':$.trim(v.children[1].innerHTML)})
+				}
+			})
+			$(".modal-body").children().html("")
+			$.each(p, function(k,v){
+				$("#def1").html("Varones que serán dados de baja")
+				$("#list").append("<li>"+v.nombre+"</li>")
+				delete p[k]['nombre']
+			})
+			$.each(ignore, function(k, v){
+				$("#def2").html("Varones que no podrán ser dados de baja porque son encargados en grupos:")
+				$("#list2").append("<li>"+v.nombre+"</li>")
+			})
+			$("#si").removeAttr("disabled")
+			if(p.length==0){
+				$("#si").attr("disabled", "true")
+			}
+			$("#modalPrivBaja").modal('show')
+		}else{
+			showMsg('Error al quitar privilegios!','Seleccione a un varón o mas para dar de baja', "/static/img/error.png")
+		}
+	})
+	
+	$("#si").click(function(){
+		result=function(res){
+			console.log(res)
+			bien = 0
+			mal = 0
+			if (!res.msg) {
+				$.each(res, function (key, value) {
+					if (value.bien == 1) {
+						table.row('#' + value.id).remove().draw()
+						bien++
+					} else {
+						mal++
+					}
+				})
+			} else {
+				bien++
+			}
+
+			if (bien > 0) {
+				if (res.on){
+					$.gritter.add({
+						title: 'Dar de baja'
+						, text: res.msg
+						, image: "/static/img/success.png"
+						, time: 3000
+					, });
+				}else{
+					$.gritter.add({
+						title: 'Dar de baja'
+						, text: res.msg
+						, image: "/static/img/error.png"
+						, time: 3000
+					, });
+				}
+			}
+
+			if (mal > 0) {
+				$.gritter.add({
+					title: 'Creacion de Grupos!'
+					, text: 'No se pudo dar de baja a algunos, porfavor intentelo nuevamente'
+					, image: "/static/img/error.png"
+					, time: 3000
+				, });
+			} else {
+				setTimeout(
+					function () {
+						window.location = "{% url 'secretario:privconsnombrados' %}"
+					}
+					, 3000
+				)
+			}
+		}
+		if (p.length>0){
+			baja=new Gestion()
+			key=['pubs']
+			baja._json={'csrfmiddlewaretoken':'{{ csrf_token }}', 'pubs':JSON.stringify(p)}
+			baja.setPost("{% url 'secretario:privBaja' %}", 0, result)
+		}else{
+			showMsg('Error al quitar privilegios!','Seleccione a un varón o mas para dar de baja', "/static/img/error.png")
+		}
+	})
 </script>
 {% endblock %}

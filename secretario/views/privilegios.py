@@ -41,7 +41,9 @@ def consultarNombrados(request):
     for i in pubs:
         priv=privilegioPub.objects.get(FKpub=i, status=True)
         tiempo=getDiferenciaMes(priv.mes, priv.year, hoy.month, hoy.year)+1
-        data[cont]={'nombre':i.nombre+" "+i.apellido, 'priv':priv.FKpriv.nombre, 'resp':priv.responsabilidad, 'tiempo':tiempoCompleto(tiempo)}
+        data[cont]={'pk':i.pk, 'nombre':i.nombre+" "+i.apellido, 'priv':priv.FKpriv.nombre, 'resp':priv.responsabilidad, 'tiempo':tiempoCompleto(tiempo)}
+        if len(GruposPred.objects.filter(encargado=i.pk))>0:
+            data[cont]['excluye']=1
         cont+=1
     data=data.values()
     return render(request, "Privilegio/consNombrados.html", {'data':data})
@@ -135,29 +137,41 @@ def modificar(request):
 def baja(request):
     msg={}
     try:
-        idPub=int(request.POST['id'])
-    except ValueError:
+        pubs=json.loads(request.POST['pubs'])
+    except (ValueError, KeyError):
         msg={'msg':"Error, No intente hacer trampa"}
     else:
-        try:
-            p=Publicador.objects.get(pk=idPub)
-        except(KeyError, Publicador.DoesNotExist):
-            msg={'msg':"Error, Publicador no existe"}
-        else:
-            hoy=datetime.date.today()
-            privilegios=privilegioPub.objects.filter(FKpub=p.pk, status=True).order_by("-year", "-mes")
-            if len(privilegios)>0:
-                if len(GruposPred.objects.filter(Q(encargado=p.pk)|Q(auxiliar=p.pk)))==0:
-                    priv=privilegios[0]
-                    priv.status=False
-                    priv.fechaFin=str(datetime.date.today())[0:7]
-                    priv.save()
-                    msg={'msg':"Publcador dado de baja", 'on':1}
-                else:
-                    msg={'msg':"Error, Publicador tiene responsabilidades en un grupo"}
+        validaciones=True
+        cont=0
+        for i in pubs:
+            try:
+                p=Publicador.objects.get(pk=int(i['id']))
+            except(KeyError, Publicador.DoesNotExist):
+                msg[cont]={'id':i['id'], 'bien':0}
+                validaciones=False
             else:
-                msg={'msg':"Error, Este publicador no tiene privilegios"}
+                hoy=datetime.date.today()
+                privilegios=privilegioPub.objects.filter(FKpub=p.pk, status=True).order_by("-year", "-mes")
+                if len(privilegios)>0:
+                    if len(GruposPred.objects.filter(encargado=p.pk))==0:
+                        priv=privilegios[0]
+                        priv.status=False
+                        priv.fechaFin=str(datetime.date.today())[0:7]
+                        priv.save()
+                        msg[cont]={'id':i['id'], 'bien':1}
+                    else:
+                        msg[cont]={'id':i['id'], 'bien':0}
+                        validaciones=False
+                else:
+                    msg[cont]={'id':i['id'], 'bien':0}
+                    validaciones=False
+            cont+=1
+        if validaciones:
+            msg={'msg':"Varones han sido dados de baja", 'on':1}
+        elif len(pubs)==0:
+            msg={'msg':"Error, no intente hacer trampa"}
     return HttpResponse(json.dumps(msg))
+
 #metodos reutilizables
 def privilegioActivo(priv, mes, year):
      activo=False
