@@ -34,8 +34,17 @@ def Vistanombrar(request):
 @login_required(login_url='/login')
 def consultarNombrados(request):
     sesionGrupo(request)
+    hoy=datetime.date.today()
+    data={}
     pubs=Publicador.objects.filter(privilegiopub__status=True)
-    return render(request, "Privilegio/consNombrados.html", {'data':pubs})
+    cont=0
+    for i in pubs:
+        priv=privilegioPub.objects.get(FKpub=i, status=True)
+        tiempo=getDiferenciaMes(priv.mes, priv.year, hoy.month, hoy.year)+1
+        data[cont]={'nombre':i.nombre+" "+i.apellido, 'priv':priv.FKpriv.nombre, 'resp':priv.responsabilidad, 'tiempo':tiempoCompleto(tiempo)}
+        cont+=1
+    data=data.values()
+    return render(request, "Privilegio/consNombrados.html", {'data':data})
 
 @login_required(login_url='/login')
 def nombrar(request):
@@ -149,7 +158,7 @@ def baja(request):
             else:
                 msg={'msg':"Error, Este publicador no tiene privilegios"}
     return HttpResponse(json.dumps(msg))
-
+#metodos reutilizables
 def privilegioActivo(priv, mes, year):
      activo=False
      if getDiferenciaMes(priv.mes, priv.year, mes, year) > -2:
@@ -163,3 +172,29 @@ def privilegioActivo(priv, mes, year):
           if getDiferenciaMes(mes, year, mesF, yearF) > -2:
                activo=True
      return activo
+
+def tiempoCompleto(meses):
+    mes=0
+    year=0
+    tiempo=""
+    if meses==0:
+        tiempo="Inicia este mes"
+    else:
+        for i in range(0,meses):
+            mes+=1
+            if mes==13:
+                year+=1
+                mes=1
+        if year>0:
+            tiempo=str(year)+" anio"
+            if year>1:
+                tiempo+="s"
+            if meses>0:
+                tiempo+=" y "+str(mes)+" mes"
+                if mes>1:
+                    tiempo+="es"
+        else:
+            tiempo=str(mes)+" mes"
+            if mes>1:
+                tiempo+="es"
+    return tiempo
