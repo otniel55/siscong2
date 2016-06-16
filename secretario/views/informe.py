@@ -57,6 +57,7 @@ def registrar(request):
                msg=_hour[1]
      else:
           msg=validar.mensaje
+     print(msg)
      return HttpResponse(json.dumps(msg))
 
 @login_required(login_url='/login')
