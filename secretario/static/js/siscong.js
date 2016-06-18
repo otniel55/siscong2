@@ -521,7 +521,7 @@
 		})
 	}
 
-	function createDoughnut(array, init=0){
+	function createDoughnut(array, init){
 		function __init__(key, array){
 			if(array.torta){
 				exclude = ['torta', 'mes', 'result', 't']
@@ -662,7 +662,7 @@
 		}
 
 		nkeys = Object.keys(array).length
-		tKeys = nkeys - init
+		tKeys = nkeys - ( init || 0 )
 
 		switch(tKeys){
 			case 1:
