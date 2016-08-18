@@ -9,7 +9,9 @@ from .siscong import *
 from secretario.models import Publicador, privilegio, privilegioPub
 
 def consultar(request):
-    return render(request, "Privilegio/consultar.html")
+    sesionGrupo(request)
+    priv=privilegio.objects.all()
+    return render(request, "Privilegio/consultar.html", {'data':priv})
 
 def Vistanombrar(request):
     sesionGrupo(request)
