@@ -8,7 +8,7 @@ from django.http import HttpResponse
 #modulos propios del proyecto
 from secretario.forms import precursorados
 from .siscong import *
-from secretario.models import Publicador, Informe, nroPrec, Precursor
+from secretario.models import Publicador, Informe, nroPrec, Precursor, horasCon
 
 def vistaNombrar(request):
      sesionGrupo(request)
@@ -155,6 +155,8 @@ def conPrecs(request):
      return HttpResponse(json.dumps(data))
 
 def historiaPrec(request, year):
+     acumCon=0
+     total=0
      sesionGrupo(request)
      bajaAuto()
      cont=0
@@ -167,10 +169,10 @@ def historiaPrec(request, year):
      prec=request.session['precur']
      pub=request.session['pubprec']
      if prec==2 or prec==1:
-          pg="tarjetaPrecAux.html"
+          pg="Precursor/tarjetaPrecAux.html"
           entrar=True
      elif prec==3 or prec==4:
-          pg="tarjetaPrecReg.html"
+          pg="Precursor/tarjetaPrecReg.html"
           entrar=True
      else:
           pg="tarjetaPrecAux.html"
@@ -252,8 +254,6 @@ def historiaPrec(request, year):
                               duracion=getDiferenciaMes(iMonth,iYear,fMonth,fYear)+2
                               while duracion>0:
                                    mesPrecur.append([iYear, iMonth, pre.FKprecursor.horas, pre.duracion])
-                                   if iMonth==hoy.month and iYear==hoy.year:
-                                       mesPrecur.pop()
                                    iMonth+=1
                                    if iMonth==13:
                                         iMonth=1
@@ -277,13 +277,19 @@ def historiaPrec(request, year):
                                         inf=Informe.objects.get(FKpub=pub, mes=f[1], year=f[0])
                                    except(KeyError, Informe.DoesNotExist):
                                         if request.session['precur'] in (1, 2):
-                                             data[cont]={'fecha':datetime.date(f[0],f[1],15), 'horasR':f[2], 'horasI':0, 'obj':0}
-                                        else:
-                                             if acum>=f[2]*(cont+1):
-                                                  obj=1
+                                             if f[1]==hoy.month and f[0]==hoy.year:
+                                                  data[cont]={'fecha':datetime.date(f[0],f[1],15), 'horasR':f[2], 'horasI':"Mes en curso", 'obj':2}
                                              else:
-                                                  obj=0
-                                             data[cont] = {'fecha': datetime.date(f[0], f[1], 15), 'horasI':0, 'horasA':acum, 'horasRes':horasT-acum, 'obj':obj}
+                                                  data[cont]={'fecha':datetime.date(f[0],f[1],15), 'horasR':f[2], 'horasI':0, 'obj':0}
+                                        else:
+                                             if f[1]==hoy.month and f[0]==hoy.year:
+                                                  data[cont] = {'fecha': datetime.date(f[0], f[1], 15), 'horasI':"Mes en curso", 'horasA':acum, 'horasRes':horasT-acum, 'obj':2}
+                                             else:
+                                                  if acum>=f[2]*(cont+1):
+                                                       obj=1
+                                                  else:
+                                                       obj=0
+                                                  data[cont] = {'fecha': datetime.date(f[0], f[1], 15), 'horasI':0, 'horasA':acum, 'horasRes':horasT-acum, 'obj':obj}
                                    else:
                                         if request.session['precur'] in (1,2):
                                              hoursDecimal=int(convertMinutesToHours(inf.minutos))
@@ -299,6 +305,13 @@ def historiaPrec(request, year):
                                              else:
                                                   obj=0
                                              data[cont]={'fecha':datetime.date(f[0],f[1],15), 'horasI':int(convertMinutesToHours(inf.minutos)), 'horasA':acum, 'horasRes':horasT-acum, 'obj':obj}
+                                             try:
+                                                  hCon=horasCon.objects.get(FKinf=inf.pk)
+                                             except(KeyError, horasCon.DoesNotExist):
+                                                  pass
+                                             else:
+                                                  data[cont]['horasCon']=hCon.horas
+                                                  acumCon+=hCon.horas
                                    cont=cont+1
                          else:
                               precursor=Precursor.objects.get(pk=request.session['precur'])
@@ -310,13 +323,24 @@ def historiaPrec(request, year):
                               if request.session['precur'] in (1, 2):
                                    data[cont] = {'fecha': datetime.date(hoy.year, hoy.month, 15), 'horasR': horasR, 'horasI': "En curso",'obj': 2}
                               else:
-                                   data[cont] = {'fecha': datetime.date(hoy.year, hoy.month, 15), 'horasI': "En curso", 'horasA': 0,'horasRes': horasT, 'obj': 2}
+                                   data[cont] = {'fecha': datetime.date(hoy.year, hoy.month, 15), 'horasI': "Mes en curso", 'horasA': 0,'horasRes': horasT, 'obj': 2}
+                         if (hoy.month==9 and hoy.year==finY) or (cont==12 and data[cont-1]['horasI']!="Mes en curso"):
+                              print("soy pro y llego")
+                              total={'horas':acum, 'obj':0}
+                              if acum<horasT:
+                                   if acumCon>0:
+                                        if acum+acumCon>=horasT:
+                                             total['horasCon']=acumCon
+                                             total['totalYear']=acum+acumCon
+                                             total['obj']=1
+                              else:
+                                   total['obj']=1
                          data=data.values()
                     else:
                          data={'msg':"Esta persona no fue precursor en el periodo "+year}
                else:
                     data={'msg':"Este Publicador nunca ha sido precursor"}
-     return render(request, pg, {'ficha':ficha, 'datos':data})
+     return render(request, pg, {'ficha':ficha, 'datos':data,'total':total})
 
 def darBaja(request):
      hoy=datetime.date.today()

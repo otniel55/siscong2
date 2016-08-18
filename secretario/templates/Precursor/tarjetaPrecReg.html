@@ -53,7 +53,7 @@
                                     {{ info.fecha|date:"F" }}
                                 </td>
                                 <td class="numeric text-center" data-title="Horas Realizadas">
-                                    {{ info.horasI }}
+                                    {{ info.horasI }}/{{info.horasCon}}
                                 </td>
                                 <td class="numeric text-center" data-title="Horas Acumuladas">
                                     {{ info.horasA }}
@@ -76,6 +76,7 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                {{total}}
             </section>
         </div>
     </div>
