@@ -115,50 +115,54 @@ def modificar(request):
           _horas=request.POST['horas']
           _id=int(request.POST['id'])
           _fecha = request.POST['fecha']
-          revisitas=request.POST['revisitas']
-          estudios=request.POST['estudios']
-          publicaciones=request.POST['publicaciones']
-          videos=request.POST['videos']
+          revisitas=int(request.POST['revisitas'])
+          estudios=int(request.POST['estudios'])
+          publicaciones=int(request.POST['publicaciones'])
+          videos=int(request.POST['videos'])
           obs=request.POST['obs']
           HorasC=int(request.POST['horasCons'])
           _hour=convertHoursToMinutes(_horas)
-          try:
-               inf=Informe.objects.get(pk=_id)
-          except(KeyError):
-               msg={"msg":"Informe no existe"}
-          else:
-               if getDiferenciaMes(int(_fecha[0:2]), int(_fecha[3:]),hoy.month, hoy.year)>-2:
-                    if _horas!="0":
-                         informes=Informe.objects.filter(mes=int(fecha[0:2]), year=int(fecha[3:]), FKpub=inf.FKpub).exclude(pk=inf.pk)
-                         if len(informes)>0:
-                              inf.mes=int(fecha[0:2])
-                              inf.year=int(fecha[3:])
-                              inf.minutos=_hour
-                              inf.revisitas=revisitas
-                              inf.estudios=estudios
-                              inf.publicaciones=publicaciones
-                              inf.videos=videos
-                              inf.save()
-                              msg={"msg":"Datos del informe modificados con exito"}
-                              if HorasC>0:
-                                   try:
-                                        hC=horasCon.objects.get(FKinf=inf.pk)
-                                   except(KeyError, horasCon.DoesNotExist):
-                                        registrarH=regHorasCon(inf, _horasC, False)
-                                        if not registrarH[0]:
-                                             msg=registrarH[1]
-                                   else:
-                                        if horas>100:
-                                             msg={'msg':"Error las horas de consesion NO deben ser mayores a 100"}
-                                        else:
-                                             hC.horas=_horasC
-                                             hC.save()
-                         else:
-                              msg={'msg':"Error ya existe otro informe con esta fecha"}
-                    else:
-                         msg={'msg':"Error, el informe no puede estar vacio"}
+          if _hour[0]:
+               try:
+                    inf=Informe.objects.get(pk=_id)
+               except(KeyError):
+                    msg={"msg":"Informe no existe"}
                else:
-                    msg={'msg':"Error, Informe no puede ser del futuro"}
+                    if getDiferenciaMes(int(_fecha[0:2]), int(_fecha[3:]),hoy.month, hoy.year)>-2:
+                         if _horas!="0":
+                              informes=Informe.objects.filter(mes=int(_fecha[0:2]), year=int(_fecha[3:]), FKpub=inf.FKpub).exclude(pk=inf.pk)
+                              if len(informes)==0:
+                                   inf.mes=int(_fecha[0:2])
+                                   inf.year=int(_fecha[3:])
+                                   inf.minutos=_hour[1]
+                                   inf.revisitas=revisitas
+                                   inf.estudios=estudios
+                                   inf.publicaciones=publicaciones
+                                   inf.videos=videos
+                                   inf.obs=obs
+                                   inf.save()
+                                   msg={"msg":"Datos del informe modificados con exito"}
+                                   if HorasC>0:
+                                        try:
+                                             hC=horasCon.objects.get(FKinf=inf.pk)
+                                        except(KeyError, horasCon.DoesNotExist):
+                                             registrarH=regHorasCon(inf, HorasC, False)
+                                             if not registrarH[0]:
+                                                  msg=registrarH[1]
+                                        else:
+                                             if horas>100:
+                                                  msg={'msg':"Error las horas de consesion NO deben ser mayores a 100"}
+                                             else:
+                                                  hC.horas=_horasC
+                                                  hC.save()
+                              else:
+                                   msg={'msg':"Error ya existe otro informe con esta fecha"}
+                         else:
+                              msg={'msg':"Error, el informe no puede estar vacio"}
+                    else:
+                         msg={'msg':"Error, Informe no puede ser del futuro"}
+          else:
+               msg=_hour[1]
      else:
           msg=validar.mensaje
      return HttpResponse(json.dumps(msg))
