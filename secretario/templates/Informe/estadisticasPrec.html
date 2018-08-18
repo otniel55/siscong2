@@ -55,7 +55,6 @@
 			$("#resultados2").html("")
 			$("#dialogos").html("")
             res=JSON.parse(res)
-			console.log(res)
             $.each(res, function(key, value){
                 if (value['0']){
 					mes = moment(value['mes'], "MM").format('MMMM')

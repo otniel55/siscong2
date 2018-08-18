@@ -3,7 +3,7 @@
 
 <div id="mainGrupo" class="col-lg-12">
 	<div class="form-panel row">
-		<h3 class="text-center titlecolor"><i class="fa fa-angle-right"></i>Editar Grupo de Predicación</h3>
+		<h3 class="text-center titlecolor">Editar Grupo de Predicación</h3>
 
 		{% csrf_token %}
 		<div class="form-group">
@@ -349,8 +349,6 @@
 							]).draw().node()
 			$(newRow).attr('id', '' + $(nodo).val() ).find('td').addClass("text-center")
 
-			console.log('Publicador Impreso '+id)
-
 			if ( $('#move-left').is(':disabled') && nombrar.rows().data().length > 0) {
 				$('#move-left').removeAttr('disabled')
 				$('#save').removeProp('disabled')
@@ -383,15 +381,12 @@
 
 		$.each(options, function(key, option){
 			if( $(option).prop('selected') == false ){
-				console.log( $(option).attr('data-grupo') )
 				if( $(option).attr('data-grupo') ==  $('#nroGrupo').html().trim() ){
-					console.log('Este es mi Grupo')
 					result = searchPub( $(option).val() )
 					if( result )
 						id = result
 				} else {
 					if ( $('#otherGroup').is(':visible') && $('#otherGroup').val() == $(option).attr('data-grupo') ){
-						console.log('Este es el Grupo Selected')
 						result = searchPub( $(option).val() )
 						if( result )
 							idAntes = result
@@ -626,8 +621,6 @@
 								   'adress': value[2],
 								  })
 				}
-
-				console.log(newGroup)
 			})
 
 			if ($('#selectAll2').is(':checked'))
@@ -932,7 +925,6 @@
 			key = new Array('enc', 'aux', 'IDgrupo', 'pubs')
 			grupoPubs = new Array(nro, JSON.stringify(pubs) )
 			x = obj.generateJson(key, '{{ csrf_token }}', grupoPubs)
-			console.log(x)
 			obj.setPost("{% url 'secretario:modGrup' %}", 0, result)
 		}
 	})

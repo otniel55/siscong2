@@ -5,10 +5,10 @@
 	<div class="col-md-12 col-lg-12">
 		<div class="form-panel row">
 		    <div class="visible-md visible-lg">
-				<h1 class="text-center titlecolor"><i class="fa fa-angle-right"></i>Edicion de Precursorados</h1>
+				<h1 class="text-center titlecolor">Edicion de Precursorados</h1>
 			</div>
 			<div class="visible-xs visible-sm">
-				<h3 class="text-center"><i class="fa fa-angle-right"></i>Edicion de Precursorados</h3>
+				<h3 class="text-center">Edicion de Precursorados</h3>
 			</div>
 
 	<div class="form-horizontal style-form">
@@ -25,7 +25,6 @@
 								<tr>
 									<th class="numeric text-center" style="width:40%;">Tipos de Precursorado</th>
 									<th class="numeric text-center" style="width:40%;">Cantidad de Horas</th>
-									<th class="numeric text-center" style="width:20%;"></th>
 
 								</tr>
 							</thead>
@@ -37,9 +36,6 @@
 									</td>
 									<td class="numeric text-center" data-title="Cantidad de Horas" style="width:40%;">
 										{{ pre.horas }}
-									</td>
-									<td class="numeric text-center" data-title="" style="width:20%;">
-										<button class="btn btn-success">Cambiar</button>
 									</td>
 								</tr>
 							{% endfor %}
@@ -71,10 +67,8 @@
             input = td.find('input').length
             if(input == 0){
                 btn=$("#editPrecur tr:nth-child("+(tr+1)+") td:nth-child(3) button")
-                console.log(btn.attr('class'))
                 if($(this)[0]==btn.parent('td')[0]){
                     if(btn.attr('class')=="btn btn-primary"){
-                        alert("aqui toy")
                         otroAction=true
                     }
                 }
@@ -108,7 +102,6 @@
                         }
                     })
                 } else{
-                    alert("toy molando uwu")
                     btn.removeClass("btn-primary")
                     btn.addClass("btn-success")
                 }

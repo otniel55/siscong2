@@ -50,7 +50,6 @@
 					$("#resultados").html("")
 					$("#resultados2").html("")
 					res = JSON.parse(res)
-					console.log(res)
 					$.each(res, function (key, value) {
 						mes = moment(value['mes'], "MM").format('MMMM')
 						mes = toUpperFirst(mes)

@@ -29,7 +29,6 @@
         $.post("{% url 'secretario:darBaja' %}", {csrfmiddlewaretoken:'{{ csrf_token }}'})
         .success(function(res){
             res = JSON.parse(res)
-            console.log(res)
         })
     })
 
