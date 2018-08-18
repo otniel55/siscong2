@@ -1,0 +1,2 @@
+INSERT INTO secretario_precursor("IDprecursor", nombre, horas) VALUES (1, 'Auxiliar (Campañas)', 30),(2, 'Auxiliar', 50),(3, 'Regular', 60),(4, 'Especial', 120);
+INSERT INTO secretario_privilegio(id, nombre, "edadMin", "tiempoBauMin") VALUES (1, 'Superintendente (Anciano)', 25, 5),(2, 'Siervo Ministerial', 18, 1)
