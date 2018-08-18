@@ -130,9 +130,9 @@
                     </li>
 
                     <li class="mt">
-                        <a class="{% if url == 0 %} active {% endif %}" href="{% url 'secretario:usuReg' %}">
+                        <a href="{% url 'secretario:usuReg' %}">
                             <i class="fa fa-user"></i>
-                            <span>Usuarios</span>
+                            <span>Usuarios {{ url }}</span>
                         </a>
                     </li>
                 </ul>

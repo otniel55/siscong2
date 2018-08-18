@@ -30,7 +30,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/siscong.css' %}" />
 </head>
 
-<body>
+<body style="background-color: #5c3d89;">
 	<div id="login-page">
 		<div class="container">
 			{% csrf_token %}
@@ -44,50 +44,8 @@
 					<input type="password" class="form-control" placeholder="Ingrese su Contraseña...">
 					<br>
 
-					<label class="checkbox">
-						<span class="pull-right" style="margin-bottom:5px;">
-							<a data-toggle="modal" href="#myModal" style="font-size:12px;">Olvido su Contraseña?</a>
-						</span>
-					</label>
-
-					<button id="login" class="btn btn-primary btn-block"><i class="fa fa-lock"></i> Ingresar</button>
+					<button id="login" class="btn btn-primary btn-block" style="background-color: #5c3d89;"><i class="fa fa-lock"></i> Ingresar</button>
 				</div>
-
-				<!-- Modal -->
-				<div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade">
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-								<h4 class="modal-title">Olvido su Contraseña?</h4>
-							</div>
-
-							<div class="modal-body">
-								<h3 class="text-center titlecolor" style="margin-bottom:30px;">Porfavor Responda las Siguientes Preguntas</h3>
-								<div class="modal-bottom">
-									<label for="">Pregunta 1:</label>
-									<input type="text" placeholder="Respuesta 1" autocomplete="off" class="form-control placeholder-no-fix">
-								</div>
-
-								<div class="modal-bottom">
-									<label for="">Pregunta 2:</label>
-									<input type="text" placeholder="Respuesta 2" autocomplete="off" class="form-control placeholder-no-fix">
-								</div>
-
-								<div class="modal-bottom">
-									<label for="">Pregunta 3:</label>
-									<input type="text" placeholder="Respuesta 3" autocomplete="off" class="form-control placeholder-no-fix">
-								</div>
-							</div>
-
-							<div class="modal-footer">
-								<button data-dismiss="modal" class="btn btn-default" type="button">Cancelar</button>
-								<button class="btn btn-success" type="button">Recuperar Contraseña</button>
-							</div>
-						</div>
-					</div>
-				</div>
-				<!-- modal -->
 			</div>
 		</div>
 	</div>
@@ -106,8 +64,14 @@
     <script src="{% static 'js/datepicker/bootstrap-datetimepicker.min.js' %}" type="text/javascript"></script>
 
     <script>
-        $.backstretch("{% static 'img/login.jpg'%}", {speed: 500});
+        // $.backstretch("{% static 'img/login.jpg'%}", {speed: 500});
 		//$('body').css('background-color', '#1C70AE')
+
+		$('.login-wrap .form-control').keydown(function(e) {
+			if (e.keyCode === 13) {
+				$('#login').click();
+			}
+		});
 
 		$('#login').click(function(){
 			redirect = function(res){
@@ -123,9 +87,9 @@
 			if ( input.vacio == 0 ){
 				keys = new Array('user', 'password')
 				login.generateJson(keys, '{{ csrf_token }}')
-				login.setPost("{% url 'secretario:autenticar' %}", 0, redirect)
+				login.setPost("{% url 'secretario:autenticar' %}", 'Login', redirect)
 			} else {
-				showMsg('Error al Registrar Informe!','Hay Algunos Campos Vacios o con valores invalidos', "{% static 'img/error.png' %}")
+				showMsg('Error','Hay Algunos Campos Vacios o con valores invalidos', "{% static 'img/error.png' %}")
 			}
 		})
     </script>

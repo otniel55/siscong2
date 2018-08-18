@@ -212,7 +212,7 @@
 					});
 
 					if ( fn ){
-						  fn(res, parametros)
+						fn(res, parametros)
 					}
 
 				} else {

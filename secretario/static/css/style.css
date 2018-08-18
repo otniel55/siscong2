@@ -431,9 +431,7 @@ ul.sidebar-menu li a.active i {
 .wrapper {
     display: inline-block;
     margin-top: 60px;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-bottom: 15px;
+    padding: 30px;
     padding-top: 0px;
     width: 100%;
 }
@@ -1816,24 +1814,27 @@ label {
 
 /*LOGIN CONFIGURATION PAGE*/
 .form-login {
-	max-width: 330px;
-	margin: 100px auto 0;
-	background: #fff;
-	border-radius: 5px;
-	-webkit-border-radius: 5px;
+    max-width: 330px;
+    margin: 100px auto 0;
+    background: #fff;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    box-shadow: 0px 2px 2px 4px rgba(0,0,0,.15);
+    border-radius: 0;
 }
 
 .form-login h2.form-login-heading {
 	margin: 0;
 	padding: 25px 20px;
 	text-align: center;
-	background: #68dff0;
+	background: #FFF;
 	border-radius: 5px 5px 0 0;
 	-webkit-border-radius: 5px 5px 0 0;
-	color: #fff;
+	color: #5c3d89;
 	font-size: 20px;
 	text-transform: uppercase;
-	font-weight: 300;
+    font-weight: 300;
+    border-bottom: solid 1px #5c3d89;
 }
 .login-wrap {
 	padding: 20px;
