@@ -2,7 +2,7 @@
 
 	<div id="mainGrupo" class="col-lg-12">
 		<div class="form-panel row">
-			<h3 class="text-center titlecolor"><i class="fa fa-angle-right"></i>Grupo de Predicación</h3>
+			<h3 class="text-center titlecolor">Grupo de Predicación</h3>
 
 			<div>
 				{% csrf_token %}
@@ -488,19 +488,17 @@
 
 						$(nodo).attr('id', '' + id ).find('td').addClass("numeric text-center")
 
-						console.log('pub agregado ' + id)
-					} else {
-						console.log('publicador existe '+id)
+						// console.log('pub agregado ' + id)
 					}
+					// else {
+					// 	// console.log('publicador existe '+id)
+					// }
 				}
 			})
 		}
 
 		s1 = _searchDel(cmb1)
 		s2 = _searchDel(cmb2)
-
-		console.log(s1)
-		console.log(s2)
 
 		_searchAdd(cmb1, cmb2)
 		_searchAdd(cmb2, cmb1)
@@ -614,7 +612,6 @@
 			rowNode = nombrar.rows('.selected').nodes()
 			nombrar.rows('.selected').remove().draw()
 
-			console.log(row)
 			$.each(row, function (key, value) {
 
 				nodo =  publics.row.add([

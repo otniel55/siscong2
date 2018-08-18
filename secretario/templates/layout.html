@@ -49,11 +49,11 @@
                 <div class="fa fa-bars tooltips visible-xs visible-sm" data-placement="right" data-original-title="Toggle Navigation"></div>
             </div>
             <!--logo start-->
-            <a href="" class="logo"><b>Sistema El Palito</b></a>
+            <a href="/" class="logo"><b>SISCONG - Sistema Administrativo para las congregaciones</b></a>
             <!--logo end-->
             <div class="top-menu">
                 <ul class="nav pull-right top-menu">
-                    <li><a class="logout" href="{% url 'secretario:cerrar' %}">Salir</a></li>
+                    <li><a class="logout" href="{% url 'secretario:cerrar' %}">SALIR</a></li>
                 </ul>
             </div>
         </header>
@@ -64,10 +64,6 @@
             <div id="sidebar" class="nav-collapse ">
                 <!-- sidebar menu start-->
                 <ul class="sidebar-menu" id="nav-accordion">
-
-                    <p class="centered"><img src="" class="img-circle" width="60"></p>
-                    <h5 class="centered">{{ request.session.nombre }}</h5>
-
                     <li class="mt">
                         <a class="{% if url == 0 %} active {% endif %}" href="{% url 'secretario:index' %}">
                             <i class="fa fa-home"></i>
@@ -129,24 +125,15 @@
                         </a>
                         <ul class="sub">
                             <li><a href="{% url 'secretario:estadisticas' %}">Estadisticas</a></li>
-                            <li class="sub-menu">
-                            	<a href="">Reportes</a>
-								<ul class="sub">
-									<li><a href="{% url 'secretario:vistaPdfPub' %}">Tarjeta del publicador</a></li>
-								</ul>
-							</li>
+                            <li><a href="{% url 'secretario:vistaPdfPub' %}">Tarjeta del publicador</a></li>
                         </ul>
                     </li>
 
-                    <li class="sub-menu">
-                        <a href="">
-                            <i class="fa fa-server"></i>
+                    <li class="mt">
+                        <a class="{% if url == 0 %} active {% endif %}" href="{% url 'secretario:usuReg' %}">
+                            <i class="fa fa-user"></i>
                             <span>Usuarios</span>
                         </a>
-                        <ul class="sub">
-                            <li><a href="{% url 'secretario:usuReg' %}">Registrar</a></li>
-                            <li><a href="">Editar</a></li>
-                        </ul>
                     </li>
                 </ul>
                 <!-- sidebar menu end-->
@@ -159,8 +146,11 @@
             <section class="wrapper">
                 <div class="row">
                     {% block contenido %}
-                    <div class="col-xs-6 col-xs-offset-3">
-                        <img src="{% static 'img/jwlogo.png' %}" style="width: 100%">
+                    <div class="welcome-message">
+                        <div class="welcome-message__content">
+                            <h1>Bienvenido a SISCONG</h1>
+                            <p>Ingrese en alguno de los menús y comience a gestionar su congregación</p>
+                        </div>
                     </div>
                     {% endblock %}
                 </div>

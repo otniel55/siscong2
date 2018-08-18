@@ -207,7 +207,6 @@
 		$.post("{% url 'secretario:infG' %}",{ 'fecha': fecha, csrfmiddlewaretoken: '{{ csrf_token }}' })
 			.success(function(res){
 				results = res = JSON.parse(res)
-				console.log(res)
 
 				$('#resultAT').children().detach()
 

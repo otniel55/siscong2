@@ -4,176 +4,161 @@
 
 {% block contenido %}
 
-	<div class="col-md-12 col-lg-12">
-		<div class="form-panel row">
-		    <div class="visible-md visible-lg">
-				<h1 class="text-center titlecolor"><i class="fa fa-angle-right"></i>Nombrar Precursores</h1>
-			</div>
-			<div class="visible-xs visible-sm">
-				<h3 class="text-center"><i class="fa fa-angle-right"></i>Nombrar Precursores</h3>
-			</div>
+<div class="col-md-12 col-lg-12">
+    <div class="form-panel row">
+        <div class="visible-md visible-lg">
+            <h1 class="text-center titlecolor">Nombrar Precursores</h1>
+        </div>
+        <div class="visible-xs visible-sm">
+            <h3 class="text-center">Nombrar Precursores</h3>
+        </div>
 
-	<div class="style-form">
-		<div class="form-group">
-
-			{% csrf_token %}
-
-			<div class="col-lg-12" style="margin-top: 20px;">
-				<div class="row">
-
-					<div class="col-lg-6 col-md-offset-3">
-							<div class="row">
-
-                                <div class="form-inline col-lg-6" style="margin-top:7px;">
-									<div class="form-group">
-                                        <label for="fechaIni">Fecha de Inicio:</label>
-                                        <div class='input-group date datepicker'>
-                                            <input type="text" class="form-control" style="font-size:16px;">
-                                            <span class="input-group-addon">
-                                                <span class="fa fa-calendar">
-                                                </span>
-                                            </span>
-                                        </div>
-                                    </div>
-					            </div>
-
-                                <div class="col-sm-2 col-md-2 col-lg-2">
-                                    <button id="move-right" class="btn btn-success btn-block fa fa-arrow-right fa-2x"></button>
+        <div class="style-form">
+            <div class="form-group">
+                {% csrf_token %}
+                <div class="col-lg-12" style="margin-top: 20px;">
+                    <div class="row">
+                        <div class="col-xs-4" style="margin-top:7px;">
+                            <label for="fechaIni">Fecha de Inicio:</label>
+                            <div class="form-group">
+                                <div class='input-group date datepicker'>
+                                    <input type="text" class="form-control" style="font-size:16px;">
+                                    <span class="input-group-addon">
+                                        <span class="fa fa-calendar">
+                                        </span>
+                                    </span>
                                 </div>
-
-                                <div class="col-sm-2 col-md-2 col-lg-2">
-                                    <button id="move-left" class="btn btn-danger btn-block fa fa-arrow-left fa-2x" disabled></button>
-                                </div>
-
-                                <div class="col-sm-2 col-md-2 col-lg-2">
-                                    <button id="save" class="btn btn-primary btn-block fa fa-check-square-o fa-2x" disabled></button>
-								</div>
-				            </div>
-					</div>
-
-				</div>
-			</div>
-
-			<div class="clearfix"></div>
-
-			<div class="col-lg-6" style="margin-top: 40px;">
-                <div class="content-panel">
-					<section id="tabla1">
-					
-						<h3 class="text-center titlecolor cabecero">Publicadores</h3>
-                       
-                        <div class="col-lg-6 Nfilter">
-                            <input type="text" id="filtro1" class="form-control" placeholder="Buscar...">
+                            </div>
                         </div>
+
+                        <div class="col-xs-3" style="margin-top: 34px;">
+                            <button style="height: 34px;" id="move-right" class="btn btn-success fa fa-arrow-right"></button>
+                            <button style="height: 34px;" id="move-left" class="btn btn-danger fa fa-arrow-left" disabled></button>
+                            <button style="height: 34px;" id="save" class="btn btn-primary fa fa-check-square-o" disabled></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+
+                <div class="col-lg-6">
+                    <div class="content-panel">
+                        <section id="tabla1">
                         
-                    	<table id="publics" class="display table table-condensed cf" cellspacing="0" style="font-size:14px;" width:"100%">
-                        	<thead class="cf">				
-								<tr>
-									<th style="width:5%;">
-										<input type="checkbox" id="selectAll" />
-									</th>
-									<th class="numeric text-center">Nombre y Apellido</th>
-									<th class="numeric text-center">Fecha de Bautismo</th>
-									<th class="numeric text-center">Tiempo Bautizado</th>
-								</tr>
-							</thead>
-							<tbody>
-							{% for pubs in pub %}
-								<tr id="{{ pubs.pk }}">
-									<td></td>
-									<td class="numeric text-center" data-title="Nombre y Apellido">
-										{{ pubs.nombre }} {{ pubs.apellido }}
-									</td>
-									<td class="numeric text-center" data-title="Fecha de Bautismo">
-										{{ pubs.fechaBau }}
-									</td>
-									<td class="numeric text-center" data-title="Tiempo Bautizado">
-										{{ pubs.tiempoB }}
-									</td>
-								</tr>
-							{% endfor %}
-							</tbody>
-						</table>
+                            <h3 class="text-center titlecolor cabecero">Publicadores</h3>
+                        
+                            <div class="col-lg-6 Nfilter">
+                                <input type="text" id="filtro1" class="form-control" placeholder="Buscar...">
+                            </div>
+                            
+                            <table id="publics" class="display table table-condensed cf" cellspacing="0" style="font-size:14px;" width:"100%">
+                                <thead class="cf">				
+                                    <tr>
+                                        <th style="width:5%;">
+                                            <input type="checkbox" id="selectAll" />
+                                        </th>
+                                        <th class="numeric text-center">Nombre y Apellido</th>
+                                        <th class="numeric text-center">Fecha de Bautismo</th>
+                                        <th class="numeric text-center">Tiempo Bautizado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for pubs in pub %}
+                                    <tr id="{{ pubs.pk }}">
+                                        <td></td>
+                                        <td class="numeric text-center" data-title="Nombre y Apellido">
+                                            {{ pubs.nombre }} {{ pubs.apellido }}
+                                        </td>
+                                        <td class="numeric text-center" data-title="Fecha de Bautismo">
+                                            {{ pubs.fechaBau }}
+                                        </td>
+                                        <td class="numeric text-center" data-title="Tiempo Bautizado">
+                                            {{ pubs.tiempoB }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
 
-                        <div style="height:80px;">
-                            <nav class="center-block">
-                              <ul id="pager1" class="pagination pager hide" >
-                                <li>
-                                  <a href="#" aria-label="P">
-                                    <span aria-hidden="true">&laquo;</span>
-                                  </a>
-                                </li>
-                                <li>
-                                  <a href="#" aria-label="N">
-                                    <span aria-hidden="true">&raquo;</span>
-                                  </a>
-                                </li>
-                              </ul>
-                            </nav>
-                        </div>
-					</section>
-				</div>
-			</div>
+                            <div style="height:80px;">
+                                <nav class="center-block">
+                                <ul id="pager1" class="pagination pager hide" >
+                                    <li>
+                                    <a href="#" aria-label="P">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                    </li>
+                                    <li>
+                                    <a href="#" aria-label="N">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                    </li>
+                                </ul>
+                                </nav>
+                            </div>
+                        </section>
+                    </div>
+                </div>
 
-			<div class="col-lg-6" style="margin-top: 40px;">
-                <div class="content-panel">
-					<section id="tabla2">
+                <div class="col-lg-6">
+                    <div class="content-panel">
+                        <section id="tabla2">
 
-                       <h3 class="text-center titlecolor cabecero">Publicadores Que Seran Nombrados</h3>
+                        <h3 class="text-center titlecolor cabecero">Publicadores Que Seran Nombrados</h3>
 
-                        <div class="col-lg-6 Nfilter">
-                            <input type="text" id="filtro2" class="form-control" placeholder="Buscar...">
-                        </div>
+                            <div class="col-lg-6 Nfilter">
+                                <input type="text" id="filtro2" class="form-control" placeholder="Buscar...">
+                            </div>
 
-                    	<table id="nombrar" class="display table table-condensed cf" cellspacing="0" style="font-size:14px;" width:"100%">
-                        	<thead class="cf">				
-								<tr>
-									<th style="width:5%;">
-										<input type="checkbox" id="selectAll2" />
-									</th>
-									<th class="numeric text-center" style="width:45%;">Nombre y Apellido</th>
-									<th class="numeric text-center" style="width:30%;">
-                                        <div class="btn-group">
-                                          <button class="btnPrecur dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                              Tipo Precursorado <span class="fa fa-caret-square-o-down"></span>
-                                          </button>
-                                          <ul class="dropdown-menu">
-                                            <li><a href="#" val="2">Auxiliar</a></li>
-                                            <li><a href="#" val="1">Auxiliar (Campañas)</a></li>
-                                            <li><a href="#" val="3">Regular</a></li>
-                                            <li><a href="#" val="4">Especial</a></li>
-                                          </ul>
-                                        </div>
-									</th>
-									<th class="numeric text-center" style="width:20%;"></th>
-								</tr>
-							</thead>
-							<tbody>
-							</tbody>
-						</table>
+                            <table id="nombrar" class="display table table-condensed cf" cellspacing="0" style="font-size:14px;" width:"100%">
+                                <thead class="cf">				
+                                    <tr>
+                                        <th style="width:5%;">
+                                            <input type="checkbox" id="selectAll2" />
+                                        </th>
+                                        <th class="numeric text-center" style="width:45%;">Nombre y Apellido</th>
+                                        <th class="numeric text-center" style="width:30%;">Tipo Precursorado
+                                            <!-- <div class="btn-group">
+                                            <button class="btnPrecur dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Tipo Precursorado <span class="fa fa-caret-square-o-down"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="#" val="2">Auxiliar</a></li>
+                                                <li><a href="#" val="1">Auxiliar (Campañas)</a></li>
+                                                <li><a href="#" val="3">Regular</a></li>
+                                                <li><a href="#" val="4">Especial</a></li>
+                                            </ul>
+                                            </div> -->
+                                        </th>
+                                        <th class="numeric text-center" style="width:20%;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
 
-                        <div style="height:80px;">
-                            <nav class="center-block">
-                              <ul id="pager2" class="pagination pager hide">
-                                <li>
-                                  <a href="#" aria-label="P">
-                                    <span aria-hidden="true">&laquo;</span>
-                                  </a>
-                                </li>
-                                <li>
-                                  <a href="#" aria-label="N">
-                                    <span aria-hidden="true">&raquo;</span>
-                                  </a>
-                                </li>
-                              </ul>
-                            </nav>
-                        </div>
-					</section>
-				</div>
-			</div>
-		</div>
-	</div>		
-		</div> 
+                            <div style="height:80px;">
+                                <nav class="center-block">
+                                <ul id="pager2" class="pagination pager hide">
+                                    <li>
+                                    <a href="#" aria-label="P">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                    </li>
+                                    <li>
+                                    <a href="#" aria-label="N">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                    </li>
+                                </ul>
+                                </nav>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>		
+	</div> 
 </div> 
 
 {% endblock %}

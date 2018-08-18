@@ -52,6 +52,28 @@
 	float: none;
 }
 
+/* welcome message*/
+.welcome-message {
+	position: fixed;
+    height: 100%;
+    width: 100%;
+    background-color: #eaeaea;
+    top: 0;
+    left: 0;
+	z-index: -1;
+	display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: row wrap;
+}
+
+.welcome-message__content {
+	width: 500px;
+    color: #5c3d89;
+    margin-left: 210px;
+    text-align: center;
+}
+
 /* styles for the body */
 
 #dialogo dt {

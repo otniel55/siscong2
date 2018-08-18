@@ -4,10 +4,10 @@
 	<div class="row">
 		<div class="form-panel">
 		    <div class="visible-md visible-lg">
-				<h1 class="text-center titlecolor"><i class="fa fa-angle-right"></i>Datos de Actividad del Publicador</h1>
+				<h1 class="text-center titlecolor">Datos de Actividad del Publicador</h1>
 			</div>
 			<div class="visible-xs visible-sm">
-				<h3 class="text-center"><i class="fa fa-angle-right"></i>Datos de Actividad del Publicador</h3>
+				<h3 class="text-center">Datos de Actividad del Publicador</h3>
 			</div>
 
 	<div class="form-horizontal style-form">
@@ -159,7 +159,6 @@
 			if ( data.vacio == 0 ){
 				keys = new Array('publicaciones', 'videos', 'horas', 'revisitas', 'estudios', 'obs','fecha', 'horasCons', 'id')
 				x = edit.generateJson(keys, '{{ csrf_token }}', idRow)
-				console.log(x)
 				edit.setPost("{% url 'secretario:modInf' %}", 'Modificar Informe!', close)
 			} else {
 				showMsg('Error al Registrar Informe!','Hay Algunos Campos Vacios o con valores invalidos', "{% static 'img/error.png' %}")
