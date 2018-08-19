@@ -1,3 +1,4 @@
 git *.pyc
 *.cpython-34.pyc
 __Installer
+*.db

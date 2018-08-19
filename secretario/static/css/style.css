@@ -1632,7 +1632,7 @@ background: #fffbcc !important;
 }
 
 label {
-	color: #5c3d89;
+	/* color: #5c3d89; */
 	font: bold 20px 'arial';
 	font-weight: 400;
 }
